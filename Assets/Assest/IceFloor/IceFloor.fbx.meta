@@ -3,7 +3,22 @@ guid: 07fe6943a12e2124297ed5020c224c64
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat_dlc3_ice_floor_01
+    second: {fileID: 2100000, guid: d6c3fe1a7072df242bbcba61161dc162, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat_dlc3_iceedge_01
+    second: {fileID: 2100000, guid: 202475b440db56c41b54b34e46ff76fe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat_dlc3_ripples_01
+    second: {fileID: 2100000, guid: 5594cf25446ceed42a04193b87c8e816, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
