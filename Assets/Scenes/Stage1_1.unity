@@ -630,6 +630,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2332}
   - component: {fileID: 5255}
+  - component: {fileID: 5256}
   m_Layer: 11
   m_Name: m_sk_crate_01
   m_TagString: Untagged
@@ -37398,6 +37399,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0067139864, y: 0.24872866, z: 0}
     m_Extent: {x: 0.51917386, y: 0.25127134, z: 0.51917386}
   m_DirtyAABB: 0
+--- !u!114 &5256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aafacd0a07688e4388052924703bcd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _offsetX: 0.2
+  _offsetY: 0.6
 --- !u!137 &5757
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
