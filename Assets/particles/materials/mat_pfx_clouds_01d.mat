@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: mat_pfx_clouds_01d
+  m_Shader: {fileID: 4800000, guid: a8afe7b59a606ce4ca7a774af4d922a3, type: 3}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3100
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+      _MainTexture:
+        m_Texture: {fileID: 2800000, guid: 4f7c6b418166b0240931a934e39814f3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+      _Brightnes: 1.29
+      _Brightness: -0.36
+      _BumpScale: 1
+      _Cutoff: 0.5
+      _DetailNormalMapScale: 1
+      _Disolve: 1
+      _DisolveAmount: 0.8
+      _DistortionAmount: 0.651
+      _DistortionClamp: 0.482
+      _DstBlend: 0
+      _EdgeMaskVOffset: 0
+      _FreznelColourIntencity: 0.528
+      _FreznelFalloff: 0.76
+      _FreznelIntencity: 1.35
+      _GlossMapScale: 1
+      _Glossiness: 0.5
+      _GlossyReflections: 1
+      _High: 100
+      _LightFalloff: 1.09
+      _LightRange: 17.1
+      _Lightclamp: 19.3
+      _Low: 100
+      _MaskOffset: 0.449
+      _Metallic: 0
+      _Mode: 0
+      _OcclusionStrength: 1
+      _Parallax: 0.02
+      _SmoothnessTextureChannel: 0
+      _SpecularHighlights: 1
+      _SrcBlend: 1
+      _UVSec: 0
+      _ZWrite: 1
+      _de_736969: 0.612
+      _node_1135: 0.214
+      _node_1909: 40
+      _node_372: 1.4
+      _node_4596: 0.232
+      _node_5677: 0
+      _node_570: -0.03
+      _node_686: 0.79
+      _node_7369: 0.2894172
+      _node_8373: 1
+      _node_8574: 1.21
+      _node_8697: 0.483
+      _node_8752: 0.443
+    m_Colors:
+      _Color: {r: 1, g: 0.5586207, b: 0, a: 1}
+      _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+      _FresnelColour: {r: 0.5735294, g: 0.5735294, b: 0.5735294, a: 1}
+      _node_1194: {r: 1, g: 0, b: 0, a: 1}
+      _node_1199: {r: 0.88539565, g: 0.16911763, b: 1, a: 1}
+      _node_1896: {r: 1, g: 0.86764705, b: 0.86764705, a: 1}
+      _node_2663: {r: 1, g: 1, b: 1, a: 1}
+      _node_4251: {r: 0.2521135, g: 0.1235943, b: 0.9338235, a: 1}
+      _node_4295: {r: 1, g: 0, b: 0, a: 1}
+      _node_9506: {r: 1, g: 0.39310342, b: 0, a: 1}
+      _node_9617: {r: 0.9938134, g: 1, b: 0.5514706, a: 1}
