@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Overcooked.Interfaces
 {
@@ -31,5 +32,30 @@ namespace Overcooked.Interfaces
         void CompleteOrder(int orderIndex);
         Action<RecipeData> OnOrderAdded { get; set; }
         Action<int> OnOrderCompleted { get; set; }
+    }
+
+    // 플레이어
+    public interface IPlayerInputService
+    {
+        // 이동 입력
+        Vector2 GetMovementInput();
+    
+        // 상호작용 (잡기 / 놓기)
+        bool IsInteractButtonDown();
+    
+        // 행동 입력 (썰기, 대쉬)
+        bool IsActionButtonDown();
+    }
+    
+    public interface IPlayerController
+    {
+        void SetMoveSpeed(float speed);
+        void EnableControl(bool isEnabled);
+    }
+
+    // 맵
+    public interface ILevelService
+    {
+        Transform GetPlayerSpawnPoint();
     }
 }

@@ -1,3 +1,4 @@
+using Overcooked;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,7 +8,7 @@ using VContainer.Unity;
 
 public class GameLifetimeScope : LifetimeScope
 {
-    [SerializeField] private GameObject _playerObject;
+    [SerializeField] private PlayerInput _playerMovement;
     [SerializeField] private List<RecipeData> _recipeList;
 
     protected override void Configure(IContainerBuilder builder)
@@ -18,8 +19,14 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.Register<ScoreManager>(Lifetime.Singleton).AsImplementedInterfaces();
         builder.Register<TimerManager>(Lifetime.Singleton).AsImplementedInterfaces();
-        builder.Register<RecipeManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
         builder.RegisterEntryPoint<GameLoopManager>();
+
+        builder.Register<PlayerInput>(Lifetime.Singleton).AsImplementedInterfaces();
+        
+        if (_playerMovement != null)
+        {
+            builder.RegisterComponent(_playerMovement);
+        }
     }
 }
