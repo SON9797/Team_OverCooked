@@ -5,7 +5,6 @@ using UnityEngine;
 public class StuffOffset : MonoBehaviour
 {
     private Renderer _renderer;
-    private Vector2 _currentOffset;
     [SerializeField] private float _offsetX = 0.2f;
     [SerializeField] private float _offsetY = 0.2f;
     void Start()
