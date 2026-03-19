@@ -9,7 +9,10 @@ using VContainer.Unity;
 public class GameLifetimeScope : LifetimeScope
 {
     [SerializeField] private PlayerInput _playerMovement;
+
     [SerializeField] private List<RecipeData> _recipeList;
+
+    [SerializeField] private LevelManager _levelManager;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -27,6 +30,11 @@ public class GameLifetimeScope : LifetimeScope
         if (_playerMovement != null)
         {
             builder.RegisterComponent(_playerMovement);
+        }
+
+        if (_levelManager != null)
+        {
+            builder.RegisterComponent(_levelManager).AsImplementedInterfaces();
         }
     }
 }

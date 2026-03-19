@@ -12,14 +12,17 @@ namespace Overcooked
         private IPlayerInputService _inputService;
         private Rigidbody _rb;
 
+        private ILevelService _levelService;
+
         [Header("¼¼ÆÃ")]
         [SerializeField] private float _moveSpeed = 8f;
         [SerializeField] private float _rotationSpeed = 15f;
 
         [Inject]
-        public void Construct(IPlayerInputService inputService)
+        public void Construct(IPlayerInputService inputService, ILevelService levelService)
         {
             _inputService = inputService;
+            _levelService = levelService;
         }
 
         private void Awake()
@@ -27,6 +30,20 @@ namespace Overcooked
             _rb = GetComponent<Rigidbody>();
 
             _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+
+        private void Start()
+        {
+            if (_levelService != null)
+            {
+                Transform spawnPoint = _levelService.GetPlayerSpawnPoint();
+
+                if (spawnPoint != null)
+                {
+                    _rb.position = spawnPoint.position;
+                    _rb.rotation = spawnPoint.rotation;
+                }
+            }
         }
 
         private void FixedUpdate()
