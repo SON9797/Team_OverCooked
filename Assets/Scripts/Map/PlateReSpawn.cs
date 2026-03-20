@@ -54,4 +54,20 @@ public class PlateReSpawn : MonoBehaviour
         GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
         _spawnedPlate.Add(newItem);
     }
+
+    public GameObject GetTopPlate()
+    {
+        if (_spawnedPlate.Count == 0)
+        {
+            Debug.Log("가져갈 접시가 없습니다!");
+            return null;
+        }
+
+        int lastIndex = _spawnedPlate.Count - 1;
+        GameObject topPlate = _spawnedPlate[lastIndex];
+
+        _spawnedPlate.RemoveAt(lastIndex);
+
+        return topPlate;
+    }
 }
