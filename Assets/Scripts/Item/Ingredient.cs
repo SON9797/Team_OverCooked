@@ -38,7 +38,7 @@ public class Ingredient : MonoBehaviour
 
 
 
-    [SerializeField]private List<StatusModelInfo> statusModelinfos = new List<StatusModelInfo>();
+    [SerializeField]private List<StatusModelInfo> statusModelinfos;
     [SerializeField]private IngreDientKind kind;
     [SerializeField]private float cookDuration = 5f;
 
@@ -78,8 +78,13 @@ public class Ingredient : MonoBehaviour
 
     public bool CanStatusAdd(CookBehaivior cook)
     {
+        //이미 있는 상태면 안됨
+        if ((cook & currentStat) == cook)
+            return false;
+        
         CookBehaivior nextStatus = currentStat | cook;
 
+        //없는 상태면 안됨
         if (!statusModels.ContainsKey(nextStatus))
         {
             print($"{currentStat} to {nextStatus} is not founded");
@@ -92,6 +97,20 @@ public class Ingredient : MonoBehaviour
     {
         CookBehaivior nextStatus = currentStat | cook;
         currentStat = nextStatus;
+
+        //먼저 원래 있던 모델 삭제
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        //status에 맞는 모델로 추가
+        print(nextStatus);
+        FoodModel model = Instantiate(statusModels[currentStat]).GetComponent<FoodModel>();
+        model.GotoPosWithRoot(transform.position);
+        model.transform.SetParent(transform);
+        
+
     }
 
     public IngreDientData GetIngredientData()
