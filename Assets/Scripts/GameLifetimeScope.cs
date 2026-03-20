@@ -1,4 +1,5 @@
 using Overcooked;
+using Overcooked.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,8 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private List<RecipeData> _recipeList;
 
     [SerializeField] private LevelManager _levelManager;
+
+    [SerializeField] private UIManager _uiManager;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -36,5 +39,9 @@ public class GameLifetimeScope : LifetimeScope
         {
             builder.RegisterComponent(_levelManager).AsImplementedInterfaces();
         }
+        
+        builder.RegisterComponent(_uiManager).As<IUIManager>();
+
+        builder.Register<SceneFlowManager>(Lifetime.Singleton).AsImplementedInterfaces();
     }
 }
