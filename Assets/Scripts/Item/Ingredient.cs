@@ -105,12 +105,15 @@ public class Ingredient : MonoBehaviour
         }
 
         //status에 맞는 모델로 추가
-        print(nextStatus);
+        ModelUpdate();
+        
+
+    }
+    private void ModelUpdate()
+    {
         FoodModel model = Instantiate(statusModels[currentStat]).GetComponent<FoodModel>();
         model.GotoPosWithRoot(transform.position);
         model.transform.SetParent(transform);
-        
-
     }
 
     public IngreDientData GetIngredientData()
