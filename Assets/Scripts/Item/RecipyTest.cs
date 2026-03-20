@@ -18,7 +18,7 @@ public struct IngreDientData
 [Serializable]
 public struct RecipyData
 {
-    public List<IngreDientData> ingreDients;
+    public List<IngreDientData> ingredients;
     public GameObject model;
 
 
@@ -27,7 +27,7 @@ class RecipyTest : MonoBehaviour
 {
     public static RecipyTest Instance;
     
-    [SerializeField] List<IngreDientData> data;
+    //[SerializeField] List<IngreDientData> data;
     [SerializeField] List<RecipyData> recipyData;
 
     private void Awake()
@@ -45,7 +45,7 @@ class RecipyTest : MonoBehaviour
     {
         foreach(RecipyData r in recipyData)
         {
-            if (mix.SetEquals(r.ingreDients) && mix.Count==r.ingreDients.Count)
+            if (mix.SetEquals(r.ingredients) && mix.Count==r.ingredients.Count)
             {
                 return true;
             }
