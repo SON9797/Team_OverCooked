@@ -8,7 +8,6 @@ public class ConveyorBeltOffset : MonoBehaviour
 
     private float _currentOffset;
     
-    private float _offsetX = 0f;
     private float _offsetY = 0f;
     void Start()
     {
