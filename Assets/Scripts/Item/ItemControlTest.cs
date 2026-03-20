@@ -15,11 +15,9 @@ public class ItemControlTest : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            print("ÀÔ·Â");
             Ingredient item = ItemCk();
             if (item!=null)
             {
-                print("item exist");
                 if (item.CanStatusAdd(CookBehaivior.chop))
                 {
                     
@@ -34,7 +32,6 @@ public class ItemControlTest : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(transform.position, transform.forward,out hit, 2f))
         {
-            print("ÀÎ½ÄµÊ");
             Ingredient ing=hit.transform.root.gameObject.GetComponent<Ingredient>();
             return ing;
         }
