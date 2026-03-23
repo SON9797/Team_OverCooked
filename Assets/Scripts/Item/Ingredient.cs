@@ -52,6 +52,16 @@ public class Ingredient : MonoBehaviour
         {
             statusModels[statusModelinfos[i].status]=statusModelinfos[i].obj;
         }
+        //만약 초반 모델이 비어있으면 현재상태에 맞게 생성
+        if(transform.childCount == 0)
+        {
+            ModelUpdate();
+        }
+        //리기드바디 없으면 추가하는 코드
+        if (GetComponent<Rigidbody>() == null)
+        {
+            gameObject.AddComponent<Rigidbody>();
+        }
     }
 
     
@@ -80,7 +90,9 @@ public class Ingredient : MonoBehaviour
     {
         //이미 있는 상태면 안됨
         if ((cook & currentStat) == cook)
+        {
             return false;
+        }
         
         CookBehaivior nextStatus = currentStat | cook;
 
@@ -98,21 +110,26 @@ public class Ingredient : MonoBehaviour
         CookBehaivior nextStatus = currentStat | cook;
         currentStat = nextStatus;
 
-        //먼저 원래 있던 모델 삭제
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
 
-        //status에 맞는 모델로 추가
+        //status에 맞는 모델로 추가 및 원래 모델 삭제
         ModelUpdate();
         
 
     }
     private void ModelUpdate()
     {
-        FoodModel model = Instantiate(statusModels[currentStat]).GetComponent<FoodModel>();
-        model.GotoPosWithRoot(transform.position);
+        Vector3 originAngle = transform.eulerAngles;
+
+        //먼저 원래 있던 모델 삭제
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        //FoodModel model = Instantiate(statusModels[currentStat]).GetComponent<FoodModel>();
+        //model.GotoPosWithRoot(transform.position);
+        GameObject model = Instantiate(statusModels[currentStat]);
+        model.transform.position = transform.position;
         model.transform.SetParent(transform);
     }
 
