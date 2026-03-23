@@ -66,6 +66,7 @@ namespace Overcooked.Interfaces
         void StartManagerCoroutine(IEnumerator routine);
         void SetupLevelUI(Overcooked.LevelData levelData);
         void UpdateTimerText(float time);
+        void UpdateTimerGauge(float currentTime, float maxTime);
 
         GameObject LoadingPanel { get; }
         GameObject TutorialPanel { get; }

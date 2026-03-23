@@ -32,6 +32,8 @@ namespace Overcooked
             _timerService.OnTimerTick = (remainingTime) => 
             {
                 _uiManager.UpdateTimerText(remainingTime);
+
+                _uiManager.UpdateTimerGauge(remainingTime, _currentLevelData.GamePlayTime);
             };
 
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, false);
@@ -44,6 +46,8 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
 
             _uiManager.UpdateTimerText(_currentLevelData.GamePlayTime);
+
+            _uiManager.UpdateTimerGauge(_currentLevelData.GamePlayTime, _currentLevelData.GamePlayTime);
 
             _uiManager.StartManagerCoroutine(InitializeFlowCoroutine());
         }
@@ -81,20 +85,22 @@ namespace Overcooked
             yield return new WaitForSeconds(1.5f);
 
             // 6. 게임 시작
+            _timerService.StartTimer();
+
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
-            _timerService.StartTimer();
 
             // 7. 엔딩
             yield return new WaitUntil(() => _timerService.IsTimeOver);
 
-            _uiManager.SetPanelActive(_uiManager.TimerPanel, true);
-
-            yield return new WaitForSeconds(1.5f);
-
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
             _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
+
+            _uiManager.SetPanelActive(_uiManager.TimesUpPanel, true);
+
+            yield return new WaitForSeconds(2.5f);
+            
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
 
             _uiManager.SetPanelActive(_uiManager.EndingPanel, true);
