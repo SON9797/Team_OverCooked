@@ -13,18 +13,26 @@ namespace Overcooked
         private readonly IUIManager _uiManager;
         private readonly ITimerService _timerService;
 
-        private readonly float _gamePlayTime = 5f; // юс╫ц
+        private readonly LevelData _currentLevelData;
 
         [Inject]
-        public SceneFlowManager(IUIManager uiManager, ITimerService timerService)
+        public SceneFlowManager(IUIManager uiManager, ITimerService timerService, LevelData levelData)
         {
             _uiManager = uiManager;
             _timerService = timerService;
+            _currentLevelData = levelData;
         }
 
         public void Start()
         {
-            _timerService.Initialize(_gamePlayTime);
+            _uiManager.SetupLevelUI(_currentLevelData);
+
+            _timerService.Initialize(_currentLevelData.GamePlayTime);
+
+            _timerService.OnTimerTick = (remainingTime) => 
+            {
+                _uiManager.UpdateTimerText(remainingTime);
+            };
 
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, false);
             _uiManager.SetPanelActive(_uiManager.ReadyPanel, false);
@@ -34,6 +42,8 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
             _uiManager.SetPanelActive(_uiManager.EndingPanel, false);
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
+
+            _uiManager.UpdateTimerText(_currentLevelData.GamePlayTime);
 
             _uiManager.StartManagerCoroutine(InitializeFlowCoroutine());
         }

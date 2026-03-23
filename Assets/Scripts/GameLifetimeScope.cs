@@ -17,6 +17,8 @@ public class GameLifetimeScope : LifetimeScope
 
     [SerializeField] private UIManager _uiManager;
 
+    [SerializeField] private LevelData _currentLevelData;
+
     protected override void Configure(IContainerBuilder builder)
     {
         builder.Register<RecipeManager>(Lifetime.Singleton)
@@ -43,5 +45,8 @@ public class GameLifetimeScope : LifetimeScope
         builder.RegisterComponent(_uiManager).As<IUIManager>();
 
         builder.Register<SceneFlowManager>(Lifetime.Singleton).AsImplementedInterfaces();
+
+        builder.RegisterInstance(_currentLevelData);
+
     }
 }

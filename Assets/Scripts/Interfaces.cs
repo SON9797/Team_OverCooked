@@ -64,6 +64,8 @@ namespace Overcooked.Interfaces
     {
         void SetPanelActive(GameObject panel, bool isActive);
         void StartManagerCoroutine(IEnumerator routine);
+        void SetupLevelUI(Overcooked.LevelData levelData);
+        void UpdateTimerText(float time);
 
         GameObject LoadingPanel { get; }
         GameObject TutorialPanel { get; }
