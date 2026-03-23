@@ -33,6 +33,21 @@ public class ChopBoard : ItemPlaceAndTake
 
     private void Update()
     {
+        if (_onCounterItem != null)
+        {
+            // [추가] 매 프레임 아이템이 낙하하지 않도록 물리 설정을 강제 고정
+            if (_onCounterItem.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            {
+                rb.useGravity = false;   // 중력 끄기
+                rb.isKinematic = true;  // 물리 연산 중단 (고정)
+            }
+        }
+
+        if (!_isChopping || _onCounterItem == null)
+        {
+            return;
+        }
+
         if (_isChopping && _onCounterItem != null)
         {
             Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
