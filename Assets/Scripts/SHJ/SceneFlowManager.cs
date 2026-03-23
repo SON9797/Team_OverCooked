@@ -29,6 +29,7 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
             _uiManager.SetPanelActive(_uiManager.EndingPanel, false);
+            _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
 
             _uiManager.StartManagerCoroutine(InitializeFlowCoroutine());
         }
