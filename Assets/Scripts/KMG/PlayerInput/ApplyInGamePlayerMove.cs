@@ -48,8 +48,11 @@ namespace Overcooked
     
         public void TryDash()
         {
-            if (!_canDash || _isDashing) return;
-    
+            if (!_canDash || _isDashing)
+            {
+                return;
+            }
+
             Vector3 DashDir;
     
             if (_moveDir.sqrMagnitude > 0.001f) DashDir = _moveDir.normalized;
@@ -92,8 +95,11 @@ namespace Overcooked
     
         private void FixedUpdate()
         {
-            if (_isDashing) return;
-    
+            if (_isDashing)
+            {
+                return;
+            }
+
             Vector3 v = _moveDir * _moveSpeed;
     
             _rb.velocity = new Vector3(v.x,_rb.velocity.y, v.z);

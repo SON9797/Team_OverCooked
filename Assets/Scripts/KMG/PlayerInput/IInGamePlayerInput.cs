@@ -17,6 +17,10 @@ namespace Overcooked
         bool DashInput { get; }
         bool SwitchingInput { get; }
         bool InteractionInput {  get; }
-    
+
+        /*
+        //플레이어 이동 잠금. 인게임 스타트 시 true 호출해야함.
+        bool SetInputActive(bool active);
+        */
     }
 }

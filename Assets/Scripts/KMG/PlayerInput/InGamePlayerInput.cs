@@ -28,6 +28,6 @@ namespace Overcooked
         }
         public bool DashInput => Input.GetKeyDown(KeyCode.LeftAlt);
         public bool SwitchingInput => Input.GetKeyDown(KeyCode.LeftShift);
-        public bool InteractionInput => Input.GetKey(KeyCode.LeftControl);
+        public bool InteractionInput => Input.GetKeyDown(KeyCode.LeftControl);
     }
 }
