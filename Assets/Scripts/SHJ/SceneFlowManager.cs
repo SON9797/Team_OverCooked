@@ -12,6 +12,8 @@ namespace Overcooked
     {
         private readonly IUIManager _uiManager;
 
+        private readonly float _gamePlayTime = 150f; // 임시
+
         [Inject]
         public SceneFlowManager(IUIManager uiManager)
         {
@@ -26,6 +28,7 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
             _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
+            _uiManager.SetPanelActive(_uiManager.EndingPanel, false);
 
             _uiManager.StartManagerCoroutine(InitializeFlowCoroutine());
         }
@@ -35,7 +38,7 @@ namespace Overcooked
         {
             // 1. 로딩화면
             _uiManager.SetPanelActive(_uiManager.LoadingPanel, true);
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(3.0f);
 
             // 2. 레시피튜토리얼
             _uiManager.SetPanelActive(_uiManager.LoadingPanel, false);
@@ -47,6 +50,10 @@ namespace Overcooked
                 yield return null; // 스페이스바가 눌릴 때까지 무한 대기
             }
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, false);
+
+            _uiManager.SetPanelActive(_uiManager.CoinPanel, true);
+            _uiManager.SetPanelActive(_uiManager.RecipePanel, true);
+            _uiManager.SetPanelActive(_uiManager.TimerPanel, true);
 
             // 4. Ready 1.5초
             _uiManager.SetPanelActive(_uiManager.ReadyPanel, true);
@@ -60,10 +67,14 @@ namespace Overcooked
             // 6. 게임 시작
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
-            _uiManager.SetPanelActive(_uiManager.CoinPanel, true);
-            _uiManager.SetPanelActive(_uiManager.RecipePanel, true);
-            _uiManager.SetPanelActive(_uiManager.TimerPanel, true);
+            // 7. 엔딩 타이틀
+            yield return new WaitForSeconds(_gamePlayTime);
 
+            _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
+            _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
+            _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
+
+            _uiManager.SetPanelActive(_uiManager.EndingPanel, true);
         }
     }
 }

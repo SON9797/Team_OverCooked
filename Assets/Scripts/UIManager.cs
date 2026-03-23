@@ -15,6 +15,7 @@ namespace Overcooked
         [SerializeField] private GameObject _coinPanel;
         [SerializeField] private GameObject _recipePanel;
         [SerializeField] private GameObject _timerPanel;
+        [SerializeField] private GameObject _endingPanel;
 
         public GameObject LoadingPanel => _loadingPanel;
         public GameObject TutorialPanel => _recipeTutorialPanel;
@@ -23,6 +24,7 @@ namespace Overcooked
         public GameObject CoinPanel => _coinPanel;
         public GameObject RecipePanel => _recipePanel;
         public GameObject TimerPanel => _timerPanel;
+        public GameObject EndingPanel => _endingPanel;        
 
 
         public void SetPanelActive(GameObject panel, bool isActive)
