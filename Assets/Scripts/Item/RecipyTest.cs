@@ -7,6 +7,7 @@ using UnityEngine;
 public enum IngreDientKind
 {
     lettuce,
+    fish,
     carrot,
     fish,
     parwn
@@ -22,6 +23,7 @@ public struct RecipyData
 {
     public List<IngreDientData> ingredients;
     public GameObject model;
+    public int score;
 
 
 }
@@ -40,20 +42,29 @@ class RecipyTest : MonoBehaviour
             return;
         }
         Instance = this;
+
+        for (int i=0;i<recipyData.Count; i++)
+        {
+            RecipyData temp = recipyData[i];
+            temp.score = temp.ingredients.Count;
+            recipyData[i] = temp;
+        }
         
     }
 
-    public bool RecipyExistCk(HashSet<IngreDientData> mix)
+    //레시피에 해당하는 모델 반환
+    public GameObject GetRecipyModel(HashSet<IngreDientData> mix)
     {
         foreach(RecipyData r in recipyData)
         {
             if (mix.SetEquals(r.ingredients) && mix.Count==r.ingredients.Count)
             {
-                return true;
+                return r.model;
             }
         }
-        return false;
+        return null;
     }
+    
 
 
 }
