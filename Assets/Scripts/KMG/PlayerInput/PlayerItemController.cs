@@ -11,13 +11,7 @@ namespace Overcooked
         [Header("손 위치")]
         [SerializeField] private Transform _holdPoint;
 
-        [Header("상호작용 레이 시작점")]
-        [SerializeField] private Transform _rayPoint;
-
-        [Header("레이 상호작용 거리")]
-        [SerializeField] private float _interactionDistance = 3f;
-
-        [Header("주변 줍기 반경")]
+        [Header("상호작용 반경")]
         [SerializeField] private float _interactRadius = 1.5f;
 
         [Header("정면 판정 기준")]
@@ -26,216 +20,183 @@ namespace Overcooked
         [Header("재료 레이어")]
         [SerializeField] private LayerMask _ingredientLayer;
 
-        [Header("바닥 드랍 거리")]
+        [Header("내려놓기 거리")]
         [SerializeField] private float _dropDistance = 1f;
 
         private Ingredient _currentIngredient;
         private Rigidbody _currentIngredientRb;
         private Collider[] _currentIngredientCols;
 
-
-
-
-
-
-
         public bool HasIngredient => _currentIngredient != null;
 
         public void TryInteractionIngredient()
         {
             RaycastHit hit;
-            bool isHit = false;
+            bool rayHit = Physics.Raycast(_holdPoint.position, transform.forward, out hit, _interactRadius);
 
-            if (_rayPoint != null)
+            if (_currentIngredient == null)
             {
-                isHit = Physics.Raycast(
-                    _rayPoint.position,
-                    _rayPoint.forward,
-                    out hit,
-                    _interactionDistance
-                );
-            }
-            else
-            {
-                hit = default;
-            }
-
-            if (HasIngredient)
-            {
-                TryPlaceOrDrop(hit, isHit);
-            }
-            else
-            {
-                TryPickOrTake(hit, isHit);
-            }
-        }
-
-        private void TryPlaceOrDrop(RaycastHit hit, bool isHit)
-        {
-            if (_currentIngredient == null) return;
-
-            if (isHit)
-            {
-                ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
-                if (counter != null && counter.CanPlaceItem())
+                if (!rayHit)
                 {
-                    PlaceToCounter(counter);
                     return;
                 }
-            }
 
-            DropToGround();
-        }
-
-        private void TryPickOrTake(RaycastHit hit, bool isHit)
-        {
-            if (isHit)
-            {
-                IngredientSource source = hit.transform.GetComponentInParent<IngredientSource>();
+                // 상자에서 꺼내기
+                IngredientSource source = hit.transform.GetComponent<IngredientSource>();
                 if (source != null)
                 {
-                    TakeFromSource(source);
+                    TryPickUpIngredientFromSource(source);
                     return;
                 }
 
+                // 조리대에서 집기
                 ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
                 if (counter != null && !counter.CanPlaceItem())
                 {
-                    TakeFromCounter(counter);
-                    return;
+                    TryPickUpIngredientFromCounter(counter);
                 }
             }
-
-            PickNearbyIngredient();
-        }
-
-        private void PickNearbyIngredient()
-        {
-            Collider[] hits = Physics.OverlapSphere(transform.position, _interactRadius, _ingredientLayer);
-
-            Ingredient nearestIngredient = null;
-            float nearestDistance = float.MaxValue;
-
-            for (int i = 0; i < hits.Length; i++)
+            else
             {
-                Ingredient ingredient = hits[i].GetComponentInParent<Ingredient>();
-                if (ingredient == null) continue;
-
-                Vector3 toIngredient = ingredient.transform.position - transform.position;
-                toIngredient.y = 0f;
-
-                if (toIngredient.sqrMagnitude < 0.0001f) continue;
-
-                float dot = Vector3.Dot(transform.forward, toIngredient.normalized);
-                if (dot < _forwardDot) continue;
-
-                float sqrDistance = toIngredient.sqrMagnitude;
-                if (sqrDistance < nearestDistance)
+                if (rayHit)
                 {
-                    nearestDistance = sqrDistance;
-                    nearestIngredient = ingredient;
+                    ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
+                    if (counter != null && counter.CanPlaceItem())
+                    {
+                        TryPlaceIngredient(counter);
+                        return;
+                    }
                 }
+
+                TryDropIngredient();
             }
-
-            if (nearestIngredient == null) return;
-
-            HoldIngredient(nearestIngredient);
         }
 
-        private void TakeFromSource(IngredientSource source)
+        public void TryInteractionCook()
         {
-            GameObject spawnedObject = source.SpawnIngredient();
-            if (spawnedObject == null) return;
+            RaycastHit hit;
+            bool rayHit = Physics.Raycast(_holdPoint.position, transform.forward, out hit, _interactRadius);
 
-            Ingredient ingredient = spawnedObject.GetComponent<Ingredient>();
-            if (ingredient == null)
+            if (!rayHit)
             {
-                ingredient = spawnedObject.GetComponentInParent<Ingredient>();
+                return;
             }
 
-            if (ingredient == null) return;
-
-            HoldIngredient(ingredient);
-        }
-
-        private void TakeFromCounter(ItemPlaceAndTake counter)
-        {
-            GameObject itemObject = counter.TakeItem();
-            if (itemObject == null) return;
-
-            Ingredient ingredient = itemObject.GetComponent<Ingredient>();
-            if (ingredient == null)
+            ChopBoard chopBoard = hit.transform.GetComponentInParent<ChopBoard>();
+            if (chopBoard != null)
             {
-                ingredient = itemObject.GetComponentInParent<Ingredient>();
+                chopBoard.ToggleChop();
             }
-
-            if (ingredient == null) return;
-
-            HoldIngredient(ingredient);
         }
 
-        private void PlaceToCounter(ItemPlaceAndTake counter)
+        private void TryPickUpIngredientFromSource(IngredientSource source)
         {
-            if (_currentIngredient == null) return;
+            GameObject newIngredientObject = source.SpawnIngredient();
+            if (newIngredientObject == null)
+            {
+                return;
+            }
 
-            ReleaseIngredientPhysics();
-            _currentIngredient.transform.SetParent(null);
+            SetCurrentIngredient(newIngredientObject);
+        }
+
+        private void TryPickUpIngredientFromCounter(ItemPlaceAndTake counter)
+        {
+            GameObject takeIngredientObject = counter.TakeItem();
+            if (takeIngredientObject == null)
+            {
+                return;
+            }
+
+            SetCurrentIngredient(takeIngredientObject);
+        }
+
+        private void TryPlaceIngredient(ItemPlaceAndTake counter)
+        {
+            if (_currentIngredient == null)
+            {
+                return;
+            }
+
+            PrepareIngredientForPlace();
 
             counter.PlaceItem(_currentIngredient.gameObject);
-
             ClearCurrentIngredient();
         }
 
-        private void DropToGround()
+        private void TryDropIngredient()
         {
-            if (_currentIngredient == null) return;
+            if (_currentIngredient == null)
+            {
+                return;
+            }
+
+            Vector3 dropPos = transform.position + transform.forward * _dropDistance;
+            dropPos.y = _holdPoint.position.y;
 
             _currentIngredient.transform.SetParent(null);
-            _currentIngredient.transform.position = transform.position + transform.forward * _dropDistance;
-
-            ReleaseIngredientPhysics();
-            ClearCurrentIngredient();
-        }
-
-        private void HoldIngredient(Ingredient ingredient)
-        {
-            _currentIngredient = ingredient;
-            _currentIngredientRb = _currentIngredient.GetComponent<Rigidbody>();
-            _currentIngredientCols = _currentIngredient.GetComponentsInChildren<Collider>();
+            _currentIngredient.transform.position = dropPos;
 
             if (_currentIngredientRb != null)
             {
+                _currentIngredientRb.isKinematic = false;
                 _currentIngredientRb.velocity = Vector3.zero;
                 _currentIngredientRb.angularVelocity = Vector3.zero;
-                _currentIngredientRb.isKinematic = true;
             }
 
-            if (_currentIngredientCols != null)
+            SetIngredientColliderEnabled(true);
+
+            ClearCurrentIngredient();
+        }
+
+        private void SetCurrentIngredient(GameObject ingredientObject)
+        {
+            Ingredient ingredient = ingredientObject.GetComponent<Ingredient>();
+            if (ingredient == null)
             {
-                for (int i = 0; i < _currentIngredientCols.Length; i++)
-                {
-                    _currentIngredientCols[i].enabled = false;
-                }
+                return;
             }
+
+            _currentIngredient = ingredient;
+            _currentIngredientRb = ingredientObject.GetComponent<Rigidbody>();
+            _currentIngredientCols = ingredientObject.GetComponentsInChildren<Collider>();
+
+            if (_currentIngredientRb != null)
+            {
+                _currentIngredientRb.isKinematic = true;
+                _currentIngredientRb.velocity = Vector3.zero;
+                _currentIngredientRb.angularVelocity = Vector3.zero;
+            }
+
+            SetIngredientColliderEnabled(false);
 
             _currentIngredient.transform.SetParent(_holdPoint);
             _currentIngredient.transform.localPosition = Vector3.zero;
             _currentIngredient.transform.localRotation = Quaternion.identity;
         }
 
-        private void ReleaseIngredientPhysics()
+        private void PrepareIngredientForPlace()
         {
             if (_currentIngredientRb != null)
             {
-                _currentIngredientRb.isKinematic = false;
+                _currentIngredientRb.isKinematic = true;
+                _currentIngredientRb.velocity = Vector3.zero;
+                _currentIngredientRb.angularVelocity = Vector3.zero;
             }
 
-            if (_currentIngredientCols != null)
+            SetIngredientColliderEnabled(false);
+        }
+
+        private void SetIngredientColliderEnabled(bool isEnabled)
+        {
+            if (_currentIngredientCols == null)
             {
-                for (int i = 0; i < _currentIngredientCols.Length; i++)
-                {
-                    _currentIngredientCols[i].enabled = true;
-                }
+                return;
+            }
+
+            for (int i = 0; i < _currentIngredientCols.Length; i++)
+            {
+                _currentIngredientCols[i].enabled = isEnabled;
             }
         }
 
@@ -244,18 +205,6 @@ namespace Overcooked
             _currentIngredient = null;
             _currentIngredientRb = null;
             _currentIngredientCols = null;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, _interactRadius);
-
-            if (_rayPoint != null)
-            {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawLine(_rayPoint.position, _rayPoint.position + _rayPoint.forward * _interactionDistance);
-            }
         }
     }
 }
