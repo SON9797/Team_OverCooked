@@ -16,3 +16,15 @@ MonoBehaviour:
   GamePlayTime: 10
   LoadingImage: {fileID: 21300000, guid: b6c89082dcdfd4641876d205ddffd3a4, type: 3}
   TutorialImage: {fileID: 21300000, guid: f673e20971c60c94caa2a5de44db1428, type: 3}
+  BaseTipAmount: 8
+  Recipes:
+  - DisgName: Fish
+    FinishedDishImage: {fileID: 21300000, guid: 62f8f5bffee19f94d90c03d560c311ec, type: 3}
+    Ingredients:
+    - {fileID: 21300000, guid: e922a018dfe317d49b1377f72babe17b, type: 3}
+    BaseScore: 20
+  - DisgName: Prawn
+    FinishedDishImage: {fileID: 21300000, guid: 54c2a03c614aa30459ba7f8396252f66, type: 3}
+    Ingredients:
+    - {fileID: 21300000, guid: 1552a47ddb5273d41a9c5b41284f62a1, type: 3}
+    BaseScore: 20

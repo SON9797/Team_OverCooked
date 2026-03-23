@@ -12,15 +12,21 @@ namespace Overcooked
     {
         private readonly IUIManager _uiManager;
         private readonly ITimerService _timerService;
+        private readonly IRecipeService _recipeService;
 
         private readonly LevelData _currentLevelData;
 
         [Inject]
-        public SceneFlowManager(IUIManager uiManager, ITimerService timerService, LevelData levelData)
+        public SceneFlowManager(
+            IUIManager uiManager,
+            ITimerService timerService,
+            LevelData levelData,
+            IRecipeService recipeService)
         {
             _uiManager = uiManager;
             _timerService = timerService;
             _currentLevelData = levelData;
+            _recipeService = recipeService;
         }
 
         public void Start()
@@ -85,9 +91,14 @@ namespace Overcooked
             yield return new WaitForSeconds(1.5f);
 
             // 6. 게임 시작
+            _timerService.StartTimer();
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
-            _timerService.StartTimer();
+            if (_recipeService is RecipeManager manager)
+            {
+                manager.AddRandomOrder();
+            }
+
 
             // 7. 엔딩
             yield return new WaitUntil(() => _timerService.IsTimeOver);

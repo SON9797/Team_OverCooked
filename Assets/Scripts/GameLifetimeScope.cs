@@ -22,7 +22,7 @@ public class GameLifetimeScope : LifetimeScope
     protected override void Configure(IContainerBuilder builder)
     {
         builder.Register<RecipeManager>(Lifetime.Singleton)
-               .WithParameter(_recipeList)
+               .WithParameter(_currentLevelData.Recipes)
                .AsImplementedInterfaces();
 
         builder.Register<ScoreManager>(Lifetime.Singleton).AsImplementedInterfaces();
