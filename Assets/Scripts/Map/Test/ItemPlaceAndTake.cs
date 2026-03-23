@@ -17,6 +17,10 @@ public class ItemPlaceAndTake : MonoBehaviour
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
 
+        if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb.isKinematic = true;
+        }
     }
 
     //다시 집어갈 때
