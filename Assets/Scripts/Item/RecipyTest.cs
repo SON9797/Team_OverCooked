@@ -9,7 +9,6 @@ public enum IngreDientKind
     lettuce,
     fish,
     carrot,
-    fish,
     parwn
 }
 [Serializable]
