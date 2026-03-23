@@ -11,17 +11,21 @@ namespace Overcooked
     public class SceneFlowManager : IStartable
     {
         private readonly IUIManager _uiManager;
+        private readonly ITimerService _timerService;
 
         private readonly float _gamePlayTime = 5f; // 임시
 
         [Inject]
-        public SceneFlowManager(IUIManager uiManager)
+        public SceneFlowManager(IUIManager uiManager, ITimerService timerService)
         {
             _uiManager = uiManager;
+            _timerService = timerService;
         }
 
         public void Start()
         {
+            _timerService.Initialize(_gamePlayTime);
+
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, false);
             _uiManager.SetPanelActive(_uiManager.ReadyPanel, false);
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
@@ -63,13 +67,16 @@ namespace Overcooked
             // 5. Start 1.5초 보여주고
             _uiManager.SetPanelActive(_uiManager.ReadyPanel, false);
             _uiManager.SetPanelActive(_uiManager.StartPanel, true);
+
             yield return new WaitForSeconds(1.5f);
 
             // 6. 게임 시작
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
+            _timerService.StartTimer();
+
             // 7. 엔딩
-            yield return new WaitForSeconds(_gamePlayTime);
+            yield return new WaitUntil(() => _timerService.IsTimeOver);
 
             _uiManager.SetPanelActive(_uiManager.TimerPanel, true);
 
@@ -78,6 +85,7 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
             _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
+            _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
 
             _uiManager.SetPanelActive(_uiManager.EndingPanel, true);
         }

@@ -17,6 +17,7 @@ public class TimerManager : ITimerService, ITickable
     {
         RemainingTime = duration;
         IsTimeOver = false;
+        IsRunning = false;
     }
 
     public void StartTimer() => IsRunning = true;
