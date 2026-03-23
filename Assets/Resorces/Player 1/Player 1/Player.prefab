@@ -297,9 +297,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -547724750668800520, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2834249980256204270}
-    - targetCorrespondingSourceObject: {fileID: -547724750668800520, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7791919207867034234}
   m_SourcePrefab: {fileID: 100100000, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
 --- !u!4 &6797441176624210343 stripped
 Transform:
@@ -402,32 +399,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _holdPoint: {fileID: 1244882064013420219}
-  _rayPoint: {fileID: 0}
-  _interactionDistance: 3
   _interactRadius: 1.5
   _forwardDot: 0.3
   _ingredientLayer:
     serializedVersion: 2
     m_Bits: 16
-  _dropDistance: 1
---- !u!114 &7791919207867034234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7078992284501183067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ace8ada7cfe3a0a42aad5d4454076829, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _holdPoint: {fileID: 0}
-  _rayPoint: {fileID: 0}
-  _interactionDistance: 3
-  _interactRadius: 1.5
-  _forwardDot: 0.3
-  _ingredientLayer:
-    serializedVersion: 2
-    m_Bits: 1
   _dropDistance: 1
