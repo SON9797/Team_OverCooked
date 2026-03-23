@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
-
 public class GameLifetimeScope : LifetimeScope
 {
     [SerializeField] private PlayerInput _playerMovement;
@@ -31,7 +30,7 @@ public class GameLifetimeScope : LifetimeScope
         builder.RegisterEntryPoint<GameLoopManager>();
 
         builder.Register<PlayerInput>(Lifetime.Singleton).AsImplementedInterfaces();
-        
+
         if (_playerMovement != null)
         {
             builder.RegisterComponent(_playerMovement);
@@ -41,12 +40,14 @@ public class GameLifetimeScope : LifetimeScope
         {
             builder.RegisterComponent(_levelManager).AsImplementedInterfaces();
         }
-        
+
         builder.RegisterComponent(_uiManager).As<IUIManager>();
 
         builder.Register<SceneFlowManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
         builder.RegisterInstance(_currentLevelData);
 
+        builder.Register<Overcooked.IInGamePlayerInput, Overcooked.InGamePlayerInput>(Lifetime.Singleton);
+        builder.RegisterComponentInHierarchy<Overcooked.InGameInputInjector>();
     }
 }
