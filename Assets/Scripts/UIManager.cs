@@ -17,7 +17,6 @@ namespace Overcooked
         [SerializeField] private GameObject _timerPanel;
         [SerializeField] private GameObject _endingPanel;
         [SerializeField] private GameObject _timesUpPanel;
-        [SerializeField] private Image _timerGauge;
 
         [Header("스테이지 정보 업데이트용 UI")]
         [SerializeField] private TextMeshProUGUI _loadingLevelText;
@@ -87,33 +86,6 @@ namespace Overcooked
                 int seconds = Mathf.FloorToInt(time % 60);
 
                 _timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-            }
-        }
-
-        public void UpdateTimerGauge(float currentTime, float maxTime)
-        {
-            if (_timerGauge == null || maxTime <= 0)
-            {
-                return;
-            }
-
-            float fillValue = currentTime / maxTime;
-
-            _timerGauge.fillAmount = fillValue;
-
-            if (fillValue <= 0.1f)
-            {
-                _timerGauge.color = Color.red;
-            }
-
-            else if (fillValue <= 0.5f)
-            {
-                _timerGauge.color = Color.Lerp(Color.red, new Color(1f, 0.5f, 0f), (fillValue - 0.1f)/ 0.4f);
-            }
-
-            else
-            {
-                _timerGauge.color = Color.Lerp(new Color(1f, 0.5f, 0f), Color.green, (fillValue - 0.5f) / 0.5f);
             }
         }
     }
