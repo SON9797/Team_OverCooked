@@ -37,6 +37,5 @@ public class Dish : MonoBehaviour
         }
 
         //food.position에 mix의 비트에 맞는 음식 조합 프리팹을 불러오기.. 
-    }
-   
+    }   
 }

@@ -72,7 +72,7 @@ namespace Overcooked.Interfaces
         GameObject CoinPanel { get; }
         GameObject TimerPanel { get; }
         GameObject RecipePanel { get; }
-
         GameObject EndingPanel { get; }
+        GameObject TimesUpPanel { get; }
     }
 }

@@ -12,7 +12,7 @@ namespace Overcooked
     {
         private readonly IUIManager _uiManager;
 
-        private readonly float _gamePlayTime = 150f; // 임시
+        private readonly float _gamePlayTime = 5f; // 임시
 
         [Inject]
         public SceneFlowManager(IUIManager uiManager)
@@ -67,8 +67,12 @@ namespace Overcooked
             // 6. 게임 시작
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
-            // 7. 엔딩 타이틀
+            // 7. 엔딩
             yield return new WaitForSeconds(_gamePlayTime);
+
+            _uiManager.SetPanelActive(_uiManager.TimerPanel, true);
+
+            yield return new WaitForSeconds(1.5f);
 
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
             _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
