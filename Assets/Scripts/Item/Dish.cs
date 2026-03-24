@@ -8,15 +8,9 @@ public class Dish : MonoBehaviour
 {
     [SerializeField] Transform foodPos;
     HashSet<IngreDientData> mix=new HashSet<IngreDientData>();
-    private RecipeManager _recipeManager;
+    [Inject]private RecipeManager _recipeManager;
 
-    [Inject] IObjectResolver _container;
-
-    [Inject]
-    public void Construct(RecipeManager recipeManager)
-    {
-        _recipeManager = recipeManager;
-    }
+    
     //해당 함수를 사용하면 접시에 매개변수의 재료를 추가한다.
     //만약 조합이 존재하지 않으면, 접시에 재료가 올라가지 않는다.
     public bool AddIngredient(Ingredient ingredient)
