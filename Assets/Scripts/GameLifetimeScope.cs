@@ -52,7 +52,7 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<Overcooked.IInGamePlayerInput, Overcooked.InGamePlayerInput>(Lifetime.Singleton);
         builder.RegisterComponentInHierarchy<Overcooked.InGameInputInjector>();
 
-        builder.RegisterComponent(_plateRespawn);
+        builder.RegisterComponent(_plateRespawn).As<PlateReSpawn>();
 
     }
 }
