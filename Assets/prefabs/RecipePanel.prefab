@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2374016162335300861}
   - component: {fileID: 5267028362211326535}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Bottom_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,10 +32,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8064156746100775125}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -5}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2374016162335300861
 CanvasRenderer:
@@ -243,7 +243,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dishImage: {fileID: 2576888670503180429}
   _ingredientParent: {fileID: 8064156746100775125}
-  _ingredientPrefab: {fileID: 782151401319001730}
+  _ingredientPrefab: {fileID: 5267028362211326535}
+  _moveDuration: 0.3
+  _startOffsetX: 1500
 --- !u!1 &3900893566260192377
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,6 +257,7 @@ GameObject:
   - component: {fileID: 8064156746100775125}
   - component: {fileID: 1799969965480345647}
   - component: {fileID: 4360028885536470750}
+  - component: {fileID: 5575457408456614955}
   m_Layer: 5
   m_Name: Recip_bottom
   m_TagString: Untagged
@@ -320,6 +323,32 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5575457408456614955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3900893566260192377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 5
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &5518299356605432239
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,7 +361,7 @@ GameObject:
   - component: {fileID: 549118008222860302}
   - component: {fileID: 2576888670503180429}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Top_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

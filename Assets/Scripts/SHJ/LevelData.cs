@@ -28,6 +28,9 @@ namespace Overcooked
         [Header("팁 설정")]
         [SerializeField] public int BaseTipAmount = 8;
 
+        [Header("주문 관리")]
+        public int MaxOrderCount = 2;
+
         [Header("레시피 설정")]
         public List<RecipeData> Recipes;
     }

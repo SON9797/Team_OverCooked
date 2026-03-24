@@ -46,7 +46,6 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.ReadyPanel, false);
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
-            _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
             _uiManager.SetPanelActive(_uiManager.EndingPanel, false);
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
@@ -77,7 +76,6 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, false);
 
             _uiManager.SetPanelActive(_uiManager.CoinPanel, true);
-            _uiManager.SetPanelActive(_uiManager.RecipePanel, true);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, true);
 
             // 4. Ready 1.5ÃÊ
@@ -94,10 +92,7 @@ namespace Overcooked
             _timerService.StartTimer();
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
-            if (_recipeService is RecipeManager manager)
-            {
-                manager.AddRandomOrder();
-            }
+            _recipeService.StartGeneration((MonoBehaviour)_uiManager);
 
 
             // 7. ¿£µù
@@ -106,7 +101,6 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, true);
 
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
-            _uiManager.SetPanelActive(_uiManager.RecipePanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
 
             yield return new WaitForSeconds(1.5f);

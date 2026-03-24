@@ -33,6 +33,8 @@ namespace Overcooked.Interfaces
         void CompleteOrder(int orderIndex);
         Action<RecipeData> OnOrderAdded { get; set; }
         Action<int> OnOrderCompleted { get; set; }
+
+        void StartGeneration(MonoBehaviour runner);
     }
 
     // 플레이어
@@ -75,7 +77,6 @@ namespace Overcooked.Interfaces
         GameObject StartPanel { get; }
         GameObject CoinPanel { get; }
         GameObject TimerPanel { get; }
-        GameObject RecipePanel { get; }
         GameObject EndingPanel { get; }
         GameObject TimesUpPanel { get; }
     }
