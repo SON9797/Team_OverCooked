@@ -16,13 +16,7 @@ public class PlateReSpawn : MonoBehaviour
 
     private void Start()
     {
-        _spawnedPlate.Clear();
-
-        for (int i = 0; i < _maxPlate; i++)
-        {
             StartItemSpawn();
-        }
-
     }
     private void Update()
     {
@@ -31,7 +25,6 @@ public class PlateReSpawn : MonoBehaviour
             _spawnedPlate.RemoveAll(item => item == null);
         }
 
-        // 아이템이 최대치보다 적고, 리스폰 루틴이 실행 중이지 않을 때
         if (_spawnedPlate.Count < _maxPlate && !_isRespawning)
         {
             StartCoroutine(RespawnRoutine());
@@ -59,6 +52,23 @@ public class PlateReSpawn : MonoBehaviour
             Vector3 spawnPosition = _plates[i];
             GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
             _spawnedPlate.Add(newItem);
+
+            Collider[] colliders = Physics.OverlapSphere(spawnPosition, 0.5f);
+
+            foreach (var col in colliders)
+            {
+                // 조리대 스크립트가 있는지 확인
+                ItemPlaceAndTake counter = col.GetComponentInParent<ItemPlaceAndTake>();
+
+                if (counter != null)
+                {
+                    // 조리대를 찾았다면, 조리대의 공식적인 PlaceItem 함수를 호출하여 등록
+                    // 이렇게 하면 부모 설정, 위치 고정(Kinematic), 변수 등록이 한 번에 해결됩니다.
+                    counter.PlaceItem(newItem);
+                    Debug.Log($"{newItem.name}이(가) {counter.gameObject.name}에 자동으로 등록되었습니다.");
+                    break; // 조리대 하나를 찾았으면 루프 종료
+                }
+            }
         }
        
     }
@@ -69,6 +79,7 @@ public class PlateReSpawn : MonoBehaviour
         _heightInterval += 0.2f;
         GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
         _spawnedPlate.Add(newItem);
+
     }
 
     public GameObject GetTopPlate()

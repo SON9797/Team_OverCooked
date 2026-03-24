@@ -61,18 +61,18 @@ public class ItemBoxTest : MonoBehaviour
     }
 
 
-        if (_inHandItem != null)
+            if (_inHandItem != null)
         {
             if (rayHit)
             {
                 ItemPlaceAndTake counter = hit.transform.GetComponent<ItemPlaceAndTake>();
                 if (counter != null && _inHandItem != null)
                 {
-                    // 1. 조리대에게 "너 접시 들고 있니?"라고 물어봄
+                    //조리대에게 "너 접시 들고 있니?"라고 물어봄
                     if (counter.HasDish(out Dish dishOnCounter))
                     {
                         Ingredient ing = _inHandItem.GetComponent<Ingredient>();
-                        // 2. 접시에 담기 시도
+                        // 접시에 담기 시도
                         if (ing != null && dishOnCounter.AddIngredient(ing))
                         {
                             _inHandItem = null;
@@ -114,10 +114,16 @@ public class ItemBoxTest : MonoBehaviour
 
     private void PickFromCounter(ItemPlaceAndTake counter)
     {
-        _inHandItem = counter.TakeItem();
-        _inHandItem.transform.SetParent(_holdPoint);
-        _inHandItem.transform.localPosition = Vector3.zero;
-        _inHandItem.transform.localRotation = Quaternion.identity;
+        if (_inHandItem == null && !counter.CanPlaceItem())
+        {
+            // 조리대에 있는 걸 집어옴
+            _inHandItem = counter.TakeItem();
+            _inHandItem.transform.SetParent(_holdPoint);
+            _inHandItem.transform.localPosition = Vector3.zero;
+
+            // 이때 Rigidbody가 다시 켜지는지 확인!
+            if (_inHandItem.TryGetComponent<Rigidbody>(out Rigidbody rb)) rb.isKinematic = true;
+        }
     }
 
     private void TakeFromBox(IngredientSource source)
