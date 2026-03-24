@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,5 +58,25 @@ namespace Overcooked.Interfaces
     public interface ILevelService
     {
         Transform GetPlayerSpawnPoint();
+    }
+
+    public interface IUIManager
+    {
+        void SetPanelActive(GameObject panel, bool isActive);
+        void StartManagerCoroutine(IEnumerator routine);
+        void SetupLevelUI(Overcooked.LevelData levelData);
+        void UpdateTimerText(float time);
+
+        void UpdateTimerGauge(float currentTime, float maxTime);
+
+        GameObject LoadingPanel { get; }
+        GameObject TutorialPanel { get; }
+        GameObject ReadyPanel { get; }
+        GameObject StartPanel { get; }
+        GameObject CoinPanel { get; }
+        GameObject TimerPanel { get; }
+        GameObject RecipePanel { get; }
+        GameObject EndingPanel { get; }
+        GameObject TimesUpPanel { get; }
     }
 }

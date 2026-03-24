@@ -17,6 +17,7 @@ public class TimerManager : ITimerService, ITickable
     {
         RemainingTime = duration;
         IsTimeOver = false;
+        IsRunning = false;
     }
 
     public void StartTimer() => IsRunning = true;
@@ -26,7 +27,10 @@ public class TimerManager : ITimerService, ITickable
     // VContainer가 매 프레임 호출해줌
     public void Tick()
     {
-        if (!IsRunning || IsTimeOver) return;
+        if (!IsRunning || IsTimeOver) 
+        { 
+            return;
+        }
 
         RemainingTime -= Time.deltaTime;
 

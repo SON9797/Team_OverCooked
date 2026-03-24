@@ -1,0 +1,34 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Overcooked
+{
+    [Serializable]
+    public class RecipeData
+    {
+        public string DisgName;
+        public Sprite FinishedDishImage;
+        public List<Sprite> Ingredients;
+        public int BaseScore = 20;
+    }
+
+    [CreateAssetMenu(fileName = "Level_", menuName = "Overcooked/Level Data", order = 1)]
+    public class LevelData : ScriptableObject
+    {
+        [Header("스테이지 설정")]
+        public string LevelName;
+        public float GamePlayTime;
+
+        [Header("스테이지 UI 이미지")]
+        public Sprite LoadingImage;
+        public Sprite TutorialImage;
+
+        [Header("팁 설정")]
+        [SerializeField] public int BaseTipAmount = 8;
+
+        [Header("레시피 설정")]
+        public List<RecipeData> Recipes;
+    }
+}
