@@ -54,7 +54,7 @@ public class PlateReSpawn : MonoBehaviour
     private void StartItemSpawn()
     {
        
-        for (int i = 0; i <= 4; i++)
+        for (int i = 0; i < _maxPlate; i++)
         {
             Vector3 spawnPosition = _plates[i];
             GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
