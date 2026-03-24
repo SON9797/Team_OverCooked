@@ -56734,7 +56734,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects:
-  - {fileID: 0}
+  - {fileID: 708332613}
   _recipeList: []
   _levelManager: {fileID: 180725913}
   _uiManager: {fileID: 2134727630}
@@ -58668,6 +58668,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 676913097}
   m_CullTransparentMesh: 1
+--- !u!1 &708332613 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1628859501380889330, guid: 349047e1a11092f4986fb1d84c68b4be, type: 3}
+  m_PrefabInstance: {fileID: 1820206432}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &749471477
 GameObject:
   m_ObjectHideFlags: 0
@@ -62561,7 +62566,6 @@ MonoBehaviour:
   _readyPanel: {fileID: 676913097}
   _startPanel: {fileID: 287516700}
   _coinPanel: {fileID: 749471477}
-  _recipePanel: {fileID: 1823633506}
   _timerPanel: {fileID: 1074941314}
   _endingPanel: {fileID: 1640267617}
   _timesUpPanel: {fileID: 2021454871}
