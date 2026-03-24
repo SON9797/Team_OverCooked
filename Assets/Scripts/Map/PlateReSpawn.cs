@@ -16,19 +16,20 @@ public class PlateReSpawn : MonoBehaviour
 
     private void Start()
     {
+        _spawnedPlate.Clear();
+
         for (int i = 0; i < _maxPlate; i++)
         {
-            Vector3 spawnPos = (_plates != null && i < _plates.Length) ? _plates[i] : transform.position + (Vector3.up * i * _heightInterval);
-
-            GameObject plate = Instantiate(_platePrefab, spawnPos, Quaternion.identity);
-            _spawnedPlate.Add(plate);
+            StartItemSpawn();
         }
 
     }
     private void Update()
     {
-        // 리스트에서 파괴된 아이템 제거
-        _spawnedPlate.RemoveAll(item => item == null);
+        if (_spawnedPlate.Contains(null))
+        {
+            _spawnedPlate.RemoveAll(item => item == null);
+        }
 
         // 아이템이 최대치보다 적고, 리스폰 루틴이 실행 중이지 않을 때
         if (_spawnedPlate.Count < _maxPlate && !_isRespawning)
@@ -42,15 +43,30 @@ public class PlateReSpawn : MonoBehaviour
         _isRespawning = true;
         yield return new WaitForSeconds(_respawnTime);
 
-        SpawnStackedItem();
+        if (_spawnedPlate.Count < _maxPlate)
+        {
+            SpawnStackedItem();
+        }
+
         _isRespawning = false;
     }
 
+    private void StartItemSpawn()
+    {
+       
+        for (int i = 0; i <= 4; i++)
+        {
+            Vector3 spawnPosition = _plates[i];
+            GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
+            _spawnedPlate.Add(newItem);
+        }
+       
+    }
     void SpawnStackedItem()
     {
-        float currentYOffset = _spawnedPlate.Count * _heightInterval;
+        float currentYOffset = _heightInterval;
         Vector3 spawnPosition = transform.position + new Vector3(0, currentYOffset, 0);
-        _heightInterval += 0.05f;
+        _heightInterval += 0.2f;
         GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
         _spawnedPlate.Add(newItem);
     }

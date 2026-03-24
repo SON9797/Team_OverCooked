@@ -66,11 +66,26 @@ public class ItemBoxTest : MonoBehaviour
             if (rayHit)
             {
                 ItemPlaceAndTake counter = hit.transform.GetComponent<ItemPlaceAndTake>();
-                if (counter != null && counter.CanPlaceItem())
+                if (counter != null && _inHandItem != null)
                 {
-                    counter.PlaceItem(_inHandItem);
-                    _inHandItem = null; // 손을 비움
-                    return;
+                    // 1. 조리대에게 "너 접시 들고 있니?"라고 물어봄
+                    if (counter.HasDish(out Dish dishOnCounter))
+                    {
+                        Ingredient ing = _inHandItem.GetComponent<Ingredient>();
+                        // 2. 접시에 담기 시도
+                        if (ing != null && dishOnCounter.AddIngredient(ing))
+                        {
+                            _inHandItem = null;
+                            return; // 성공했으면 종료
+                        }
+                    }
+
+                    // 3. 접시가 없거나 담을 수 없는 재료라면 조리대에 그냥 놓기
+                    if (counter.CanPlaceItem())
+                    {
+                        counter.PlaceItem(_inHandItem);
+                        _inHandItem = null;
+                    }
                 }
             }
             
