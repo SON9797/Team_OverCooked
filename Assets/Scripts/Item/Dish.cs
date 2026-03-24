@@ -8,6 +8,7 @@ public class Dish : MonoBehaviour
 {
     [SerializeField] Transform foodPos;
     HashSet<IngreDientData> mix=new HashSet<IngreDientData>();
+
     [Inject]private RecipeManager _recipeManager;
 
     

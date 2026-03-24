@@ -167,6 +167,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &857348367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 857348368}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &857348368
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857348367}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 964.8307, y: 535.5241, z: -6.066969}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &933171949 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7056569347493374639, guid: dd39f7ef4cd411b4faa7ddd652f70f6b, type: 3}
@@ -651,12 +682,15 @@ MonoBehaviour:
   parentReference:
     TypeName: 
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 857348367}
+  - {fileID: 0}
   _recipeList: []
   _levelManager: {fileID: 599773413}
   _uiManager: {fileID: 1986661584}
   _currentLevelData: {fileID: 11400000, guid: 2bf2b671900339f468ae8fdb7aa4c0aa, type: 2}
   _plateRespawn: {fileID: 1807686384}
+  _platePrefab: {fileID: 2790184470915138096, guid: 51ef9d6793213bd458d8e04116d88fb4, type: 3}
 --- !u!4 &1297131084
 Transform:
   m_ObjectHideFlags: 0
@@ -1131,3 +1165,4 @@ SceneRoots:
   - {fileID: 599773414}
   - {fileID: 1298231228}
   - {fileID: 1986661585}
+  - {fileID: 857348368}

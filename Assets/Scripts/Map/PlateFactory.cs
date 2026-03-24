@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -13,6 +14,8 @@ public class PlateFactory
     {
         _container = container;
         _prefab = prefab;
+
+        Debug.Log("µî·Ï");
     }
 
     public GameObject Create(Vector3 pos)

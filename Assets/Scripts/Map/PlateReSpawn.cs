@@ -1,3 +1,4 @@
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,17 +13,24 @@ public class PlateReSpawn : MonoBehaviour
     [SerializeField] private float _heightInterval = 0.5f; //쌓이는 접시 높이
     [SerializeField] private Vector3[] _plates; //초기 접시들 위치값
 
-    [Inject] private PlateFactory _factory;
-
+    private PlateFactory _factory;
+    
 
 
     // 현재 쌓여있는 아이템들을 관리할 리스트
     public List<GameObject> _spawnedPlate = new List<GameObject>();
     private bool _isRespawning = false;
 
+    private IRecipeService _recipeservice;
+    public void Construct(IRecipeService recipeService)
+    {
+        _recipeservice = recipeService;
+        Debug.Log("12345");
 
+    }
     public void Start()
     {
+        Debug.Log(_factory);
         for (int i = 0; i < _maxPlate; i++)
         {
             Vector3 spawnPos = (_plates != null && i < _plates.Length) ? _plates[i] : transform.position + (Vector3.up * i * _heightInterval);
