@@ -6,70 +6,68 @@ using VContainer;
 
 namespace Overcooked
 {
-    
-            [RequireComponent(typeof(ApplyInGamePlayerMove))]
-            [RequireComponent(typeof(PlayerItemController))]
-            public class InGameInputInjector : MonoBehaviour
+    [RequireComponent(typeof(ApplyInGamePlayerMove))]
+    [RequireComponent(typeof(PlayerItemController))]
+    public class InGameInputInjector : MonoBehaviour
+    {
+        private IInGamePlayerInput _input;
+        private ApplyInGamePlayerMove _move;
+        private PlayerItemController _holdIngredient;
+
+        public bool IsSelected { get; private set; }
+
+        [Inject]
+        public void Construct(IInGamePlayerInput input)
         {
-            private IInGamePlayerInput _input;
-            private ApplyInGamePlayerMove _move;
-            private PlayerItemController _holdIngredient;
+            _input = input;
+        }
 
-            public bool IsSelected { get; private set; }
+        private void Awake()
+        {
+            _move = GetComponent<ApplyInGamePlayerMove>();
+            _holdIngredient = GetComponent<PlayerItemController>();
+        }
 
-            [Inject]
-            public void Construct(IInGamePlayerInput input)
+        private void Update()
+        {
+            if (_move == null || _input == null || _holdIngredient == null)
             {
-                _input = input;
+                return;
             }
 
-            private void Awake()
+            if (!IsSelected)
             {
-                _move = GetComponent<ApplyInGamePlayerMove>();
-                _holdIngredient = GetComponent<PlayerItemController>();
+                _move.SetMoveInput(Vector2.zero);
+                return;
             }
 
-            private void Start()
+            _move.SetMoveInput(_input.Move);
+
+            if (_input.DashInput)
             {
-                SetSelected(true);
+                _move.TryDash();
             }
 
-            private void Update()
+            if (_input.InteractionIngredientInput)
             {
-                if (!IsSelected)
-                {
-                    _move.SetMoveInput(Vector2.zero);
-                    return;
-                }
-
-                _move.SetMoveInput(_input.Move);
-
-                if (_input.DashInput)
-                {
-                    _move.TryDash();
-                }
-
-                if (_input.InteractionIngredientInput)
-                {
-                    _holdIngredient.TryInteractionIngredient();
-                }
-
-                if (_input.InteractionCookInput)
-                {
-                    _holdIngredient.TryInteractionCook();
-                }
-
-                if (_input.SwitchingInput)
-                {
-                    // 여기서 플레이어 스위칭 처리 연결
-                }
+                _holdIngredient.TryInteractionIngredient();
             }
 
-            public void SetSelected(bool isSelected)
+            if (_input.InteractionCookInput)
             {
-                IsSelected = isSelected;
+                _holdIngredient.TryInteractionCook();
             }
         }
 
+        public void SetSelected(bool isSelected)
+        {
+            IsSelected = isSelected;
+
+            if (!IsSelected && _move != null)
+            {
+                _move.SetMoveInput(Vector2.zero);
+            }
+        }
     }
+}
 
