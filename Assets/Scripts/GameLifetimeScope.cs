@@ -24,14 +24,16 @@ public class GameLifetimeScope : LifetimeScope
                .WithParameter(_currentLevelData.Recipes)
                .AsImplementedInterfaces();
 
+        builder.RegisterComponentInHierarchy<OrderListUI>();
+
         builder.Register<ScoreManager>(Lifetime.Singleton).AsImplementedInterfaces();
         builder.Register<TimerManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
         builder.RegisterEntryPoint<GameLoopManager>();
 
-        builder.Register<PlayerInput>(Lifetime.Singleton).AsImplementedInterfaces();
+        builder.Register<PlayerInput>(Lifetime.Singleton).AsImplementedInterfaces();    // 삭제 예정
 
-        if (_playerMovement != null)
+        if (_playerMovement != null)        // 삭제 예정
         {
             builder.RegisterComponent(_playerMovement);
         }
@@ -49,5 +51,6 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.Register<Overcooked.IInGamePlayerInput, Overcooked.InGamePlayerInput>(Lifetime.Singleton);
         builder.RegisterComponentInHierarchy<Overcooked.InGameInputInjector>();
+
     }
 }

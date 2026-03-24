@@ -2,6 +2,7 @@ using Overcooked.Interfaces;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Overcooked
 {
@@ -13,7 +14,6 @@ namespace Overcooked
         [SerializeField] private GameObject _readyPanel;
         [SerializeField] private GameObject _startPanel;
         [SerializeField] private GameObject _coinPanel;
-        [SerializeField] private GameObject _recipePanel;
         [SerializeField] private GameObject _timerPanel;
         [SerializeField] private GameObject _endingPanel;
         [SerializeField] private GameObject _timesUpPanel;
@@ -39,11 +39,11 @@ namespace Overcooked
         public GameObject ReadyPanel => _readyPanel;
         public GameObject StartPanel => _startPanel;
         public GameObject CoinPanel => _coinPanel;
-        public GameObject RecipePanel => _recipePanel;
         public GameObject TimerPanel => _timerPanel;
         public GameObject EndingPanel => _endingPanel;        
         public GameObject TimesUpPanel => _timesUpPanel;
 
+     
         private void Update()
         {
             if (_isHourglassShaking && _hourglassIcon != null)
@@ -67,7 +67,7 @@ namespace Overcooked
                 panel.SetActive(isActive);
             }
         }
-
+ 
         public void StartManagerCoroutine(System.Collections.IEnumerator routine)
         {
             StartCoroutine(routine);
