@@ -9,6 +9,7 @@ public enum IngreDientKind
     lettuce,
     fish,
     carrot,
+    shrimp
 }
 [Serializable]
 public struct IngreDientData
