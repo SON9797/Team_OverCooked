@@ -50,7 +50,15 @@ public class ItemPlaceAndTake : MonoBehaviour
     //다시 집어갈 때
     public virtual GameObject TakeItem()
     {
-        GameObject item = _onCounterItem;
+        if (_onCounterItem == null)
+        {
+            CheckExistingItem();
+        }
+        if (_onCounterItem == null)
+        {
+            return null;
+        }
+            GameObject item = _onCounterItem;
         _onCounterItem = null;
         return item;
     }
@@ -58,31 +66,33 @@ public class ItemPlaceAndTake : MonoBehaviour
     //처음 접시 체크
     private void CheckExistingItem()
     {
-        Collider[] colliders = Physics.OverlapSphere(_snapPoint.position, 0.1f);
+        Collider[] colliders = Physics.OverlapSphere(_snapPoint.position, 0.3f);
 
         foreach (var col in colliders)
         {
-            if (col.gameObject == this.gameObject)
-            {
-                continue;
-            }
-            // 아이템(재료나 접시)인 경우 변수에 등록
-            if (col.GetComponent<Ingredient>() != null || col.GetComponent<Dish>() != null)
-            {
-                _onCounterItem = col.gameObject;
+            // 자기 자신(조리대)은 무시
+            if (col.gameObject == this.gameObject) continue;
 
-                // 물리 설정 고정
+            // 접시(Dish)나 재료(Ingredient)를 '자신 또는 부모'에서 찾음
+            Dish dish = col.GetComponentInParent<Dish>();
+            Ingredient ing = col.GetComponentInParent<Ingredient>();
+
+            if (dish != null || ing != null)
+            {
+                // 실제 스크립트가 붙은 최상단 오브젝트를 타겟으로 잡음
+                _onCounterItem = dish != null ? dish.gameObject : ing.gameObject;
+
+                // 물리 및 부모 설정 강제 동기화
                 if (_onCounterItem.TryGetComponent<Rigidbody>(out Rigidbody rb))
                 {
                     rb.isKinematic = true;
                 }
 
-                // 부모 설정 (에디터에서 안 되어 있을 경우를 대비)
                 _onCounterItem.transform.SetParent(_snapPoint);
                 _onCounterItem.transform.localPosition = Vector3.zero;
                 _onCounterItem.transform.localRotation = Quaternion.identity;
 
-                Debug.Log($"{gameObject.name} 위에 이미 {col.name}이(가) 있습니다.");
+                Debug.Log($"{gameObject.name}가 주변에서 {_onCounterItem.name}을 찾아 등록했습니다.");
                 break;
             }
         }
