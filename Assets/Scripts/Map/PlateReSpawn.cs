@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 public class PlateReSpawn : MonoBehaviour
 {
@@ -10,17 +12,28 @@ public class PlateReSpawn : MonoBehaviour
     [SerializeField] private float _heightInterval = 0.5f; //쌓이는 접시 높이
     [SerializeField] private Vector3[] _plates; //초기 접시들 위치값
 
+    
+
     // 현재 쌓여있는 아이템들을 관리할 리스트
     public List<GameObject> _spawnedPlate = new List<GameObject>();
     private bool _isRespawning = false;
 
-    private void Start()
+    private IObjectResolver _container;
+
+    [Inject]
+    public void Construct(IObjectResolver container)
     {
+        print("construct");
+        _container = container;
+    }
+    public void Start()
+    {
+        print(_container);
         for (int i = 0; i < _maxPlate; i++)
         {
             Vector3 spawnPos = (_plates != null && i < _plates.Length) ? _plates[i] : transform.position + (Vector3.up * i * _heightInterval);
 
-            GameObject plate = Instantiate(_platePrefab, spawnPos, Quaternion.identity);
+            GameObject plate = _container.Instantiate(_platePrefab, spawnPos, Quaternion.identity);
             _spawnedPlate.Add(plate);
         }
 
@@ -51,7 +64,7 @@ public class PlateReSpawn : MonoBehaviour
         float currentYOffset = _spawnedPlate.Count * _heightInterval;
         Vector3 spawnPosition = transform.position + new Vector3(0, currentYOffset, 0);
         _heightInterval += 0.05f;
-        GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
+        GameObject newItem = _container.Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
         _spawnedPlate.Add(newItem);
     }
 

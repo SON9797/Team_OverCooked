@@ -18,6 +18,8 @@ public class GameLifetimeScope : LifetimeScope
 
     [SerializeField] private LevelData _currentLevelData;
 
+    [SerializeField] private PlateReSpawn _plateRespawn;
+
     protected override void Configure(IContainerBuilder builder)
     {
         builder.Register<RecipeManager>(Lifetime.Singleton)
@@ -49,5 +51,8 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.Register<Overcooked.IInGamePlayerInput, Overcooked.InGamePlayerInput>(Lifetime.Singleton);
         builder.RegisterComponentInHierarchy<Overcooked.InGameInputInjector>();
+
+        builder.RegisterComponent(_plateRespawn);
+
     }
 }

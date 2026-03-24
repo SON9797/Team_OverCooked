@@ -46,5 +46,16 @@ namespace Overcooked
                 OnOrderCompleted?.Invoke(orderIndex);
             }
         }
+        public GameObject GetRecipyModel(HashSet<IngreDientData> mix)
+        {
+            foreach (RecipeData r in _allRecipes)
+            {
+                if (mix.SetEquals(r.Ingredients) && mix.Count == r.Ingredients.Count)
+                {
+                    return r.resultPrefab;
+                }
+            }
+            return null;
+        }
     }
 }

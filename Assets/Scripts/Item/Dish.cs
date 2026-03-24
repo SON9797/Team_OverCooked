@@ -1,13 +1,22 @@
+using Overcooked;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class Dish : MonoBehaviour
 {
     [SerializeField] Transform foodPos;
     HashSet<IngreDientData> mix=new HashSet<IngreDientData>();
+    private RecipeManager _recipeManager;
 
+    [Inject] IObjectResolver _container;
 
+    [Inject]
+    public void Construct(RecipeManager recipeManager)
+    {
+        _recipeManager = recipeManager;
+    }
     //해당 함수를 사용하면 접시에 매개변수의 재료를 추가한다.
     //만약 조합이 존재하지 않으면, 접시에 재료가 올라가지 않는다.
     public bool AddIngredient(Ingredient ingredient)
@@ -19,18 +28,21 @@ public class Dish : MonoBehaviour
             //이미 가지고 있음.
             return false;
         }
-        HashSet<IngreDientData>nextMix=mix;
+        HashSet<IngreDientData> nextMix = new HashSet<IngreDientData>(mix);
         nextMix.Add(ingredientData);
 
 
         //레시피 불러와보기. (없으면 null 반환)
-        GameObject recipyModel = RecipyTest.Instance.GetRecipyModel(nextMix);
+        GameObject recipyModel = _recipeManager.GetRecipyModel(nextMix); //여기서 레시피매니저를 불러와야됨;
+
 
         if (recipyModel==null)
         {
             // 존재하지 않는 조합이면 행동안함.
             print($"{string.Join(", ", nextMix)}는 없는 조합입니다");
             return false;
+
+            
         }
         print("조합성공");
         // 진짜 조합함.

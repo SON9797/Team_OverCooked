@@ -16,6 +16,7 @@ public struct IngreDientData
 {
     public IngreDientKind kind;
     public CookBehaivior stat;
+    public Sprite icon;
 }
 [Serializable]
 public struct RecipyData
@@ -37,7 +38,7 @@ class RecipyTest : MonoBehaviour
     {
         if (Instance != null)
         {
-            Destroy(Instance);
+            Destroy(gameObject);
             return;
         }
         Instance = this;

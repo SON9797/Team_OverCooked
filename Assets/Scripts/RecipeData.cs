@@ -6,8 +6,9 @@ using UnityEngine;
 public class RecipeData : ScriptableObject
 {
     public string _recipeName;                          
-    public Sprite _recipeIcon;                          
-    public List<GameObject> _requiredIngredients;       // 재료 리스트
+    public Sprite _recipeIcon;
+    public HashSet<IngreDientData> _requiredIngredients;       // 재료 리스트
+    public GameObject resultPrefab;
     public int scorePoint;
     public float timeLimit;
 }
