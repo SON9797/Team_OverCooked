@@ -1,5 +1,6 @@
 using Overcooked;
 using Overcooked.Interfaces;
+using OverCooked;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,7 +18,6 @@ public class GameLifetimeScope : LifetimeScope
 
     [SerializeField] private InGameInputInjector _player1Injector;
     [SerializeField] private InGameInputInjector _player2Injector;
-
     [SerializeField] private GameObject _platePrefab;
 
     protected override void Configure(IContainerBuilder builder)
@@ -33,13 +33,8 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.RegisterComponentInHierarchy<OrderListUI>();
 
-        builder.Register<ScoreManager>(Lifetime.Singleton)
-               .AsImplementedInterfaces();
-
         builder.Register<TimerManager>(Lifetime.Singleton)
                .AsImplementedInterfaces();
-
-        builder.RegisterEntryPoint<GameLoopManager>();
 
         if (_levelManager != null)
         {
@@ -80,9 +75,16 @@ public class GameLifetimeScope : LifetimeScope
                 container.InjectGameObject(_playerSwitchManager.gameObject);
             }
         });
+
+        // 스코어 관련
+        builder.RegisterComponentInHierarchy<ScoreManager>().AsImplementedInterfaces();
+        builder.RegisterComponentInHierarchy<OrderManager>();
+
+
         builder.RegisterComponentInHierarchy<PlateReSpawn>();
 
         builder.Register<PlateFactory>(Lifetime.Singleton)
        .WithParameter<GameObject>(_platePrefab);
+
     }
 }
