@@ -29,6 +29,9 @@ namespace Overcooked
         [Header("모래시계 연출")]
         [SerializeField] private RectTransform _hourglassIcon;
 
+        [Header("콤보 UI")]
+        [SerializeField] private GameObject[] _comboIcons;
+
         private bool _isHourglassShaking = false;
         private float _shakeSpeed = 20f;
         private float _shakeAmount = 15f;
@@ -146,6 +149,29 @@ namespace Overcooked
             else
             {
                 _timerGauge.color = Color.Lerp(new Color(1f, 0.5f, 0f), Color.green, (fillValue - 0.5f) / 0.5f);
+            }
+        }
+
+        public void UpdateComboUI(int combo)
+        {
+            for (int i = 0; i < _comboIcons.Length; i++)
+            {
+                if (_comboIcons[i] != null)
+                {
+                    _comboIcons[i].SetActive(false);
+                }
+            }
+
+            int targetIndex = 0;
+
+            if (combo > 0 && combo <= _comboIcons.Length)
+            {
+                targetIndex = combo - 1;
+            }
+
+            if (_comboIcons[targetIndex] != null)
+            {
+                _comboIcons[targetIndex].SetActive(true);
             }
         }
     }
