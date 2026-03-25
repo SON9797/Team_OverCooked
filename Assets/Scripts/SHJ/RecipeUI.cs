@@ -25,7 +25,7 @@ namespace Overcooked
             foreach (var icon in data.Ingredients)
             {
                 GameObject obj = Instantiate(_ingredientPrefab, _ingredientParent);
-                obj.GetComponent<Image>().sprite = icon.icon;
+                //obj.GetComponent<Image>().sprite = icon.icon;
             }
         }
     }

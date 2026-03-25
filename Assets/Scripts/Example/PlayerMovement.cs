@@ -24,7 +24,7 @@ namespace Overcooked
             _inputService = inputService;
             _levelService = levelService;
         }
-
+        /*
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
@@ -68,5 +68,7 @@ namespace Overcooked
             Quaternion targetRot = Quaternion.LookRotation(moveDir);
             _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRot, _rotationSpeed * Time.deltaTime));
         }
+        */
     }
+        
 }

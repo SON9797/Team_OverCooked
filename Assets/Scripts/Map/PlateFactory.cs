@@ -7,7 +7,7 @@ using VContainer.Unity;
 
 public class PlateFactory
 {
-    private readonly IObjectResolver _container;
+    [Inject] IObjectResolver _container;
     private readonly GameObject _prefab;
 
     public PlateFactory(IObjectResolver container, GameObject prefab)

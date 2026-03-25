@@ -1,4 +1,5 @@
 using Overcooked;
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,15 +10,15 @@ public class Dish : MonoBehaviour
     [SerializeField] Transform foodPos;
     HashSet<IngreDientData> mix=new HashSet<IngreDientData>();
 
-    [Inject]private RecipeManager _recipeManager;
+    [Inject] IRecipeService recipeService;
 
-    
+
     //해당 함수를 사용하면 접시에 매개변수의 재료를 추가한다.
     //만약 조합이 존재하지 않으면, 접시에 재료가 올라가지 않는다.
     public bool AddIngredient(Ingredient ingredient)
     {
         IngreDientData ingredientData = ingredient.GetIngredientData();
-        
+        RecipeManager _recipeManager = (RecipeManager)recipeService;
         if (mix.Contains(ingredientData))
         {
             //이미 가지고 있음.
@@ -34,7 +35,7 @@ public class Dish : MonoBehaviour
         if (recipyModel==null)
         {
             // 존재하지 않는 조합이면 행동안함.
-            print($"{string.Join(", ", nextMix)}는 없는 조합입니다");
+            print("존재하지 않는 조합");
             return false;
 
             
