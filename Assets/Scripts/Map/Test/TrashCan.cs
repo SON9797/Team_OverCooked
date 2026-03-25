@@ -17,7 +17,7 @@ public class TrashCan : ItemPlaceAndTake
         if (dish != null)
         {
             // [수정] 접시 위에 음식이 있는지 확인 (mix가 비어있지 않다면)
-            if (dish.GetRecipy().Count > 0)
+            if (dish.GetRecipe().Count > 0)
             {
                 Debug.Log("접시의 음식을 비웁니다!");
                 dish.ClearDish(); 
