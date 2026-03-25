@@ -19,7 +19,11 @@ MonoBehaviour:
   BaseTipAmount: 8
   MaxOrderCount: 2
   Recipes:
-  - DishName: 
-    FinishedDishImage: {fileID: 0}
-    Ingredients: []
+  - DishName: fish_slice_plate
+    FinishedDishImage: {fileID: 21300000, guid: 62f8f5bffee19f94d90c03d560c311ec, type: 3}
+    Ingredients:
+    - kind: 1
+      stat: 1
+      icon: {fileID: 21300000, guid: e922a018dfe317d49b1377f72babe17b, type: 3}
     BaseScore: 0
+    model: {fileID: 1788487569887237237, guid: a0654b689fa84174cb295d90d7346430, type: 3}
