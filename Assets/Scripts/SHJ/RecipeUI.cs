@@ -37,7 +37,7 @@ namespace Overcooked
             {
                 Image newIcon = Instantiate(_ingredientPrefab, _ingredientParent);
 
-                newIcon.sprite = icon;
+                newIcon.sprite = icon.icon;
 
                 newIcon.enabled = true;
             }
