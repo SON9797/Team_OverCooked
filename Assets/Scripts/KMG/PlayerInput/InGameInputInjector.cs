@@ -14,12 +14,15 @@ namespace Overcooked
         private ApplyInGamePlayerMove _move;
         private PlayerItemController _holdIngredient;
 
+        private SceneFlowManager _sceneFlowManager;
+
         public bool IsSelected { get; private set; }
 
         [Inject]
-        public void Construct(IInGamePlayerInput input)
+        public void Construct(IInGamePlayerInput input, SceneFlowManager sceneFlowManager)
         {
             _input = input;
+            _sceneFlowManager = sceneFlowManager;
         }
 
         private void Awake()
@@ -30,12 +33,14 @@ namespace Overcooked
 
         private void Update()
         {
+
             if (_move == null || _input == null || _holdIngredient == null)
             {
                 return;
             }
+            
 
-            if (!IsSelected)
+            if (_sceneFlowManager.IsUIRunning || !IsSelected)
             {
                 _move.SetMoveInput(Vector2.zero);
                 return;

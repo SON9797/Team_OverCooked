@@ -16,6 +16,8 @@ namespace Overcooked
 
         private readonly LevelData _currentLevelData;
 
+        public bool IsUIRunning { get; private set; } = true;
+
         [Inject]
         public SceneFlowManager(
             IUIManager uiManager,
@@ -31,6 +33,8 @@ namespace Overcooked
 
         public void Start()
         {
+            IsUIRunning = true;
+
             _uiManager.SetupLevelUI(_currentLevelData);
 
             _timerService.Initialize(_currentLevelData.GamePlayTime);
@@ -73,6 +77,7 @@ namespace Overcooked
             {
                 yield return null; // 스페이스바가 눌릴 때까지 무한 대기
             }
+
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, false);
 
             _uiManager.SetPanelActive(_uiManager.CoinPanel, true);
@@ -89,6 +94,7 @@ namespace Overcooked
             yield return new WaitForSeconds(1.5f);
 
             // 6. 게임 시작
+            IsUIRunning = false;
             _timerService.StartTimer();
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
@@ -97,6 +103,8 @@ namespace Overcooked
 
             // 7. 엔딩
             yield return new WaitUntil(() => _timerService.IsTimeOver);
+
+            IsUIRunning = true;
 
             _recipeService.StopGeneration();
 
