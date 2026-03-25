@@ -10,7 +10,7 @@ namespace Overcooked
     {
         public string DisgName;
         public Sprite FinishedDishImage;
-        public List<Sprite> Ingredients;
+        public List<IngreDientData> Ingredients;
         public int BaseScore = 20;
     }
 
