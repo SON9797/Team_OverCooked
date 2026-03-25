@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class DeliveryCounter : ItemPlaceAndTake
 {
-    [SerializeField] private float _deliveryDelay = 2.0f;
+    [SerializeField] private float _deliveryDelay = 0.5f;
 
     [SerializeField] private PlateReSpawn _plateSpawner;
 
-    public override void PlaceItem(GameObject item)
+    public override bool PlaceItem(GameObject item)
     {
         // 올린 아이템이 접시인지 확인
         Dish dish = item.GetComponent<Dish>();
@@ -18,10 +18,14 @@ public class DeliveryCounter : ItemPlaceAndTake
             base.PlaceItem(item);
 
             StartCoroutine(ClearDishAfterDelay(item));
+
+            return true;
         }
         else
         {
             Debug.Log("접시에 담긴 요리만 서빙할 수 있습니다!");
+
+            return false;
         }
     }
 

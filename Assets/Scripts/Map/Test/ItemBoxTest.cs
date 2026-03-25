@@ -83,8 +83,10 @@ public class ItemBoxTest : MonoBehaviour
                     // 3. 접시가 없거나 담을 수 없는 재료라면 조리대에 그냥 놓기
                     if (counter.CanPlaceItem())
                     {
-                        counter.PlaceItem(_inHandItem);
-                        _inHandItem = null;
+                        if (counter.PlaceItem(_inHandItem))
+                        {
+                            _inHandItem = null;
+                        }
                     }
                 }
             }

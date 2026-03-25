@@ -20,7 +20,7 @@ public class ItemPlaceAndTake : MonoBehaviour
         }
     }
 
-    public virtual void PlaceItem(GameObject item)
+    public virtual bool PlaceItem(GameObject item)
     {
         _onCounterItem = item;
         item.transform.SetParent(_snapPoint);
@@ -31,6 +31,8 @@ public class ItemPlaceAndTake : MonoBehaviour
         {
             rb.isKinematic = true;
         }
+
+        return true;
     }
 
     public bool HasDish(out Dish dish)

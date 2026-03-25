@@ -7,7 +7,7 @@ public class PlateReSpawn : MonoBehaviour
     [SerializeField] private GameObject _platePrefab;
     [SerializeField] private int _maxPlate = 4;
     [SerializeField] private float _respawnTime = 0.5f;
-    [SerializeField] private float _heightInterval = 0.5f; //쌓이는 접시 높이
+    [SerializeField] private float _heightInterval = 0.2f; //쌓이는 접시 높이
     [SerializeField] private Vector3[] _plates; //초기 접시들 위치값
 
     // 현재 쌓여있는 아이템들을 관리할 리스트
@@ -20,10 +20,7 @@ public class PlateReSpawn : MonoBehaviour
     }
     private void Update()
     {
-        if (_spawnedPlate.Contains(null))
-        {
-            _spawnedPlate.RemoveAll(item => item == null);
-        }
+        _spawnedPlate.RemoveAll(item => item == null);
 
         if (_spawnedPlate.Count < _maxPlate && !_isRespawning)
         {
@@ -74,9 +71,8 @@ public class PlateReSpawn : MonoBehaviour
     }
     void SpawnStackedItem()
     {
-        float currentYOffset = _heightInterval;
+        float currentYOffset = _spawnedPlate.Count * _heightInterval;
         Vector3 spawnPosition = transform.position + new Vector3(0, currentYOffset, 0);
-        _heightInterval += 0.2f;
         GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
         _spawnedPlate.Add(newItem);
 
