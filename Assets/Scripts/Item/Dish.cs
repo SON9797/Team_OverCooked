@@ -62,5 +62,22 @@ public class Dish : MonoBehaviour
         //접시에 포지션 종속
         model.transform.SetParent(this.transform);
     }
+
+    public HashSet<IngreDientData> GetRecipy()
+    {
+        return mix;
+    }
+
+    public void ClearDish()
+    {
+        //dish위 데이터 삭제
+        mix.Clear();
+        //dish에 뭐가 얹혀져있으면, 모델 삭제)
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+    }
    
 }
