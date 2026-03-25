@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlateReSpawn : MonoBehaviour
+public class PlateReSpawn : ItemPlaceAndTake
 {
     [SerializeField] private GameObject _platePrefab;
     [SerializeField] private int _maxPlate = 4;
@@ -77,7 +77,19 @@ public class PlateReSpawn : MonoBehaviour
         _spawnedPlate.Add(newItem);
 
     }
+    public override GameObject TakeItem()
+    {
+        // 조리대에서 아이템을 집으려 할 때, 리스트의 맨 위 접시를 가져옴
+        GameObject topPlate = GetTopPlate();
 
+        if (topPlate != null)
+        {
+            // 리스트에서 제거된 접시를 반환
+            return topPlate;
+        }
+
+        return null;
+    }
     public GameObject GetTopPlate()
     {
         if (_spawnedPlate.Count == 0)
@@ -93,4 +105,6 @@ public class PlateReSpawn : MonoBehaviour
 
         return topPlate;
     }
+
+    public override bool CanPlaceItem() => false;
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5514968698536202269}
   - component: {fileID: 5544435010579212730}
   - component: {fileID: 5536597076942233807}
+  - component: {fileID: 1093760298507109569}
   m_Layer: 0
   m_Name: m_recipe_sushi_02
   m_TagString: Untagged
@@ -83,3 +84,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1093760298507109569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5512695126165056686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7401b8dc68fac574a9bbb3b333ae9a46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recipyData:
+  - ingredients:
+    - kind: 1
+      stat: 1
+    model: {fileID: 5512695126165056686}
+    score: 0
