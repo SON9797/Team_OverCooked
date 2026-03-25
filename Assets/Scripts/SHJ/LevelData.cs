@@ -8,7 +8,7 @@ namespace Overcooked
     [Serializable]
     public class RecipeData
     {
-        public string DisgName;
+        public string DishName;
         public Sprite FinishedDishImage;
         public List<Sprite> Ingredients;
         public int BaseScore = 20;

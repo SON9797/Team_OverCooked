@@ -98,10 +98,12 @@ namespace Overcooked
             // 7. ¿£µù
             yield return new WaitUntil(() => _timerService.IsTimeOver);
 
-            _uiManager.SetPanelActive(_uiManager.TimesUpPanel, true);
+            _recipeService.StopGeneration();
 
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
+
+            _uiManager.SetPanelActive(_uiManager.TimesUpPanel, true);
 
             yield return new WaitForSeconds(1.5f);
 
