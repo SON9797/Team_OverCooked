@@ -19,7 +19,7 @@ public class Dish : MonoBehaviour
             //이미 가지고 있음.
             return false;
         }
-        HashSet<IngreDientData>nextMix=mix;
+        HashSet<IngreDientData> nextMix = new HashSet<IngreDientData>(mix);
         nextMix.Add(ingredientData);
 
 
