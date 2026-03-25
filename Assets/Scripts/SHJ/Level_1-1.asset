@@ -13,6 +13,13 @@ MonoBehaviour:
   m_Name: Level_1-1
   m_EditorClassIdentifier: 
   LevelName: 1-1
-  GamePlayTime: 5
+  GamePlayTime: 10
   LoadingImage: {fileID: 21300000, guid: b6c89082dcdfd4641876d205ddffd3a4, type: 3}
   TutorialImage: {fileID: 21300000, guid: 46da8e584029c5c41b830ada26ea2045, type: 3}
+  BaseTipAmount: 8
+  MaxOrderCount: 2
+  Recipes:
+  - DishName: 
+    FinishedDishImage: {fileID: 0}
+    Ingredients: []
+    BaseScore: 0

@@ -1,5 +1,6 @@
 using Overcooked;
 using Overcooked.Interfaces;
+using OverCooked;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -31,13 +32,8 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.RegisterComponentInHierarchy<OrderListUI>();
 
-        builder.Register<ScoreManager>(Lifetime.Singleton)
-               .AsImplementedInterfaces();
-
         builder.Register<TimerManager>(Lifetime.Singleton)
                .AsImplementedInterfaces();
-
-        builder.RegisterEntryPoint<GameLoopManager>();
 
         if (_levelManager != null)
         {
@@ -78,5 +74,10 @@ public class GameLifetimeScope : LifetimeScope
                 container.InjectGameObject(_playerSwitchManager.gameObject);
             }
         });
+
+        // 스코어 관련
+        builder.RegisterComponentInHierarchy<ScoreManager>().AsImplementedInterfaces();
+        builder.RegisterComponentInHierarchy<OrderManager>();
+
     }
 }
