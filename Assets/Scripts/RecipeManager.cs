@@ -4,6 +4,34 @@ using System.Collections.Generic;
 using Overcooked.Interfaces;
 using UnityEngine;
 
+public enum IngreDientKind
+{
+    lettuce,
+    fish,
+    carrot,
+    parwn
+}
+[Serializable]
+public struct IngreDientData
+{
+    public IngreDientKind kind;
+    public CookBehaivior stat;
+    public Sprite icon;
+    public override bool Equals(object obj)
+    {
+        if (obj is IngreDientData other)
+        {
+            return kind == other.kind && stat == other.stat;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(kind, stat);
+    }
+
+}
 namespace Overcooked
 {
     public class RecipeManager : IRecipeService
@@ -99,6 +127,31 @@ namespace Overcooked
 
                 AddRandomOrder();
             }
+        }
+        public GameObject GetRecipyModel(HashSet<IngreDientData> mix)
+        {
+            Debug.Log("mix-----");
+            foreach (IngreDientData a in mix)
+            {
+
+                Debug.Log($"{a.kind}, {a.stat}");
+            }
+            foreach (RecipeData r in _allRecipes)
+            {
+
+                Debug.Log("recipy-------");
+                foreach (IngreDientData a in r.Ingredients)
+                {
+                    Debug.Log($"{a.kind},{a.stat}");
+
+                }
+
+                if (mix.SetEquals(r.Ingredients) && mix.Count == r.Ingredients.Count)
+                {
+                    return r.model;
+                }
+            }
+            return null;
         }
     }
 }

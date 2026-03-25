@@ -1,17 +1,21 @@
+using Overcooked;
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class Dish : MonoBehaviour
 {
     [SerializeField] Transform foodPos;
     HashSet<IngreDientData> mix=new HashSet<IngreDientData>();
-
+    [Inject] IRecipeService recipeService;
 
     //해당 함수를 사용하면 접시에 매개변수의 재료를 추가한다.
     //만약 조합이 존재하지 않으면, 접시에 재료가 올라가지 않는다.
     public bool AddIngredient(Ingredient ingredient)
     {
+        RecipeManager _recipeManager = (RecipeManager)recipeService;
         IngreDientData ingredientData = ingredient.GetIngredientData();
         
         if (mix.Contains(ingredientData))
@@ -24,7 +28,7 @@ public class Dish : MonoBehaviour
 
 
         //레시피 불러와보기. (없으면 null 반환)
-        GameObject recipyModel = RecipyTest.Instance.GetRecipyModel(nextMix);
+        GameObject recipyModel = _recipeManager.GetRecipyModel(nextMix);
 
         if (recipyModel==null)
         {
