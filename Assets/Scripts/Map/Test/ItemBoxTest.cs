@@ -73,7 +73,7 @@ public class ItemBoxTest : MonoBehaviour
                         Ingredient ing = _inHandItem.GetComponent<Ingredient>();
                         if (ing != null)
                         {
-                            // [팀원 코드 호출] 성공하면 true 반환 및 재료 파괴됨
+                            // 성공하면 true 반환 및 재료 파괴됨
                             if (dishOnCounter.AddIngredient(ing))
                             {
                                 _inHandItem = null; // 손 비우기
@@ -105,7 +105,7 @@ public class ItemBoxTest : MonoBehaviour
                         }
                     }
 
-                    // 3. 접시가 없거나 담을 수 없는 재료라면 조리대에 그냥 놓기
+                    // 접시가 없거나 담을 수 없는 재료라면 조리대에 그냥 놓기
                     if (counter.CanPlaceItem())
                     {
                         if (counter.PlaceItem(_inHandItem))
