@@ -13,7 +13,7 @@ public class PlateReSpawn : MonoBehaviour
     [SerializeField] private float _heightInterval = 0.5f; //쌓이는 접시 높이
     [SerializeField] private Vector3[] _plates; //초기 접시들 위치값
 
-    private PlateFactory _factory;
+    [Inject]private PlateFactory _factory;
     
 
 
@@ -22,6 +22,8 @@ public class PlateReSpawn : MonoBehaviour
     private bool _isRespawning = false;
 
     private IRecipeService _recipeservice;
+
+    [Inject]
     public void Construct(IRecipeService recipeService)
     {
         _recipeservice = recipeService;
