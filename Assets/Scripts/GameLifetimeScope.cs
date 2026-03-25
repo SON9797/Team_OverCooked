@@ -48,7 +48,7 @@ public class GameLifetimeScope : LifetimeScope
         }
 
         builder.Register<SceneFlowManager>(Lifetime.Singleton)
-               .AsImplementedInterfaces();
+               .AsImplementedInterfaces().AsSelf();
 
         builder.Register<IInGamePlayerInput, InGamePlayerInput>(Lifetime.Singleton);
 
