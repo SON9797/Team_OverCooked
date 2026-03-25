@@ -12,11 +12,23 @@ public class TrashCan : ItemPlaceAndTake
 
     public override bool PlaceItem(GameObject item)
     {
+        Dish dish = item.GetComponent<Dish>();
 
-        if (item.GetComponent<Dish>() != null)
+        if (dish != null)
         {
-            Debug.Log("접시는 쓰레기통에 버릴 수 없습니다!");
-            return false;
+            // [수정] 접시 위에 음식이 있는지 확인 (mix가 비어있지 않다면)
+            if (dish.GetRecipy().Count > 0)
+            {
+                Debug.Log("접시의 음식을 비웁니다!");
+                dish.ClearDish(); 
+
+                return false; // false를 반환하여 플레이어가 접시를 계속 들고 있게 합니다.
+            }
+            else
+            {
+                Debug.Log("이미 비어있는 접시입니다.");
+                return false;
+            }
         }
 
         item.transform.SetParent(null);

@@ -15,11 +15,19 @@ public class DeliveryCounter : ItemPlaceAndTake
 
         if (dish != null)
         {
-            base.PlaceItem(item);
-
-            StartCoroutine(ClearDishAfterDelay(item));
-
-            return true;
+            if (dish.GetRecipy().Count > 0)
+            {
+                // 음식이 담긴 경우에만 서빙 진행
+                base.PlaceItem(item);
+                StartCoroutine(ClearDishAfterDelay(item));
+                return true;
+            }
+            else
+            {
+                // 빈 접시인 경우
+                Debug.Log("빈 접시는 서빙할 수 없습니다! 요리를 담아오세요.");
+                return false;
+            }
         }
         else
         {

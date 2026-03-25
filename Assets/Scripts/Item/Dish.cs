@@ -49,7 +49,7 @@ public class Dish : MonoBehaviour
     private void VisualModel(GameObject recipyModel)
     {
         //dish의 자식에 뭐가 있으면 삭제(모델 겹침 방지)
-        foreach (Transform child in transform)
+        foreach (Transform child in foodPos)
         {
             Destroy(child.gameObject);
         }
@@ -60,7 +60,8 @@ public class Dish : MonoBehaviour
 
 
         //접시에 포지션 종속
-        model.transform.SetParent(this.transform);
+        model.transform.SetParent(foodPos);
+
     }
 
     public HashSet<IngreDientData> GetRecipy()
@@ -73,7 +74,7 @@ public class Dish : MonoBehaviour
         //dish위 데이터 삭제
         mix.Clear();
         //dish에 뭐가 얹혀져있으면, 모델 삭제)
-        foreach (Transform child in transform)
+        foreach (Transform child in foodPos)
         {
             Destroy(child.gameObject);
         }

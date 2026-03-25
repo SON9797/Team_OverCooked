@@ -45,7 +45,7 @@ public class ItemPlaceAndTake : MonoBehaviour
         // 위에 놓인 아이템에서 Dish 컴포넌트를 찾음
         dish = _onCounterItem.GetComponent<Dish>();
 
-        // 찾았다면 true, 없으면 false 반환
+        // 찾았다면 true, 없으면 false 
         return dish != null;
     }
 
