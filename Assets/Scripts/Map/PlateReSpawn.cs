@@ -1,14 +1,18 @@
+using Overcooked;
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class PlateReSpawn : ItemPlaceAndTake
 {
-    [SerializeField] private GameObject _platePrefab;
     [SerializeField] private int _maxPlate = 4;
     [SerializeField] private float _respawnTime = 0.5f;
     [SerializeField] private float _heightInterval = 0.2f; //쌓이는 접시 높이
     [SerializeField] private Vector3[] _plates; //초기 접시들 위치값
+
+    [Inject] PlateFactory _factory;
 
     // 현재 쌓여있는 아이템들을 관리할 리스트
     public List<GameObject> _spawnedPlate = new List<GameObject>();
@@ -43,11 +47,11 @@ public class PlateReSpawn : ItemPlaceAndTake
 
     private void StartItemSpawn()
     {
-       
+        
         for (int i = 0; i < _maxPlate; i++)
         {
             Vector3 spawnPosition = _plates[i];
-            GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
+            GameObject newItem = _factory.Create(spawnPosition);
             _spawnedPlate.Add(newItem);
 
             Collider[] colliders = Physics.OverlapSphere(spawnPosition, 0.5f);
@@ -73,7 +77,7 @@ public class PlateReSpawn : ItemPlaceAndTake
     {
         float currentYOffset = _spawnedPlate.Count * _heightInterval;
         Vector3 spawnPosition = transform.position + new Vector3(0, currentYOffset, 0);
-        GameObject newItem = Instantiate(_platePrefab, spawnPosition, Quaternion.identity);
+        GameObject newItem = _factory.Create(spawnPosition);
         _spawnedPlate.Add(newItem);
 
     }

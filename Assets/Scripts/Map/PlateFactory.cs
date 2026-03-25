@@ -8,7 +8,6 @@ using VContainer.Unity;
 public class PlateFactory
 {
     [Inject] IObjectResolver _container;
-    private IRecipeService _recipeservice;
 
     private readonly GameObject _prefab;
 
