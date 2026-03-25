@@ -30,17 +30,19 @@ namespace Overcooked
         Vector3 _moveDir;
         private bool _canDash = true;
         private bool _isDashing;
-    
-    
+
+
         #endregion
-    
-    
+
+
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
             _rb.freezeRotation = true;
+            _rb.constraints = RigidbodyConstraints.FreezeRotation
+                            | RigidbodyConstraints.FreezePositionY;
         }
-    
+
         public void SetMoveInput(Vector2 input)
         {
             _moveDir = new Vector3(input.x, 0f, input.y);
