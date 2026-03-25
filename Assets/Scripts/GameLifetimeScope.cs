@@ -26,7 +26,8 @@ public class GameLifetimeScope : LifetimeScope
         {
             builder.Register<RecipeManager>(Lifetime.Singleton)
                    .WithParameter(_currentLevelData.Recipes)
-                   .AsImplementedInterfaces();
+                   .AsImplementedInterfaces()
+                   .AsSelf();
 
             builder.RegisterInstance(_currentLevelData);
         }
@@ -45,7 +46,8 @@ public class GameLifetimeScope : LifetimeScope
         if (_uiManager != null)
         {
             builder.RegisterComponent(_uiManager)
-                   .As<IUIManager>();
+                   .AsImplementedInterfaces()
+                   .AsSelf();
         }
 
         builder.Register<SceneFlowManager>(Lifetime.Singleton)
@@ -76,9 +78,12 @@ public class GameLifetimeScope : LifetimeScope
             }
         });
 
-        // 스코어 관련
-        builder.RegisterComponentInHierarchy<ScoreManager>().AsImplementedInterfaces();
-        builder.RegisterComponentInHierarchy<OrderManager>();
+        // 스코어 관련 / 레시피 UI 관련
+        builder.RegisterComponentInHierarchy<ScoreManager>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+        builder.RegisterComponentInHierarchy<OrderManager>().AsSelf();
+        builder.RegisterComponentInHierarchy<DeliveryCounter>().AsSelf();
 
 
         builder.RegisterComponentInHierarchy<PlateReSpawn>();

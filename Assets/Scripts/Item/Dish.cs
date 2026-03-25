@@ -68,7 +68,7 @@ public class Dish : MonoBehaviour
 
     }
 
-    public HashSet<IngreDientData> GetRecipy()
+    public HashSet<IngreDientData> GetRecipe()
     {
         return mix;
     }

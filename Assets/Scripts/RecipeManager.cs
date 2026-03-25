@@ -128,6 +128,7 @@ namespace Overcooked
                 AddRandomOrder();
             }
         }
+
         public GameObject GetRecipyModel(HashSet<IngreDientData> mix)
         {
             Debug.Log("mix-----");
@@ -151,6 +152,26 @@ namespace Overcooked
                     return r.model;
                 }
             }
+            return null;
+        }
+
+        public string GetDishNameByIngredients(HashSet<IngreDientData> submittedIngredients)
+        {
+            foreach (RecipeData recipe in _allRecipes)
+            {
+                if (recipe.Ingredients.Count != submittedIngredients.Count)
+                {
+                    continue;
+                }
+
+                HashSet<IngreDientData> recipeIngredients = new HashSet<IngreDientData>(recipe.Ingredients);
+
+                if (recipeIngredients.SetEquals(submittedIngredients))
+                {
+                    return recipe.DishName;
+                }
+            }
+
             return null;
         }
     }
