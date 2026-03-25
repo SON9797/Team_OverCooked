@@ -18,6 +18,8 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private InGameInputInjector _player1Injector;
     [SerializeField] private InGameInputInjector _player2Injector;
 
+    [SerializeField] private GameObject _platePrefab;
+
     protected override void Configure(IContainerBuilder builder)
     {
         if (_currentLevelData != null)
@@ -78,5 +80,9 @@ public class GameLifetimeScope : LifetimeScope
                 container.InjectGameObject(_playerSwitchManager.gameObject);
             }
         });
+        builder.RegisterComponentInHierarchy<PlateReSpawn>();
+
+        builder.Register<PlateFactory>(Lifetime.Singleton)
+       .WithParameter<GameObject>(_platePrefab);
     }
 }
