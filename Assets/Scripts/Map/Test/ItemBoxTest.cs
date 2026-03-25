@@ -42,26 +42,51 @@ public class ItemBoxTest : MonoBehaviour
         RaycastHit hit;
         bool rayHit = Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance);
 
-    if (Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance))
-    {
-        // 1. 레이가 맞은 물체 이름 출력
-        Debug.Log($"레이에 맞은 물체 이름: {hit.transform.name}");
-
-        var target = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
-        if (target == null)
+        if (Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance))
         {
-            // 2. 스크립트를 못 찾았다면 출력
-            Debug.Log($"{hit.transform.name}에서 스크립트를 찾지 못했습니다!");
+            Debug.Log($"레이에 맞은 물체 이름: {hit.transform.name}");
+
+            var target = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
+            if (target == null)
+            {
+                Debug.Log($"{hit.transform.name}에서 스크립트를 찾지 못했습니다!");
+            }
+            else
+            {
+                Debug.Log($"스크립트 찾음! 현재 조리대 빈 공간: {target.CanPlaceItem()}");
+            }
         }
-        else
+
+        if (Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance))
         {
-            // 3. 찾았는데도 안 된다면 조건문 확인
-            Debug.Log($"스크립트 찾음! 현재 조리대 빈 공간: {target.CanPlaceItem()}");
+            // 조리대를 먼저 찾음
+            ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
+
+            if (counter != null)
+            {
+                // 조리대 위에 접시(Dish)가 있는지 확인
+                if (counter.HasDish(out Dish dishOnCounter))
+                {
+                    // 손에 재료가 있다면 접시에 담기 시도
+                    if (_inHandItem != null)
+                    {
+                        Ingredient ing = _inHandItem.GetComponent<Ingredient>();
+                        if (ing != null)
+                        {
+                            // 성공하면 true 반환 및 재료 파괴됨
+                            if (dishOnCounter.AddIngredient(ing))
+                            {
+                                _inHandItem = null; // 손 비우기
+                                Debug.Log("접시에 재료를 추가했습니다!");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
-    }
 
-
-            if (_inHandItem != null)
+        if (_inHandItem != null)
         {
             if (rayHit)
             {
@@ -80,11 +105,13 @@ public class ItemBoxTest : MonoBehaviour
                         }
                     }
 
-                    // 3. 접시가 없거나 담을 수 없는 재료라면 조리대에 그냥 놓기
+                    // 접시가 없거나 담을 수 없는 재료라면 조리대에 그냥 놓기
                     if (counter.CanPlaceItem())
                     {
-                        counter.PlaceItem(_inHandItem);
-                        _inHandItem = null;
+                        if (counter.PlaceItem(_inHandItem))
+                        {
+                            _inHandItem = null;
+                        }
                     }
                 }
             }

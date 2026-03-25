@@ -35,6 +35,8 @@ namespace Overcooked.Interfaces
         Action<int> OnOrderCompleted { get; set; }
 
         void StartGeneration(MonoBehaviour runner);
+
+        void StopGeneration();
     }
 
     // 플레이어

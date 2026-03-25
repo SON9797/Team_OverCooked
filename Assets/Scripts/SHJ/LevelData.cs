@@ -8,7 +8,7 @@ namespace Overcooked
     [Serializable]
     public struct RecipeData
     {
-        public string DisgName;
+        public string DishName;
         public Sprite FinishedDishImage;
         public List<IngreDientData> Ingredients;
         public int BaseScore;

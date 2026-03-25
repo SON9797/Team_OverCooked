@@ -80,6 +80,24 @@ namespace Overcooked
             }
         }
 
+        public void StopGeneration()
+        {
+            if (!_isGeneration)
+            {
+                return;
+            }
+
+            _isGeneration = false;
+
+            for (int i = _currentOrders.Count - 1; i >= 0; i--)
+            {
+                OnOrderCompleted?.Invoke(i);
+            }
+
+            _currentOrders.Clear();
+            Debug.Log("UI Á¦°Å");
+        }
+
         public void AddRandomOrder()
         {
             if (_allRecipes == null || _allRecipes.Count == 0)

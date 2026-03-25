@@ -58,8 +58,6 @@ namespace Overcooked
             
         }
 
-
-
         public void SetPanelActive(GameObject panel, bool isActive)
         {
             if (panel != null)

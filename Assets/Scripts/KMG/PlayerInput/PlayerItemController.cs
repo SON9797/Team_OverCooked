@@ -8,40 +8,55 @@ namespace Overcooked
 {
     public class PlayerItemController : MonoBehaviour
     {
+        [Header("레이 시작 위치")]
+        [SerializeField] private Transform _rayPoint;
+
         [Header("손 위치")]
         [SerializeField] private Transform _holdPoint;
 
-        [Header("상호작용 반경")]
-        [SerializeField] private float _interactRadius = 1.5f;
-
-        [Header("정면 판정 기준")]
-        [SerializeField] private float _forwardDot = 0.3f;
-
-        [Header("재료 레이어")]
-        [SerializeField] private LayerMask _ingredientLayer;
+        [Header("상호작용 거리")]
+        [SerializeField] private float _interactionDistance = 3f;
 
         [Header("내려놓기 거리")]
         [SerializeField] private float _dropDistance = 1f;
 
+        private GameObject _currentHeldObject;
         private Ingredient _currentIngredient;
-        private Rigidbody _currentIngredientRb;
-        private Collider[] _currentIngredientCols;
+        private Rigidbody _currentHeldRb;
+        private Collider[] _currentHeldCols;
+        private InGameInputInjector _inputInjector;
 
-        public bool HasIngredient => _currentIngredient != null;
+        public bool HasIngredient => _currentHeldObject != null;
+
+        private void Awake()
+        {
+            _inputInjector = GetComponent<InGameInputInjector>();
+        }
 
         public void TryInteractionIngredient()
         {
-            RaycastHit hit;
-            bool rayHit = Physics.Raycast(_holdPoint.position, transform.forward, out hit, _interactRadius);
+            if (_inputInjector != null && !_inputInjector.IsSelected)
+            {
+                return;
+            }
 
-            if (_currentIngredient == null)
+            if (_rayPoint == null || _holdPoint == null)
+            {
+                return;
+            }
+
+            RaycastHit hit;
+            // 아이템박스테스트 - 레이캐스트로 정면 상호작용 대상 찾기
+            bool rayHit = Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance);
+
+            if (_currentHeldObject == null)
             {
                 if (!rayHit)
                 {
                     return;
                 }
 
-                // 상자에서 꺼내기
+                // 아이템박스테스트 - 박스에서 아이템 꺼내기
                 IngredientSource source = hit.transform.GetComponent<IngredientSource>();
                 if (source != null)
                 {
@@ -49,39 +64,67 @@ namespace Overcooked
                     return;
                 }
 
-                // 조리대에서 집기
+                // 아이템박스테스트 - 조리대 위 아이템 집기
                 ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
                 if (counter != null && !counter.CanPlaceItem())
                 {
-                    TryPickUpIngredientFromCounter(counter);
+                    TryPickUpFromCounter(counter);
                 }
             }
             else
             {
                 if (rayHit)
                 {
+                    // 아이템박스테스트 - 조리대 상호작용 대상 찾기
                     ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
-                    if (counter != null && counter.CanPlaceItem())
+                    if (counter != null)
                     {
-                        TryPlaceIngredient(counter);
-                        return;
+                        // 아이템박스테스트 - 조리대 위 접시에 재료 담기
+                        if (counter.HasDish(out Dish dishOnCounter))
+                        {
+                            if (_currentIngredient != null && dishOnCounter.AddIngredient(_currentIngredient))
+                            {
+                                _currentHeldObject.transform.SetParent(null);
+                                ClearCurrentHeldObject();
+                                return;
+                            }
+                        }
+
+                        // 아이템박스테스트 - 조리대 빈칸에 들고 있는 아이템 올려놓기
+                        if (counter.CanPlaceItem())
+                        {
+                            TryPlaceHeldObject(counter);
+                            return;
+                        }
                     }
                 }
 
-                TryDropIngredient();
+                TryDropHeldObject();
             }
         }
 
         public void TryInteractionCook()
         {
+            if (_inputInjector != null && !_inputInjector.IsSelected)
+            {
+                return;
+            }
+
+            if (_rayPoint == null)
+            {
+                return;
+            }
+
             RaycastHit hit;
-            bool rayHit = Physics.Raycast(_holdPoint.position, transform.forward, out hit, _interactRadius);
+            // 아이템박스테스트 - 정면 레이로 도마 찾기
+            bool rayHit = Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance);
 
             if (!rayHit)
             {
                 return;
             }
 
+            // 아이템박스테스트 - 도마에 칼질 상호작용 전달
             ChopBoard chopBoard = hit.transform.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
@@ -91,42 +134,42 @@ namespace Overcooked
 
         private void TryPickUpIngredientFromSource(IngredientSource source)
         {
-            GameObject newIngredientObject = source.SpawnIngredient();
-            if (newIngredientObject == null)
+            GameObject newObject = source.SpawnIngredient();
+            if (newObject == null)
             {
                 return;
             }
 
-            SetCurrentIngredient(newIngredientObject);
+            SetCurrentHeldObject(newObject);
         }
 
-        private void TryPickUpIngredientFromCounter(ItemPlaceAndTake counter)
+        private void TryPickUpFromCounter(ItemPlaceAndTake counter)
         {
-            GameObject takeIngredientObject = counter.TakeItem();
-            if (takeIngredientObject == null)
+            // 아이템박스테스트 - 조리대에서 아이템 가져오기
+            GameObject takeObject = counter.TakeItem();
+            if (takeObject == null)
             {
                 return;
             }
 
-            SetCurrentIngredient(takeIngredientObject);
+            SetCurrentHeldObject(takeObject);
         }
 
-        private void TryPlaceIngredient(ItemPlaceAndTake counter)
+        private void TryPlaceHeldObject(ItemPlaceAndTake counter)
         {
-            if (_currentIngredient == null)
+            if (_currentHeldObject == null)
             {
                 return;
             }
 
-            PrepareIngredientForPlace();
-
-            counter.PlaceItem(_currentIngredient.gameObject);
-            ClearCurrentIngredient();
+            PrepareHeldObjectForPlace();
+            counter.PlaceItem(_currentHeldObject);
+            ClearCurrentHeldObject();
         }
 
-        private void TryDropIngredient()
+        private void TryDropHeldObject()
         {
-            if (_currentIngredient == null)
+            if (_currentHeldObject == null)
             {
                 return;
             }
@@ -134,77 +177,78 @@ namespace Overcooked
             Vector3 dropPos = transform.position + transform.forward * _dropDistance;
             dropPos.y = _holdPoint.position.y;
 
-            _currentIngredient.transform.SetParent(null);
-            _currentIngredient.transform.position = dropPos;
+            _currentHeldObject.transform.SetParent(null);
+            _currentHeldObject.transform.position = dropPos;
 
-            if (_currentIngredientRb != null)
+            if (_currentHeldRb != null)
             {
-                _currentIngredientRb.isKinematic = false;
-                _currentIngredientRb.velocity = Vector3.zero;
-                _currentIngredientRb.angularVelocity = Vector3.zero;
+                _currentHeldRb.isKinematic = false;
+                _currentHeldRb.velocity = Vector3.zero;
+                _currentHeldRb.angularVelocity = Vector3.zero;
             }
 
-            SetIngredientColliderEnabled(true);
-
-            ClearCurrentIngredient();
+            SetHeldColliderEnabled(true);
+            ClearCurrentHeldObject();
         }
 
-        private void SetCurrentIngredient(GameObject ingredientObject)
+        private void SetCurrentHeldObject(GameObject heldObject)
         {
-            Ingredient ingredient = ingredientObject.GetComponent<Ingredient>();
-            if (ingredient == null)
+            if (heldObject == null)
             {
                 return;
             }
 
-            _currentIngredient = ingredient;
-            _currentIngredientRb = ingredientObject.GetComponent<Rigidbody>();
-            _currentIngredientCols = ingredientObject.GetComponentsInChildren<Collider>();
+            _currentHeldObject = heldObject;
+            _currentIngredient = heldObject.GetComponent<Ingredient>();
+            _currentHeldRb = heldObject.GetComponent<Rigidbody>();
+            _currentHeldCols = heldObject.GetComponentsInChildren<Collider>();
 
-            if (_currentIngredientRb != null)
+            if (_currentHeldRb != null)
             {
-                _currentIngredientRb.isKinematic = true;
-                _currentIngredientRb.velocity = Vector3.zero;
-                _currentIngredientRb.angularVelocity = Vector3.zero;
+                _currentHeldRb.isKinematic = true;
+                _currentHeldRb.velocity = Vector3.zero;
+                _currentHeldRb.angularVelocity = Vector3.zero;
             }
 
-            SetIngredientColliderEnabled(false);
+            SetHeldColliderEnabled(false);
 
-            _currentIngredient.transform.SetParent(_holdPoint);
-            _currentIngredient.transform.localPosition = Vector3.zero;
-            _currentIngredient.transform.localRotation = Quaternion.identity;
+            // 아이템박스테스트 - 집은 아이템을 손 위치로 붙이기
+            _currentHeldObject.transform.SetParent(_holdPoint);
+            _currentHeldObject.transform.localPosition = Vector3.zero;
+            _currentHeldObject.transform.localRotation = Quaternion.identity;
         }
 
-        private void PrepareIngredientForPlace()
+        private void PrepareHeldObjectForPlace()
         {
-            if (_currentIngredientRb != null)
+            if (_currentHeldRb != null)
             {
-                _currentIngredientRb.isKinematic = true;
-                _currentIngredientRb.velocity = Vector3.zero;
-                _currentIngredientRb.angularVelocity = Vector3.zero;
+                _currentHeldRb.isKinematic = true;
+                _currentHeldRb.velocity = Vector3.zero;
+                _currentHeldRb.angularVelocity = Vector3.zero;
             }
 
-            SetIngredientColliderEnabled(false);
+            SetHeldColliderEnabled(false);
         }
 
-        private void SetIngredientColliderEnabled(bool isEnabled)
+        private void SetHeldColliderEnabled(bool isEnabled)
         {
-            if (_currentIngredientCols == null)
+            if (_currentHeldCols == null)
             {
                 return;
             }
 
-            for (int i = 0; i < _currentIngredientCols.Length; i++)
+            for (int i = 0; i < _currentHeldCols.Length; i++)
             {
-                _currentIngredientCols[i].enabled = isEnabled;
+                _currentHeldCols[i].enabled = isEnabled;
             }
         }
 
-        private void ClearCurrentIngredient()
+        private void ClearCurrentHeldObject()
         {
+            _currentHeldObject = null;
             _currentIngredient = null;
-            _currentIngredientRb = null;
-            _currentIngredientCols = null;
+            _currentHeldRb = null;
+            _currentHeldCols = null;
         }
     }
 }

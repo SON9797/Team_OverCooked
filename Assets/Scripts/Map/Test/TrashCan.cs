@@ -10,16 +10,36 @@ public class TrashCan : ItemPlaceAndTake
 
     public override bool CanPlaceItem() => true;
 
-    public override void PlaceItem(GameObject item)
+    public override bool PlaceItem(GameObject item)
     {
-        // 1. 플레이어의 손에서 부모 연결을 끊어줍니다. (플레이어가 이동해도 아이템은 쓰레기통에 남도록)
+        Dish dish = item.GetComponent<Dish>();
+
+        if (dish != null)
+        {
+            // [수정] 접시 위에 음식이 있는지 확인 (mix가 비어있지 않다면)
+            if (dish.GetRecipy().Count > 0)
+            {
+                Debug.Log("접시의 음식을 비웁니다!");
+                dish.ClearDish(); 
+
+                return false; // false를 반환하여 플레이어가 접시를 계속 들고 있게 합니다.
+            }
+            else
+            {
+                Debug.Log("이미 비어있는 접시입니다.");
+                return false;
+            }
+        }
+
         item.transform.SetParent(null);
 
-        // 2. 애니메이션 연출 시작
+        // 애니메이션 연출
         StartCoroutine(ShrinkAndRotateEffect(item));
 
-        // 3. 쓰레기통 상태는 항상 비어있게 유지
+        // 쓰레기통 비우기
         _onCounterItem = null;
+
+        return true;
     }
 
     private IEnumerator ShrinkAndRotateEffect(GameObject item)

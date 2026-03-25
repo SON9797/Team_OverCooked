@@ -6,7 +6,6 @@ public class TableInteraction : MonoBehaviour
 {
     public ItemType _acceptableTypes;
 
-    private bool _isPlayerNearby = false;
     public Transform anchorPoint;
     [SerializeField] private bool _isOccupied = false;
 
