@@ -4,6 +4,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+public enum IngreDientKind
+{
+    lettuce,
+    fish,
+    carrot,
+    shrimp
+}
+[Serializable]
+public struct IngreDientData
+{
+    public IngreDientKind kind;
+    public CookBehaivior stat;
+    public Sprite icon;
+}
+[Serializable]
 public struct RecipyData
 {
     public List<IngreDientData> ingredients;

@@ -15,13 +15,12 @@ namespace Overcooked
 
         public bool IsInteractButtonDown()
         {
-            
-            return false;
+            return Input.GetKeyDown(KeyCode.Space);
         }
 
         public bool IsActionButtonDown()
         {
-            return false;
+            return Input.GetKeyDown(KeyCode.LeftAlt);
         }
     }
 }

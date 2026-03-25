@@ -1,37 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Overcooked.Interfaces;
-using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
-
-public enum IngreDientKind
-{
-    lettuce,
-    fish,
-    carrot,
-    shrimp
-}
-[Serializable]
-public struct IngreDientData
-{
-    public IngreDientKind kind;
-    public CookBehaivior stat;
-    public Sprite icon;
-    public override bool Equals(object obj)
-    {
-        if (obj is IngreDientData other)
-        {
-            return kind == other.kind && stat == other.stat;
-        }
-        return false;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(kind, stat);
-    }
-}
 
 namespace Overcooked
 {
@@ -78,22 +48,8 @@ namespace Overcooked
         }
         public GameObject GetRecipyModel(HashSet<IngreDientData> mix)
         {
-            Debug.Log("mix-----");
-            foreach (IngreDientData a in mix)
-            {
-
-                Debug.Log($"{a.kind}, {a.stat}");
-            }
             foreach (RecipeData r in _allRecipes)
             {
-                
-                Debug.Log("recipy-------");
-                foreach (IngreDientData a in r.Ingredients)
-                {
-                    Debug.Log($"{a.kind},{a.stat}");
-
-                }
-                
                 if (mix.SetEquals(r.Ingredients) && mix.Count == r.Ingredients.Count)
                 {
                     return r.resultPrefab;
