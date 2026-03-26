@@ -31,12 +31,14 @@ namespace Overcooked
         private Rigidbody _currentHeldRb;
         private Collider[] _currentHeldCols;
         private InGameInputInjector _inputInjector;
+        private PlayerAnimationController _animationController;
 
         public bool HasIngredient => _currentHeldObject != null;
 
         private void Awake()
         {
             _inputInjector = GetComponent<InGameInputInjector>();
+            _animationController = GetComponent<PlayerAnimationController>();
         }
 
         public void TryInteractionIngredient()
@@ -117,6 +119,12 @@ namespace Overcooked
                 return;
             }
 
+            // 손에 아이템 들고 있으면 칼질 막기
+            if (HasIngredient)
+            {
+                return;
+            }
+
             if (_rayPoint == null)
             {
                 return;
@@ -132,6 +140,7 @@ namespace Overcooked
             ChopBoard chopBoard = target.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
+                _animationController?.SetChopping(true);
                 chopBoard.ToggleChop();
             }
         }
