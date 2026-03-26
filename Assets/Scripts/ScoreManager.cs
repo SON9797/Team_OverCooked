@@ -10,21 +10,30 @@ using VContainer;
 public class ScoreManager : MonoBehaviour, IScoreService
 {
     private OrderManager _orderManager;
-    public int CurrentScore { get; private set; }
+    private IUIManager _uiManager;
 
+    public int CurrentScore { get; private set; }
     public Action<int> OnScoreChanged { get; set; }
 
     [Inject]
-    public void Construct(OrderManager orderManager)
+    public void Construct(OrderManager orderManager, IUIManager uIManager)
     {
         _orderManager = orderManager;
+        _uiManager = uIManager;
     }
 
     public void OnPlaySubmitItem(SubmittedDish item)
     {
-        if (_orderManager.TrySubmitDish(item, out int earnedScore))
+        if (_orderManager.TrySubmitDish(item, out int earnedScore, out int tip))
         {
-            AddScore(earnedScore);
+            AddScore(earnedScore + tip);
+
+            _uiManager.UpdateScoreText(CurrentScore);
+
+            if (tip > 0)
+            {
+                _uiManager.ShowTipEffect(tip);
+            }
         }
 
         else
