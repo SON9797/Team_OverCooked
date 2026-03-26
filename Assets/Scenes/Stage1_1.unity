@@ -55736,6 +55736,7 @@ GameObject:
   - component: {fileID: 1071383683}
   - component: {fileID: 1071383685}
   - component: {fileID: 1071383684}
+  - component: {fileID: 1071383686}
   m_Layer: 5
   m_Name: Coin
   m_TagString: Untagged
@@ -55800,6 +55801,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071383682}
   m_CullTransparentMesh: 1
+--- !u!95 &1071383686
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071383682}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e865a055344da9740ba0ab9afb9cfdd1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1074941314
 GameObject:
   m_ObjectHideFlags: 0
@@ -56307,13 +56329,14 @@ GameObject:
   - component: {fileID: 1238198146}
   - component: {fileID: 1238198148}
   - component: {fileID: 1238198147}
+  - component: {fileID: 1238198149}
   m_Layer: 5
-  m_Name: Flame
+  m_Name: FlameEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1238198146
 RectTransform:
   m_ObjectHideFlags: 0
@@ -56321,16 +56344,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1238198145}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.499724, y: 3.250176, z: 1}
+  m_LocalScale: {x: 1.499724, y: 3.2501767, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1995466031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.3, y: 96}
+  m_AnchoredPosition: {x: -2.2999878, y: 96.00003}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1238198147
@@ -56371,6 +56394,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1238198145}
   m_CullTransparentMesh: 1
+--- !u!95 &1238198149
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238198145}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9e1e8dcffe1c22544aaf38a40c96362f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1246694354
 GameObject:
   m_ObjectHideFlags: 0
@@ -57817,6 +57861,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2834249980256204270, guid: 349047e1a11092f4986fb1d84c68b4be, type: 3}
+      propertyPath: _interactionDistance
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -58735,8 +58783,11 @@ MonoBehaviour:
   _hourglassIcon: {fileID: 2001749702}
   _scoreText: {fileID: 211279249}
   _tipText: {fileID: 363110877}
+  _coinAnimator: {fileID: 1071383686}
   _fadeDuration: 1
   _moveSpeed: 50
+  _flameEffect: {fileID: 1238198145}
+  _flameAnimator: {fileID: 1238198149}
   _comboIcons:
   - {fileID: 1246694354}
   - {fileID: 1986344873}

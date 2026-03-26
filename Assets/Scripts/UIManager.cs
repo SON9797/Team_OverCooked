@@ -35,8 +35,11 @@ namespace Overcooked
         [Header("½ºÄÚ¾î UI")]
         [SerializeField] private TextMeshProUGUI _scoreText;
         [SerializeField] private TextMeshProUGUI _tipText;
+        [SerializeField] private Animator _coinAnimator;
         [SerializeField] private float _fadeDuration = 1.0f;
         [SerializeField] private float _moveSpeed = 50f;
+        [SerializeField] private GameObject _flameEffect;
+        [SerializeField] private Animator _flameAnimator;
 
         private Coroutine _tipCoroutine;
 
@@ -184,6 +187,21 @@ namespace Overcooked
             {
                 _comboIcons[targetIndex].SetActive(true);
             }
+
+            if (_flameEffect != null)
+            {
+                bool isMaxCombo = (combo == 4);
+
+                if (_flameEffect.activeSelf != isMaxCombo)
+                {
+                    _flameEffect.SetActive(isMaxCombo);
+
+                    if (isMaxCombo && _flameEffect != null)
+                    {
+                        _flameAnimator.Play("FlameAnim", 0, 0f);
+                    }
+                }
+            }
         }
 
         public void UpdateScoreText(int currentScore)
@@ -191,6 +209,11 @@ namespace Overcooked
             if (_scoreText != null)
             {
                 _scoreText.text = currentScore.ToString();
+            }
+
+            if (_coinAnimator != null)
+            {
+                _coinAnimator.Play("CoinSpinAnim", 0, 0f);
             }
         }
 
