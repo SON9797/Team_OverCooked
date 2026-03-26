@@ -61,10 +61,9 @@ public class DeliveryCounter : ItemPlaceAndTake
     {
         yield return new WaitForSeconds(_deliveryDelay);
 
-        if (_plateSpawner != null && _plateSpawner._spawnedPlate.Contains(dishObj))
+        if (_plateSpawner != null)
         {
-            _plateSpawner._spawnedPlate.Remove(dishObj);
-
+            _plateSpawner.OnPlateDestroyed(dishObj);
         }
         Destroy(dishObj);
         _onCounterItem = null;
