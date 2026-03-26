@@ -17,6 +17,12 @@ namespace Overcooked
         [Header("상호작용 거리")]
         [SerializeField] private float _interactionDistance = 3f;
 
+        [Header("상호작용 각도(전체)")]
+        [SerializeField, Range(1f, 180f)] private float _interactionAngle = 45f;
+
+        [Header("상호작용 대상 레이어")]
+        [SerializeField] private LayerMask _interactionLayer = ~0;
+
         [Header("내려놓기 거리")]
         [SerializeField] private float _dropDistance = 1f;
 
@@ -45,19 +51,17 @@ namespace Overcooked
                 return;
             }
 
-            RaycastHit hit;
-            // 아이템박스테스트 - 레이캐스트로 정면 상호작용 대상 찾기
-            bool rayHit = Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance);
+            Transform target = FindClosestInteractTarget();
 
             if (_currentHeldObject == null)
             {
-                if (!rayHit)
+                if (target == null)
                 {
                     return;
                 }
 
                 // 아이템박스테스트 - 박스에서 아이템 꺼내기
-                IngredientSource source = hit.transform.GetComponent<IngredientSource>();
+                IngredientSource source = target.GetComponentInParent<IngredientSource>();
                 if (source != null)
                 {
                     TryPickUpIngredientFromSource(source);
@@ -65,18 +69,21 @@ namespace Overcooked
                 }
 
                 // 아이템박스테스트 - 조리대 위 아이템 집기
-                ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
+                ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
                 if (counter != null && !counter.CanPlaceItem())
                 {
                     TryPickUpFromCounter(counter);
+                    return;
                 }
+
+                // 바닥이나 월드에 놓인 재료/접시 직접 줍기
+                TryPickUpDirectObject(target);
             }
             else
             {
-                if (rayHit)
+                if (target != null)
                 {
-                    // 아이템박스테스트 - 조리대 상호작용 대상 찾기
-                    ItemPlaceAndTake counter = hit.transform.GetComponentInParent<ItemPlaceAndTake>();
+                    ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
                     if (counter != null)
                     {
                         // 아이템박스테스트 - 조리대 위 접시에 재료 담기
@@ -115,21 +122,89 @@ namespace Overcooked
                 return;
             }
 
-            RaycastHit hit;
-            // 아이템박스테스트 - 정면 레이로 도마 찾기
-            bool rayHit = Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance);
-
-            if (!rayHit)
+            Transform target = FindClosestInteractTarget();
+            if (target == null)
             {
                 return;
             }
 
             // 아이템박스테스트 - 도마에 칼질 상호작용 전달
-            ChopBoard chopBoard = hit.transform.GetComponentInParent<ChopBoard>();
+            ChopBoard chopBoard = target.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
                 chopBoard.ToggleChop();
             }
+        }
+
+        private Transform FindClosestInteractTarget()
+        {
+            Collider[] hits = Physics.OverlapSphere(_rayPoint.position, _interactionDistance, _interactionLayer);
+
+            Transform bestTarget = null;
+            float bestSqrDistance = float.MaxValue;
+
+            float halfAngle = _interactionAngle * 0.5f;
+            float minDot = Mathf.Cos(halfAngle * Mathf.Deg2Rad);
+
+            Vector3 origin = _rayPoint.position;
+            Vector3 forward = _rayPoint.forward;
+            forward.y = 0f;
+
+            if (forward.sqrMagnitude <= 0.0001f)
+            {
+                return null;
+            }
+
+            forward.Normalize();
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Collider col = hits[i];
+                if (col == null)
+                {
+                    continue;
+                }
+
+                Transform t = col.transform;
+
+                bool isInteractable =
+                    t.GetComponentInParent<IngredientSource>() != null ||
+                    t.GetComponentInParent<ItemPlaceAndTake>() != null ||
+                    t.GetComponentInParent<ChopBoard>() != null ||
+                    t.GetComponentInParent<Ingredient>() != null ||
+                    t.GetComponentInParent<Dish>() != null;
+
+                if (!isInteractable)
+                {
+                    continue;
+                }
+
+                Vector3 closestPoint = col.ClosestPoint(origin);
+                Vector3 toTarget = closestPoint - origin;
+                toTarget.y = 0f;
+
+                float sqrDistance = toTarget.sqrMagnitude;
+                if (sqrDistance <= 0.0001f)
+                {
+                    continue;
+                }
+
+                Vector3 dir = toTarget.normalized;
+                float dot = Vector3.Dot(forward, dir);
+
+                if (dot < minDot)
+                {
+                    continue;
+                }
+
+                if (sqrDistance < bestSqrDistance)
+                {
+                    bestSqrDistance = sqrDistance;
+                    bestTarget = t;
+                }
+            }
+
+            return bestTarget;
         }
 
         private void TryPickUpIngredientFromSource(IngredientSource source)
@@ -153,6 +228,39 @@ namespace Overcooked
             }
 
             SetCurrentHeldObject(takeObject);
+        }
+
+        private void TryPickUpDirectObject(Transform target)
+        {
+            GameObject directObject = FindDirectPickableObject(target);
+            if (directObject == null)
+            {
+                return;
+            }
+
+            SetCurrentHeldObject(directObject);
+        }
+
+        private GameObject FindDirectPickableObject(Transform target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            Dish dish = target.GetComponentInParent<Dish>();
+            if (dish != null)
+            {
+                return dish.gameObject;
+            }
+
+            Ingredient ingredient = target.GetComponentInParent<Ingredient>();
+            if (ingredient != null)
+            {
+                return ingredient.gameObject;
+            }
+
+            return null;
         }
 
         private void TryPlaceHeldObject(ItemPlaceAndTake counter)
@@ -249,6 +357,37 @@ namespace Overcooked
             _currentIngredient = null;
             _currentHeldRb = null;
             _currentHeldCols = null;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (_rayPoint == null)
+            {
+                return;
+            }
+
+            Vector3 origin = _rayPoint.position;
+            Vector3 forward = _rayPoint.forward;
+            forward.y = 0f;
+
+            if (forward.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            forward.Normalize();
+
+            float halfAngle = _interactionAngle * 0.5f;
+            Vector3 leftDir = Quaternion.Euler(0f, -halfAngle, 0f) * forward;
+            Vector3 rightDir = Quaternion.Euler(0f, halfAngle, 0f) * forward;
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(origin, _interactionDistance);
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(origin, origin + forward * _interactionDistance);
+            Gizmos.DrawLine(origin, origin + leftDir * _interactionDistance);
+            Gizmos.DrawLine(origin, origin + rightDir * _interactionDistance);
         }
     }
 }
