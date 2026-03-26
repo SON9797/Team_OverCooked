@@ -72,10 +72,8 @@ public class ItemPlaceAndTake : MonoBehaviour
 
         foreach (var col in colliders)
         {
-            // 자기 자신(조리대)은 무시
             if (col.gameObject == this.gameObject) continue;
 
-            // 접시(Dish)나 재료(Ingredient)를 '자신 또는 부모'에서 찾음
             Dish dish = col.GetComponentInParent<Dish>();
             Ingredient ing = col.GetComponentInParent<Ingredient>();
 
