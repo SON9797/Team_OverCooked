@@ -8,32 +8,32 @@ using UnityEngine;
 /// </summary>
 namespace Overcooked
 {
-    [RequireComponent(typeof(Rigidbody))] 
-    
+    [RequireComponent(typeof(Rigidbody))]
     public class ApplyInGamePlayerMove : MonoBehaviour
     {
         #region 인스펙터
         [Header("걷기 속도")]
         [SerializeField] private float _moveSpeed = 5f;
+
+        [Header("회전 속도(도/초)")]
+        [SerializeField] private float _turnSpeed = 720f;
+
         [Header("대쉬 속도")]
         [SerializeField] private float _dashPower = 10f;
+
         [Header("대쉬 지속시간")]
         [SerializeField] private float _dashDuration = 0.3f;
+
         [Header("대쉬 쿨타임")]
         [SerializeField] private float _dashCoolTime = 0.5f;
-        
         #endregion
-    
-    
+
         #region 내부 변수
-        Rigidbody _rb;
-        Vector3 _moveDir;
+        private Rigidbody _rb;
+        private Vector3 _moveDir;
         private bool _canDash = true;
         private bool _isDashing;
-
-
         #endregion
-
 
         private void Awake()
         {
@@ -47,7 +47,7 @@ namespace Overcooked
         {
             _moveDir = new Vector3(input.x, 0f, input.y);
         }
-    
+
         public void TryDash()
         {
             if (!_canDash || _isDashing)
@@ -55,46 +55,38 @@ namespace Overcooked
                 return;
             }
 
-            Vector3 DashDir;
-    
-            if (_moveDir.sqrMagnitude > 0.001f) DashDir = _moveDir.normalized;
-            else DashDir = transform.forward.normalized;
-    
-            
-            StartCoroutine(DashCoroutine(DashDir));
+            Vector3 dashDir;
+
+            if (_moveDir.sqrMagnitude > 0.001f)
+                dashDir = _moveDir.normalized;
+            else
+                dashDir = transform.forward.normalized;
+
+            StartCoroutine(DashCoroutine(dashDir));
         }
-    
-    
-        /// <summary>
-        /// 대쉬 지속시간동안 움직이지 못하도록 하기 위해 코루틴 사용.
-        /// </summary>
-        /// <param name="dashDir"></param>
-        /// <returns></returns>
+
         private IEnumerator DashCoroutine(Vector3 dashDir)
         {
             _canDash = false;
             _isDashing = true;
-    
-            transform.forward = dashDir;
+
             float elapsed = 0f;
-    
-            //대쉬지속시간동안 가속.
+
             while (elapsed < _dashDuration)
             {
+                RotateToward(dashDir);
                 _rb.velocity = new Vector3(dashDir.x * _dashPower, _rb.velocity.y, dashDir.z * _dashPower);
-    
+
                 elapsed += Time.fixedDeltaTime;
-    
                 yield return new WaitForFixedUpdate();
             }
-    
+
             _isDashing = false;
-    
+
             yield return new WaitForSeconds(_dashCoolTime);
             _canDash = true;
         }
-    
-    
+
         private void FixedUpdate()
         {
             if (_isDashing)
@@ -102,17 +94,30 @@ namespace Overcooked
                 return;
             }
 
-            Vector3 v = _moveDir * _moveSpeed;
-    
-            _rb.velocity = new Vector3(v.x,_rb.velocity.y, v.z);
-    
-    
-            if(_moveDir.sqrMagnitude > 0.001f)
+            Vector3 move = _moveDir * _moveSpeed;
+            _rb.velocity = new Vector3(move.x, _rb.velocity.y, move.z);
+
+            if (_moveDir.sqrMagnitude > 0.001f)
             {
-                transform.forward = _moveDir;
+                RotateToward(_moveDir);
             }
-    
         }
-    
+
+        private void RotateToward(Vector3 dir)
+        {
+            dir.y = 0f;
+
+            if (dir.sqrMagnitude <= 0.001f)
+            {
+                return;
+            }
+
+            Quaternion targetRotation = Quaternion.LookRotation(dir.normalized);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                _turnSpeed * Time.fixedDeltaTime
+            );
+        }
     }
 }
