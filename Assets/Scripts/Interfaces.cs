@@ -72,6 +72,8 @@ namespace Overcooked.Interfaces
         void UpdateTimerText(float time);
         void UpdateTimerGauge(float currentTime, float maxTime);
         void UpdateComboUI(int combo);
+        void ShowTipEffect(int tip);
+        void UpdateScoreText(int currentScore);
 
         GameObject LoadingPanel { get; }
         GameObject TutorialPanel { get; }

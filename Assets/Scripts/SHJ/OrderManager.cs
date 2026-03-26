@@ -27,9 +27,10 @@ namespace OverCooked
             _uiManager = uiManager;
         }
 
-        public bool TrySubmitDish(SubmittedDish submittedDish, out int score)
+        public bool TrySubmitDish(SubmittedDish submittedDish, out int score, out int tip)
         {
             score = 0;
+            tip = 0;
 
             var currentOrders = _recipeManager.CurrentOrders;
 
@@ -44,10 +45,10 @@ namespace OverCooked
                     {
                         _comboCount = Mathf.Min(_comboCount + 1, 4);
 
-                        int totalTip = baseTip * _comboCount;
-                        score = baseScore + totalTip;
+                        tip = baseTip * _comboCount;
+                        score = baseScore;
 
-                        Debug.Log($"{_comboCount} / {totalTip}");
+                        Debug.Log($"{_comboCount} / {tip}");
 
                         // UI ÄÞº¸
                     }
@@ -55,7 +56,8 @@ namespace OverCooked
                     else
                     {
                         _comboCount = 0;
-                        score = baseScore + _comboCount;
+                        tip = 0;
+                        score = baseScore;
 
                         Debug.Log("ÄÞº¸ ÃÊ±âÈ­");
                     }

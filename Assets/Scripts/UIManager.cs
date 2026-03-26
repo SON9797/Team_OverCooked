@@ -1,6 +1,9 @@
 using Overcooked.Interfaces;
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using VContainer;
 
@@ -28,6 +31,14 @@ namespace Overcooked
 
         [Header("모래시계 연출")]
         [SerializeField] private RectTransform _hourglassIcon;
+
+        [Header("스코어 UI")]
+        [SerializeField] private TextMeshProUGUI _scoreText;
+        [SerializeField] private TextMeshProUGUI _tipText;
+        [SerializeField] private float _fadeDuration = 1.0f;
+        [SerializeField] private float _moveSpeed = 50f;
+
+        private Coroutine _tipCoroutine;
 
         [Header("콤보 UI")]
         [SerializeField] private GameObject[] _comboIcons;
@@ -173,6 +184,60 @@ namespace Overcooked
             {
                 _comboIcons[targetIndex].SetActive(true);
             }
+        }
+
+        public void UpdateScoreText(int currentScore)
+        {
+            if (_scoreText != null)
+            {
+                _scoreText.text = currentScore.ToString();
+            }
+        }
+
+        public void ShowTipEffect(int tipAmount)
+        {
+            if (_tipText == null || tipAmount <= 0)
+            {
+                return;
+            }
+
+            if (_tipCoroutine != null)
+            {
+                StopCoroutine( _tipCoroutine);
+            }
+
+            _tipCoroutine = StartCoroutine(TipFadeOutCoroutine(tipAmount));
+        }
+
+        private IEnumerator TipFadeOutCoroutine(int tipAmount)
+        {
+            _tipText.text = $"+ {tipAmount} Tip!";
+            _tipText.gameObject.SetActive(true);
+
+            Vector2 startPos = _tipText.rectTransform.anchoredPosition;
+            Color startColor = _tipText.color;
+            startColor.a = 1f;
+            _tipText.color = startColor;
+
+            float elapsed = 0f;
+
+            while (elapsed < _fadeDuration)
+            {
+                elapsed += Time.deltaTime;
+                float normalizedTime = elapsed / _fadeDuration;
+
+                _tipText.rectTransform.anchoredPosition += Vector2.up * _moveSpeed * Time.deltaTime;
+
+                Color currentColor = _tipText.color;
+                currentColor.a = Mathf.Lerp(1f, 0f, normalizedTime);
+                _tipText.color = currentColor;
+
+                yield return null;
+            }
+
+            _tipText.gameObject.SetActive(false);
+
+            _tipText.rectTransform.anchoredPosition = startPos;
         }
     }
 }
