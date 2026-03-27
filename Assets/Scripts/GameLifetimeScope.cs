@@ -91,5 +91,8 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<PlateFactory>(Lifetime.Singleton)
        .WithParameter<GameObject>(_platePrefab);
 
+        // Pause Menu 버튼 관련
+        builder.RegisterComponentInHierarchy<PauseMenuContorller>();
+
     }
 }

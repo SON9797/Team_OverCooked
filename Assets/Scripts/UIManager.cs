@@ -24,10 +24,14 @@ namespace Overcooked
 
         [Header("스테이지 정보 업데이트용 UI")]
         [SerializeField] private TextMeshProUGUI _loadingLevelText;
+        [SerializeField] private TextMeshProUGUI _endingLevelText;
+        [SerializeField] private TextMeshProUGUI _pauseLevelText;
         [SerializeField] private Image _loadingImage;
         [SerializeField] private Image _tutorialImage;
-        [SerializeField] private TextMeshProUGUI _ingameLevelText;
         [SerializeField] private TextMeshProUGUI _timerText;
+        [SerializeField] private TextMeshProUGUI _oneStarText;
+        [SerializeField] private TextMeshProUGUI _twoStarText;
+        [SerializeField] private TextMeshProUGUI _threeStarText;
 
         [Header("모래시계 연출")]
         [SerializeField] private RectTransform _hourglassIcon;
@@ -46,11 +50,26 @@ namespace Overcooked
         [Header("콤보 UI")]
         [SerializeField] private GameObject[] _comboIcons;
 
+        [Header("일시정지 UI")]
+        [SerializeField] private GameObject _pausePanel;
+
+        [Header("영수증 UI - 왼쪽")]
+        [SerializeField] private TextMeshProUGUI _deliveryOrderText;
+        [SerializeField] private TextMeshProUGUI _tipOrderText;
+        [SerializeField] private TextMeshProUGUI _failOrderText;
+        [SerializeField] private TextMeshProUGUI _totalText;
+
+        [Header("영수증 UI - 오른쪽")]
+        [SerializeField] private TextMeshProUGUI _totalDeliveryOrderText;
+        [SerializeField] private TextMeshProUGUI _totalTipText;
+        [SerializeField] private TextMeshProUGUI _totalFailOrderText;
+        [SerializeField] private TextMeshProUGUI _totalScoreText;
+
         private bool _isHourglassShaking = false;
         private float _shakeSpeed = 20f;
         private float _shakeAmount = 15f;
 
-
+        public GameObject PausePanel => _pausePanel;
         public GameObject LoadingPanel => _loadingPanel;
         public GameObject TutorialPanel => _recipeTutorialPanel;
         public GameObject ReadyPanel => _readyPanel;
@@ -100,9 +119,14 @@ namespace Overcooked
                 _loadingLevelText.text = levelData.LevelName;
             }
 
-            if (_ingameLevelText != null)
+            if (_endingLevelText != null)
             {
-                _ingameLevelText.text = levelData.LevelName;
+                _endingLevelText.text = levelData.LevelName;
+            }
+
+            if (_pauseLevelText != null)
+            {
+                _pauseLevelText.text = levelData.LevelName;
             }
 
             if (_loadingImage != null)
@@ -113,6 +137,21 @@ namespace Overcooked
             if (_tutorialImage != null)
             {
                 _tutorialImage.sprite = levelData.TutorialImage;
+            }
+
+            if (_oneStarText != null)
+            {
+                _oneStarText.text = levelData.OneStar.ToString();
+            }
+
+            if (_twoStarText != null)
+            {
+                _twoStarText.text = levelData.TwoStar.ToString();
+            }
+
+            if (_threeStarText != null)
+            {
+                _threeStarText.text = levelData.ThreeStar.ToString();
             }
         }
 
@@ -217,6 +256,52 @@ namespace Overcooked
             }
         }
 
+        public void UpdateEndingUI(ScoreManager scoreManager)
+        {
+            if (_deliveryOrderText != null)
+            {
+                _deliveryOrderText.text = $"Delivery Order X {scoreManager.DeliveryOrderCount}";
+            }
+
+            if (_tipOrderText != null)
+            {
+                _tipOrderText.text = "Tip";
+            }
+
+            if (_failOrderText != null)
+            {
+                _failOrderText.text = $"Fail Order X {scoreManager.FailedOrderCount}";
+            }
+
+            if (_totalText != null)
+            {
+                _totalText.text = "Total :";
+            }
+
+            if (_totalDeliveryOrderText != null)
+            {
+                _totalDeliveryOrderText.text = scoreManager.DeliveryOrderScore.ToString();
+            }
+
+            if (_totalTipText != null)
+            {
+                _totalTipText.text = scoreManager.TotalTips.ToString();
+            }
+
+            // 페널티
+            //if (_totalFailOrderText != null)
+            //{
+                //_totalTipText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
+            //}
+
+            if (_totalScoreText != null)
+            {
+                _totalScoreText.text = scoreManager.CurrentScore.ToString();
+            }
+
+            SetPanelActive(EndingPanel, true);
+        }
+
         public void ShowTipEffect(int tipAmount)
         {
             if (_tipText == null || tipAmount <= 0)
@@ -261,6 +346,19 @@ namespace Overcooked
             _tipText.gameObject.SetActive(false);
 
             _tipText.rectTransform.anchoredPosition = startPos;
+        }
+
+        public void SetPause(bool isPause)
+        {
+            if (_pausePanel != null)
+            {
+                _pausePanel.SetActive(isPause);
+            }
+
+            Time.timeScale = isPause ? 0f : 1f;
+
+            Cursor.visible = isPause;
+            Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
         }
     }
 }
