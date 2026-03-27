@@ -1,3 +1,4 @@
+using OverCooked;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,16 +6,6 @@ using UnityEngine;
 
 namespace Overcooked
 {
-    [Serializable]
-    public struct RecipeData
-    {
-        public string DishName;
-        public Sprite FinishedDishImage;
-        public List<IngreDientData> Ingredients;
-        public int BaseScore;
-        public GameObject model;
-    }
-
     [CreateAssetMenu(fileName = "Level_", menuName = "Overcooked/Level Data", order = 1)]
     public class LevelData : ScriptableObject
     {

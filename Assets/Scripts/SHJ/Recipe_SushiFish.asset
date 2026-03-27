@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9285f6f860eef144a21fee704aa87a9, type: 3}
+  m_Name: Recipe_SushiFish
+  m_EditorClassIdentifier: 
+  DishName: SushiFish
+  FinishedDishImage: {fileID: 21300000, guid: 62f8f5bffee19f94d90c03d560c311ec, type: 3}
+  Ingredients: []
+  BaseScore: 20
+  model: {fileID: 1709254077376921, guid: bfb0bbc47f4efc14fb5485386f4f7053, type: 3}
