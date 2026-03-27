@@ -32,6 +32,10 @@ namespace Overcooked
         [SerializeField] private TextMeshProUGUI _oneStarText;
         [SerializeField] private TextMeshProUGUI _twoStarText;
         [SerializeField] private TextMeshProUGUI _threeStarText;
+        [SerializeField] private TextMeshProUGUI _loadingOneStarText;
+        [SerializeField] private TextMeshProUGUI _loadingTwoStarText;
+        [SerializeField] private TextMeshProUGUI _loadingThreeStarText;
+        [SerializeField] private TextMeshProUGUI _newRecipeText;
 
         [Header("모래시계 연출")]
         [SerializeField] private RectTransform _hourglassIcon;
@@ -152,6 +156,26 @@ namespace Overcooked
             if (_threeStarText != null)
             {
                 _threeStarText.text = levelData.ThreeStar.ToString();
+            }
+
+            if (_loadingOneStarText != null)
+            {
+                _loadingOneStarText.text = levelData.OneStar.ToString();
+            }
+
+            if (_loadingTwoStarText != null)
+            {
+                _loadingTwoStarText.text = levelData.TwoStar.ToString();
+            }
+
+            if (_loadingThreeStarText != null)
+            {
+                _loadingThreeStarText.text = levelData.ThreeStar.ToString();
+            }
+
+            if (_newRecipeText != null)
+            {
+                _newRecipeText.text = levelData.NewRecipe;
             }
         }
 

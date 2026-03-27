@@ -12,6 +12,7 @@ namespace Overcooked
         [Header("스테이지 설정")]
         public string LevelName;
         public float GamePlayTime;
+        public string NewRecipe;
 
         [Header("스테이지 UI 이미지")]
         public Sprite LoadingImage;
