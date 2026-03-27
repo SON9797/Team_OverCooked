@@ -12,7 +12,13 @@ public class ScoreManager : MonoBehaviour, IScoreService
     private OrderManager _orderManager;
     private IUIManager _uiManager;
 
-    public int CurrentScore { get; private set; }
+    public int DeliveryOrderCount {  get; private set; }
+    public int DeliveryOrderScore {  get; private set; }
+    public int TotalTips {  get; private set; }
+    public int FailedOrderCount {  get; private set; }
+    public int FailedOrderPenalty {  get; private set; }
+
+    public int CurrentScore => DeliveryOrderScore + TotalTips - FailedOrderPenalty;
     public Action<int> OnScoreChanged { get; set; }
 
     [Inject]
@@ -26,9 +32,11 @@ public class ScoreManager : MonoBehaviour, IScoreService
     {
         if (_orderManager.TrySubmitDish(item, out int earnedScore, out int tip))
         {
-            AddScore(earnedScore + tip);
+            DeliveryOrderCount++;
+            DeliveryOrderScore += earnedScore;
+            TotalTips += tip;
 
-            _uiManager.UpdateScoreText(CurrentScore);
+            UpdateScoreUI();
 
             if (tip > 0)
             {
@@ -39,15 +47,31 @@ public class ScoreManager : MonoBehaviour, IScoreService
         else
         {
             Debug.Log("잘못된 주문");
+            // 추후 패널티 추가
+            // HandleFailedOrder();
         }
     }
 
-    public void AddScore(int amount)
+    private void HandleFailedOrder(int penalty)
     {
-        CurrentScore += amount;
 
-        // 점수가 변했다고 UI 에게 알림
+    }
+
+    private void UpdateScoreUI()
+    {
+        _uiManager.UpdateScoreText(CurrentScore);
         OnScoreChanged?.Invoke(CurrentScore);
+    }
+
+    public void ResetScore()
+    {
+        DeliveryOrderCount = 0;
+        DeliveryOrderScore = 0;
+        TotalTips = 0;
+        FailedOrderCount = 0;
+        FailedOrderPenalty = 0;
+
+        UpdateScoreUI();
     }
 }
 

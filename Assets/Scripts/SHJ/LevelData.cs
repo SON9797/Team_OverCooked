@@ -32,6 +32,11 @@ namespace Overcooked
         [Header("주문 관리")]
         public int MaxOrderCount = 2;
 
+        [Header("스테이지 Star 조건")]
+        public int OneStar;
+        public int TwoStar;
+        public int ThreeStar;
+
         [Header("레시피 설정")]
         public List<RecipeData> Recipes;
     }
