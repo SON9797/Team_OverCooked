@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9285f6f860eef144a21fee704aa87a9, type: 3}
   m_Name: Recipe_SushiPrawn
   m_EditorClassIdentifier: 
-  DishName: 
-  FinishedDishImage: {fileID: 0}
-  Ingredients: []
-  BaseScore: 0
-  model: {fileID: 0}
+  DishName: SushiPrawn
+  FinishedDishImage: {fileID: 21300000, guid: 54c2a03c614aa30459ba7f8396252f66, type: 3}
+  Ingredients:
+  - kind: 3
+    stat: 1
+    icon: {fileID: 21300000, guid: 1552a47ddb5273d41a9c5b41284f62a1, type: 3}
+  BaseScore: 20
+  model: {fileID: 7400928568979914333, guid: 3e6084d8039a5ce4a9b6bdd1a2da6af0, type: 3}

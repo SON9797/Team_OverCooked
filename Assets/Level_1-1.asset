@@ -18,20 +18,9 @@ MonoBehaviour:
   TutorialImage: {fileID: 21300000, guid: f673e20971c60c94caa2a5de44db1428, type: 3}
   BaseTipAmount: 8
   MaxOrderCount: 2
+  OneStar: 20
+  TwoStar: 200
+  ThreeStar: 400
   Recipes:
-  - DishName: Fish
-    FinishedDishImage: {fileID: 21300000, guid: 62f8f5bffee19f94d90c03d560c311ec, type: 3}
-    Ingredients:
-    - kind: 1
-      stat: 1
-      icon: {fileID: 21300000, guid: e922a018dfe317d49b1377f72babe17b, type: 3}
-    BaseScore: 20
-    model: {fileID: 1709254077376921, guid: bfb0bbc47f4efc14fb5485386f4f7053, type: 3}
-  - DishName: Prawn
-    FinishedDishImage: {fileID: 21300000, guid: 54c2a03c614aa30459ba7f8396252f66, type: 3}
-    Ingredients:
-    - kind: 3
-      stat: 1
-      icon: {fileID: 21300000, guid: 1552a47ddb5273d41a9c5b41284f62a1, type: 3}
-    BaseScore: 20
-    model: {fileID: 7400928568979914333, guid: 3e6084d8039a5ce4a9b6bdd1a2da6af0, type: 3}
+  - {fileID: 11400000, guid: 5dd70249e42de32419495f9c1afc831a, type: 2}
+  - {fileID: 11400000, guid: 0247a067360b53841955036a092f8917, type: 2}
