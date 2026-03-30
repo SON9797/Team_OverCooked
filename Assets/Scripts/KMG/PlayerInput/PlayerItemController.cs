@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace Overcooked
 {
     public class PlayerItemController : MonoBehaviour
@@ -25,6 +24,15 @@ namespace Overcooked
 
         [Header("내려놓기 거리")]
         [SerializeField] private float _dropDistance = 1f;
+
+        [Header("던지기 거리")]
+        [SerializeField] private float _throwDistance = 4f;
+
+        [Header("던지기 판정 레이어")]
+        [SerializeField] private LayerMask _throwLayer = ~0;
+
+        [Header("바닥 판정 레이어")]
+        [SerializeField] private LayerMask _groundLayer = ~0;
 
         private GameObject _currentHeldObject;
         private Ingredient _currentIngredient;
@@ -145,6 +153,46 @@ namespace Overcooked
             }
         }
 
+        public void TryThrowHeldObject()
+        {
+            if (_inputInjector != null && !_inputInjector.IsSelected)
+            {
+                return;
+            }
+
+            if (_currentHeldObject == null)
+            {
+                return;
+            }
+
+            // 아이템던지기 - Ingredient 스크립트가 붙은 것만 던질 수 있음
+            if (!CanThrowCurrentHeldObject())
+            {
+                return;
+            }
+
+            // 아이템던지기 - 플레이어 우선, 그다음 조리대/선반, 마지막은 바닥
+            ResolveThrow();
+        }
+
+        public bool CanReceiveThrownItem()
+        {
+            return !HasIngredient;
+        }
+
+        public void FaceThrowOrigin(Vector3 throwOrigin)
+        {
+            Vector3 dir = throwOrigin - transform.position;
+            dir.y = 0f;
+
+            if (dir.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            transform.forward = dir.normalized;
+        }
+
         private Transform FindClosestInteractTarget()
         {
             Collider[] hits = Physics.OverlapSphere(_rayPoint.position, _interactionDistance, _interactionLayer);
@@ -214,6 +262,135 @@ namespace Overcooked
             }
 
             return bestTarget;
+        }
+
+        private void ResolveThrow()
+        {
+            Vector3 origin = _holdPoint.position;
+            Vector3 forward = transform.forward;
+            forward.y = 0f;
+
+            if (forward.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            forward.Normalize();
+
+            RaycastHit[] hits = Physics.RaycastAll(origin, forward, _throwDistance, _throwLayer);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            // 아이템던지기 - 경로 내 다른 플레이어가 있으면 자동으로 회전해서 받기
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Transform hitTransform = hits[i].transform;
+                if (hitTransform == null)
+                {
+                    continue;
+                }
+
+                PlayerItemController otherPlayer = hitTransform.GetComponentInParent<PlayerItemController>();
+                if (otherPlayer != null && otherPlayer != this && otherPlayer.CanReceiveThrownItem())
+                {
+                    ThrowToPlayer(otherPlayer);
+                    return;
+                }
+            }
+
+            // 아이템던지기 - 경로 내 조리대/선반이 있으면 그곳에 올려두기
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Transform hitTransform = hits[i].transform;
+                if (hitTransform == null)
+                {
+                    continue;
+                }
+
+                ItemPlaceAndTake counter = hitTransform.GetComponentInParent<ItemPlaceAndTake>();
+                if (counter != null && counter.CanPlaceItem())
+                {
+                    ThrowToCounter(counter);
+                    return;
+                }
+            }
+
+            // 아이템던지기 - 경로 내 아무것도 없으면 바닥으로 던지기
+            ThrowToFloor(GetThrowFloorPosition(origin, forward));
+        }
+
+        private Vector3 GetThrowFloorPosition(Vector3 origin, Vector3 forward)
+        {
+            Vector3 target = origin + forward * _throwDistance;
+
+            Ray ray = new Ray(target + Vector3.up * 2f, Vector3.down);
+            if (Physics.Raycast(ray, out RaycastHit hit, 10f, _groundLayer))
+            {
+                return hit.point;
+            }
+
+            target.y = transform.position.y;
+            return target;
+        }
+
+        private bool CanThrowCurrentHeldObject()
+        {
+            if (_currentHeldObject == null)
+            {
+                return false;
+            }
+
+            return _currentHeldObject.GetComponent<Ingredient>() != null;
+        }
+
+        private void ThrowToPlayer(PlayerItemController targetPlayer)
+        {
+            if (_currentHeldObject == null || targetPlayer == null)
+            {
+                return;
+            }
+
+            GameObject throwObject = _currentHeldObject;
+
+            throwObject.transform.SetParent(null);
+
+            // 아이템던지기 - 받는 플레이어가 날아오는 아이템 방향으로 자동 회전
+            targetPlayer.FaceThrowOrigin(transform.position);
+
+            ClearCurrentHeldObject();
+            targetPlayer.SetCurrentHeldObject(throwObject);
+        }
+
+        private void ThrowToCounter(ItemPlaceAndTake counter)
+        {
+            if (_currentHeldObject == null || counter == null)
+            {
+                return;
+            }
+
+            PrepareHeldObjectForPlace();
+            counter.PlaceItem(_currentHeldObject);
+            ClearCurrentHeldObject();
+        }
+
+        private void ThrowToFloor(Vector3 targetPos)
+        {
+            if (_currentHeldObject == null)
+            {
+                return;
+            }
+
+            _currentHeldObject.transform.SetParent(null);
+            _currentHeldObject.transform.position = targetPos;
+
+            if (_currentHeldRb != null)
+            {
+                _currentHeldRb.isKinematic = false;
+                _currentHeldRb.velocity = Vector3.zero;
+                _currentHeldRb.angularVelocity = Vector3.zero;
+            }
+
+            SetHeldColliderEnabled(true);
+            ClearCurrentHeldObject();
         }
 
         private void TryPickUpIngredientFromSource(IngredientSource source)
@@ -323,8 +500,6 @@ namespace Overcooked
             if (_currentHeldRb != null)
             {
                 _currentHeldRb.isKinematic = true;
-                _currentHeldRb.velocity = Vector3.zero;
-                _currentHeldRb.angularVelocity = Vector3.zero;
             }
 
             SetHeldColliderEnabled(false);
@@ -340,8 +515,6 @@ namespace Overcooked
             if (_currentHeldRb != null)
             {
                 _currentHeldRb.isKinematic = true;
-                _currentHeldRb.velocity = Vector3.zero;
-                _currentHeldRb.angularVelocity = Vector3.zero;
             }
 
             SetHeldColliderEnabled(false);
@@ -397,6 +570,13 @@ namespace Overcooked
             Gizmos.DrawLine(origin, origin + forward * _interactionDistance);
             Gizmos.DrawLine(origin, origin + leftDir * _interactionDistance);
             Gizmos.DrawLine(origin, origin + rightDir * _interactionDistance);
+
+            if (_holdPoint != null)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawLine(_holdPoint.position, _holdPoint.position + forward * _throwDistance);
+                Gizmos.DrawWireSphere(_holdPoint.position + forward * _throwDistance, 0.15f);
+            }
         }
     }
 }
