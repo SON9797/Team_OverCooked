@@ -17,6 +17,7 @@ public class ScoreManager : MonoBehaviour, IScoreService
     public int TotalTips {  get; private set; }
     public int FailedOrderCount {  get; private set; }
     public int FailedOrderPenalty {  get; private set; }
+    public int CurrentCombo {  get; private set; }
 
     public int CurrentScore => DeliveryOrderScore + TotalTips - FailedOrderPenalty;
     public Action<int> OnScoreChanged { get; set; }
@@ -36,6 +37,9 @@ public class ScoreManager : MonoBehaviour, IScoreService
             DeliveryOrderScore += earnedScore;
             TotalTips += tip;
 
+            CurrentCombo++;
+            _uiManager.UpdateComboUI(CurrentCombo);
+
             UpdateScoreUI();
 
             if (tip > 0)
@@ -45,16 +49,23 @@ public class ScoreManager : MonoBehaviour, IScoreService
         }
 
         else
-        {
-            Debug.Log("잘못된 주문");
-            // 추후 패널티 추가
-            // HandleFailedOrder();
+        {        
+            if (item.OriginalRecipe != null)
+            {
+                HandleFailedOrder(item.OriginalRecipe.BaseScore);
+            }
         }
     }
 
-    private void HandleFailedOrder(int penalty)
+    public void HandleFailedOrder(int penaltyScore)
     {
+        FailedOrderCount++;
+        FailedOrderPenalty += penaltyScore;
 
+        CurrentCombo = 0;
+        _uiManager.UpdateComboUI(CurrentCombo);
+
+        UpdateScoreUI();
     }
 
     private void UpdateScoreUI()

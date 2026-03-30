@@ -10,6 +10,7 @@ namespace OverCooked
     public struct SubmittedDish
     {
         public string DishName;
+        public RecipeData OriginalRecipe;
     }
 
     public class OrderManager : MonoBehaviour
@@ -17,14 +18,19 @@ namespace OverCooked
         public LevelData _currentLevelData;
         private RecipeManager _recipeManager;
         private IUIManager _uiManager;
+        private IScoreService _scoreService;
 
         private int _comboCount = 0;
 
+        private IObjectResolver _resolver;
+
         [Inject]
-        public void Construct(IRecipeService recipeService, IUIManager uiManager)
+        public void Construct(IRecipeService recipeService, IUIManager uiManager, IObjectResolver resolver)
         {
             _recipeManager = (RecipeManager)recipeService;
             _uiManager = uiManager;
+
+            _resolver = resolver;
         }
 
         public bool TrySubmitDish(SubmittedDish submittedDish, out int score, out int tip)
@@ -49,8 +55,6 @@ namespace OverCooked
                         score = baseScore;
 
                         Debug.Log($"{_comboCount} / {tip}");
-
-                        // UI ÄÞº¸
                     }
 
                     else
@@ -72,6 +76,17 @@ namespace OverCooked
             _comboCount = 0;
             _uiManager.UpdateComboUI(_comboCount);
             return false;
+        }
+
+        public void HandleOrderTimeOut(RecipeData failedRecipe)
+        {
+            _comboCount = 0;
+            _uiManager.UpdateComboUI(_comboCount);
+        
+            if (_resolver.Resolve<IScoreService>() is ScoreManager scoreManager)
+            {
+                scoreManager.HandleFailedOrder(failedRecipe.BaseScore);
+            }
         }
     }
 }
