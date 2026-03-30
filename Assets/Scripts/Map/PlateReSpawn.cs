@@ -84,8 +84,7 @@ public class PlateReSpawn : ItemPlaceAndTake
     {
         _isRespawning = true;
 
-        // [추가] 대기 시간 동안 Update가 중복 실행되지 않도록 
-        // 즉시 루프를 돌거나 대기 시간을 조금 조절하는 것이 좋습니다.
+        // 대기 시간 동안 Update가 중복 실행되지 않도록 
         yield return new WaitForSeconds(_respawnTime);
 
         int totalPlates = _spawnedPlate.Count + _checkedOutPlates.Count;

@@ -8,8 +8,17 @@ public class ItemPlaceAndTake : MonoBehaviour
     public Transform _snapPoint; // 재료 위치
     protected GameObject _onCounterItem; // 현재 조리대에 놓인 아이템
 
+    public bool HasItem => _onCounterItem != null;
 
-    public virtual bool CanPlaceItem() => _onCounterItem == null;
+    public virtual bool CanPlaceItem()
+    {
+        bool isOpen = false;
+        if (TryGetComponent<Animator>(out var anim))
+        {
+            isOpen = anim.GetBool("Open");
+        }
+        return _onCounterItem == null && !isOpen;
+    }
 
     private void Start()
     {
@@ -65,7 +74,8 @@ public class ItemPlaceAndTake : MonoBehaviour
         return item;
     }
 
-    //처음 접시 체크
+    
+
     private void CheckExistingItem()
     {
         Collider[] colliders = Physics.OverlapSphere(_snapPoint.position, 0.3f);
