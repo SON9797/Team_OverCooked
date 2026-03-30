@@ -21,6 +21,6 @@ namespace Overcooked
         bool InteractionCookInput { get; }
 
         bool PauseInput { get; }
-        
+
     }
 }

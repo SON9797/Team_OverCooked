@@ -76,7 +76,17 @@ namespace Overcooked
 
             if (_input.InteractionCookInput)
             {
-                _holdIngredient.TryInteractionCook();
+                if (_holdIngredient.HasIngredient)
+                {
+                    if (_holdIngredient.CanThrowHeldObject)
+                    {
+                        _holdIngredient.TryThrowHeldObject();
+                    }
+                }
+                else
+                {
+                    _holdIngredient.TryInteractionCook();
+                }
             }
         }
 

@@ -34,6 +34,12 @@ namespace Overcooked
         [Header("바닥 판정 레이어")]
         [SerializeField] private LayerMask _groundLayer = ~0;
 
+        [Header("던지기 연출 시간")]
+        [SerializeField] private float _throwDuration = 0.25f;
+
+        [Header("던지기 포물선 높이")]
+        [SerializeField] private float _throwArcHeight = 1.2f;
+
         private GameObject _currentHeldObject;
         private Ingredient _currentIngredient;
         private Rigidbody _currentHeldRb;
@@ -41,7 +47,10 @@ namespace Overcooked
         private InGameInputInjector _inputInjector;
         private PlayerAnimationController _animationController;
 
+        private bool _isThrowing = false;
+
         public bool HasIngredient => _currentHeldObject != null;
+        public bool CanThrowHeldObject => _currentHeldObject != null && _currentHeldObject.GetComponent<Ingredient>() != null;
 
         private void Awake()
         {
@@ -52,6 +61,11 @@ namespace Overcooked
         public void TryInteractionIngredient()
         {
             if (_inputInjector != null && !_inputInjector.IsSelected)
+            {
+                return;
+            }
+
+            if (_isThrowing)
             {
                 return;
             }
@@ -127,6 +141,11 @@ namespace Overcooked
                 return;
             }
 
+            if (_isThrowing)
+            {
+                return;
+            }
+
             // 손에 아이템 들고 있으면 칼질 막기
             if (HasIngredient)
             {
@@ -160,6 +179,11 @@ namespace Overcooked
                 return;
             }
 
+            if (_isThrowing)
+            {
+                return;
+            }
+
             if (_currentHeldObject == null)
             {
                 return;
@@ -177,7 +201,7 @@ namespace Overcooked
 
         public bool CanReceiveThrownItem()
         {
-            return !HasIngredient;
+            return !HasIngredient && !_isThrowing;
         }
 
         public void FaceThrowOrigin(Vector3 throwOrigin)
@@ -356,8 +380,11 @@ namespace Overcooked
             // 아이템던지기 - 받는 플레이어가 날아오는 아이템 방향으로 자동 회전
             targetPlayer.FaceThrowOrigin(transform.position);
 
+            Rigidbody throwRb = _currentHeldRb;
+            Collider[] throwCols = _currentHeldCols;
+
             ClearCurrentHeldObject();
-            targetPlayer.SetCurrentHeldObject(throwObject);
+            StartCoroutine(CoThrowToPlayer(throwObject, throwRb, throwCols, targetPlayer));
         }
 
         private void ThrowToCounter(ItemPlaceAndTake counter)
@@ -367,9 +394,14 @@ namespace Overcooked
                 return;
             }
 
-            PrepareHeldObjectForPlace();
-            counter.PlaceItem(_currentHeldObject);
+            GameObject throwObject = _currentHeldObject;
+            Rigidbody throwRb = _currentHeldRb;
+            Collider[] throwCols = _currentHeldCols;
+
+            throwObject.transform.SetParent(null);
             ClearCurrentHeldObject();
+
+            StartCoroutine(CoThrowToCounter(throwObject, throwRb, throwCols, counter));
         }
 
         private void ThrowToFloor(Vector3 targetPos)
@@ -379,18 +411,152 @@ namespace Overcooked
                 return;
             }
 
-            _currentHeldObject.transform.SetParent(null);
-            _currentHeldObject.transform.position = targetPos;
+            GameObject throwObject = _currentHeldObject;
+            Rigidbody throwRb = _currentHeldRb;
+            Collider[] throwCols = _currentHeldCols;
 
-            if (_currentHeldRb != null)
+            throwObject.transform.SetParent(null);
+            ClearCurrentHeldObject();
+
+            StartCoroutine(CoThrowToFloor(throwObject, throwRb, throwCols, targetPos));
+        }
+
+        private IEnumerator CoThrowToPlayer(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, PlayerItemController targetPlayer)
+        {
+            if (throwObject == null || targetPlayer == null || targetPlayer._holdPoint == null)
             {
-                _currentHeldRb.isKinematic = false;
-                _currentHeldRb.velocity = Vector3.zero;
-                _currentHeldRb.angularVelocity = Vector3.zero;
+                yield break;
             }
 
-            SetHeldColliderEnabled(true);
-            ClearCurrentHeldObject();
+            _isThrowing = true;
+
+            PrepareThrownObject(throwRb, throwCols);
+
+            Vector3 startPos = throwObject.transform.position;
+            Vector3 endPos = targetPlayer._holdPoint.position;
+
+            yield return StartCoroutine(CoMoveAlongArc(throwObject.transform, startPos, endPos));
+
+            if (targetPlayer != null && targetPlayer.CanReceiveThrownItem())
+            {
+                targetPlayer.SetCurrentHeldObject(throwObject);
+            }
+            else
+            {
+                ReleaseObjectToFloor(throwObject, throwRb, throwCols, endPos);
+            }
+
+            _isThrowing = false;
+        }
+
+        private IEnumerator CoThrowToCounter(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, ItemPlaceAndTake counter)
+        {
+            if (throwObject == null || counter == null)
+            {
+                yield break;
+            }
+
+            _isThrowing = true;
+
+            PrepareThrownObject(throwRb, throwCols);
+
+            Vector3 startPos = throwObject.transform.position;
+            Vector3 endPos = counter.transform.position;
+
+            yield return StartCoroutine(CoMoveAlongArc(throwObject.transform, startPos, endPos));
+
+            if (counter != null && counter.CanPlaceItem())
+            {
+                if (throwRb != null)
+                {
+                    throwRb.isKinematic = true;
+                }
+
+                SetColliderEnabled(throwCols, false);
+                counter.PlaceItem(throwObject);
+            }
+            else
+            {
+                ReleaseObjectToFloor(throwObject, throwRb, throwCols, endPos);
+            }
+
+            _isThrowing = false;
+        }
+
+        private IEnumerator CoThrowToFloor(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 targetPos)
+        {
+            if (throwObject == null)
+            {
+                yield break;
+            }
+
+            _isThrowing = true;
+
+            PrepareThrownObject(throwRb, throwCols);
+
+            Vector3 startPos = throwObject.transform.position;
+            Vector3 endPos = targetPos;
+
+            yield return StartCoroutine(CoMoveAlongArc(throwObject.transform, startPos, endPos));
+
+            ReleaseObjectToFloor(throwObject, throwRb, throwCols, endPos);
+
+            _isThrowing = false;
+        }
+
+        private IEnumerator CoMoveAlongArc(Transform target, Vector3 startPos, Vector3 endPos)
+        {
+            if (target == null)
+            {
+                yield break;
+            }
+
+            float duration = Mathf.Max(0.01f, _throwDuration);
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+
+                Vector3 pos = Vector3.Lerp(startPos, endPos, t);
+                pos.y += Mathf.Sin(t * Mathf.PI) * _throwArcHeight;
+
+                target.position = pos;
+                yield return null;
+            }
+
+            target.position = endPos;
+        }
+
+        private void PrepareThrownObject(Rigidbody throwRb, Collider[] throwCols)
+        {
+            if (throwRb != null)
+            {
+                throwRb.isKinematic = true;
+            }
+
+            SetColliderEnabled(throwCols, false);
+        }
+
+        private void ReleaseObjectToFloor(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 targetPos)
+        {
+            if (throwObject == null)
+            {
+                return;
+            }
+
+            throwObject.transform.SetParent(null);
+            throwObject.transform.position = targetPos;
+
+            if (throwRb != null)
+            {
+                throwRb.isKinematic = false;
+                throwRb.velocity = Vector3.zero;
+                throwRb.angularVelocity = Vector3.zero;
+            }
+
+            SetColliderEnabled(throwCols, true);
         }
 
         private void TryPickUpIngredientFromSource(IngredientSource source)
@@ -530,6 +696,24 @@ namespace Overcooked
             for (int i = 0; i < _currentHeldCols.Length; i++)
             {
                 _currentHeldCols[i].enabled = isEnabled;
+            }
+        }
+
+        private void SetColliderEnabled(Collider[] cols, bool isEnabled)
+        {
+            if (cols == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (cols[i] == null)
+                {
+                    continue;
+                }
+
+                cols[i].enabled = isEnabled;
             }
         }
 
