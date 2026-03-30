@@ -1,3 +1,4 @@
+using OverCooked;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,13 +17,18 @@ namespace Overcooked
 
         private SceneFlowManager _sceneFlowManager;
 
+        private InGameUIManager _inGameUIManager;
+
+        private bool _isPaused = false;
+
         public bool IsSelected { get; private set; }
 
         [Inject]
-        public void Construct(IInGamePlayerInput input, SceneFlowManager sceneFlowManager)
+        public void Construct(IInGamePlayerInput input, SceneFlowManager sceneFlowManager, InGameUIManager inGameUIManager)
         {
             _input = input;
             _sceneFlowManager = sceneFlowManager;
+            _inGameUIManager = inGameUIManager;
         }
 
         private void Awake()
@@ -34,15 +40,25 @@ namespace Overcooked
         private void Update()
         {
 
-            if (_move == null || _input == null || _holdIngredient == null)
+            if (_move == null || _input == null || _holdIngredient == null || _inGameUIManager == null)
             {
                 return;
             }
-            
 
             if (_sceneFlowManager.IsUIRunning || !IsSelected)
             {
                 _move.SetMoveInput(Vector2.zero);
+                return;
+            }
+
+            if (_input.PauseInput)
+            {
+                bool targetStatus = !_inGameUIManager.PausePanel.activeSelf;
+                _inGameUIManager.SetPause(targetStatus);
+            }
+
+            if (_inGameUIManager.PausePanel.activeSelf)
+            {
                 return;
             }
 

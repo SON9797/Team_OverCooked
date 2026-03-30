@@ -1,4 +1,5 @@
 using Overcooked.Interfaces;
+using OverCooked;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -13,6 +14,7 @@ namespace Overcooked
         private readonly IUIManager _uiManager;
         private readonly ITimerService _timerService;
         private readonly IRecipeService _recipeService;
+        private readonly IScoreService _scoreService;
 
         private readonly LevelData _currentLevelData;
 
@@ -23,17 +25,21 @@ namespace Overcooked
             IUIManager uiManager,
             ITimerService timerService,
             LevelData levelData,
-            IRecipeService recipeService)
+            IRecipeService recipeService,
+            IScoreService scoreService)
         {
             _uiManager = uiManager;
             _timerService = timerService;
             _currentLevelData = levelData;
             _recipeService = recipeService;
+            _scoreService = scoreService;
         }
 
         public void Start()
         {
             IsUIRunning = true;
+
+            _scoreService.ResetScore();
 
             _uiManager.SetupLevelUI(_currentLevelData);
 
@@ -117,7 +123,14 @@ namespace Overcooked
 
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
 
-            _uiManager.SetPanelActive(_uiManager.EndingPanel, true);
+            if (_uiManager is InGameUIManager concreteUIManager && _scoreService is ScoreManager concreteScoreManager)
+            {
+                concreteUIManager.UpdateEndingUI(concreteScoreManager);
+            }
+            else
+            {
+                _uiManager.SetPanelActive(_uiManager.EndingPanel, true);
+            }
         }
     }
 }
