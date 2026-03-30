@@ -1,3 +1,4 @@
+using OverCooked;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,8 +10,8 @@ namespace Overcooked.Interfaces
     public interface IScoreService
     {
         int CurrentScore { get; }
-        void AddScore(int amount);
         Action<int> OnScoreChanged { get; set; }
+        void ResetScore();
     }
 
     // 시간 관련
@@ -74,6 +75,7 @@ namespace Overcooked.Interfaces
         void UpdateComboUI(int combo);
         void ShowTipEffect(int tip);
         void UpdateScoreText(int currentScore);
+        void UpdateEndingUI(ScoreManager scoreManager);
 
         GameObject LoadingPanel { get; }
         GameObject TutorialPanel { get; }

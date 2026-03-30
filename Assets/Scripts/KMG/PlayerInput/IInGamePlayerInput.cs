@@ -20,7 +20,7 @@ namespace Overcooked
         bool InteractionIngredientInput { get; }
         bool InteractionCookInput { get; }
 
-
+        bool PauseInput { get; }
         
     }
 }

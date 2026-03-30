@@ -11,7 +11,6 @@ public class GameLifetimeScope : LifetimeScope
 {
     [SerializeField] private PlayerInput _playerMovement;
     [SerializeField] private List<RecipeData> _recipeList;
-    [SerializeField] private LevelManager _levelManager;
     [SerializeField] private UIManager _uiManager;
     [SerializeField] private LevelData _currentLevelData;
     [SerializeField] private PlayerSwitchManager _playerSwitchManager;
@@ -36,12 +35,6 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.Register<TimerManager>(Lifetime.Singleton)
                .AsImplementedInterfaces();
-
-        if (_levelManager != null)
-        {
-            builder.RegisterComponent(_levelManager)
-                   .AsImplementedInterfaces();
-        }
 
         if (_uiManager != null)
         {
@@ -90,6 +83,9 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.Register<PlateFactory>(Lifetime.Singleton)
        .WithParameter<GameObject>(_platePrefab);
+
+        // Pause Menu 버튼 관련
+        builder.RegisterComponentInHierarchy<PauseMenuContorller>();
 
     }
 }

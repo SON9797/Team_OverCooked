@@ -27,6 +27,7 @@ namespace Overcooked
             }
         }
 
+        public bool PauseInput => Input.GetKeyDown(KeyCode.Escape);
         public bool DashInput => Input.GetKeyDown(KeyCode.LeftAlt);
         public bool SwitchingInput => Input.GetKeyDown(KeyCode.LeftShift);
 
