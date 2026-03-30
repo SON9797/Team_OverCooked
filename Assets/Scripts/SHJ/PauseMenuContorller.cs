@@ -17,12 +17,12 @@ namespace OverCooked
         [SerializeField] private Button _restartButton;
         [SerializeField] private Button _exitButton;
 
-        private UIManager _uiManager;
+        private InGameUIManager _inGameUIManager;
 
         [Inject]
-        public void Construct(UIManager uiManager)
+        public void Construct(InGameUIManager inGameUIManager)
         {
-            _uiManager = uiManager;
+            _inGameUIManager = inGameUIManager;
         }
 
         private void Start()
@@ -45,7 +45,7 @@ namespace OverCooked
 
         public void OnClickResume()
         {
-            _uiManager.SetPause(false);
+            _inGameUIManager.SetPause(false);
         }
 
         public void OnClickRestart()

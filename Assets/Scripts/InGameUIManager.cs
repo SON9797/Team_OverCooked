@@ -1,3 +1,4 @@
+using Overcooked;
 using Overcooked.Interfaces;
 using System.Collections;
 using TMPro;
@@ -7,9 +8,9 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using VContainer;
 
-namespace Overcooked
+namespace OverCooked
 {
-    public class UIManager : MonoBehaviour, IUIManager
+    public class InGameUIManager : MonoBehaviour, IUIManager
     {
         [Header("세팅")]
         [SerializeField] private GameObject _loadingPanel;
@@ -69,6 +70,9 @@ namespace Overcooked
         [SerializeField] private TextMeshProUGUI _totalFailOrderText;
         [SerializeField] private TextMeshProUGUI _totalScoreText;
 
+        [Header("엔딩 별 연출")]
+        [SerializeField] private EndingStarsContorller _endingStarsContorller;
+
         private bool _isHourglassShaking = false;
         private float _shakeSpeed = 20f;
         private float _shakeAmount = 15f;
@@ -80,10 +84,10 @@ namespace Overcooked
         public GameObject StartPanel => _startPanel;
         public GameObject CoinPanel => _coinPanel;
         public GameObject TimerPanel => _timerPanel;
-        public GameObject EndingPanel => _endingPanel;        
+        public GameObject EndingPanel => _endingPanel;
         public GameObject TimesUpPanel => _timesUpPanel;
 
-     
+
         private void Update()
         {
             if (_isHourglassShaking && _hourglassIcon != null)
@@ -95,7 +99,7 @@ namespace Overcooked
             {
                 _hourglassIcon.localRotation = Quaternion.identity;
             }
-            
+
         }
 
         public void SetPanelActive(GameObject panel, bool isActive)
@@ -105,7 +109,7 @@ namespace Overcooked
                 panel.SetActive(isActive);
             }
         }
- 
+
         public void StartManagerCoroutine(System.Collections.IEnumerator routine)
         {
             StartCoroutine(routine);
@@ -315,7 +319,7 @@ namespace Overcooked
             // 페널티
             //if (_totalFailOrderText != null)
             //{
-                //_totalTipText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
+            //_totalTipText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
             //}
 
             if (_totalScoreText != null)
@@ -323,7 +327,10 @@ namespace Overcooked
                 _totalScoreText.text = scoreManager.CurrentScore.ToString();
             }
 
-            SetPanelActive(EndingPanel, true);
+            if (_endingStarsContorller != null)
+            {
+                _endingStarsContorller.ShowEndingStarEffect(scoreManager.CurrentScore);
+            }
         }
 
         public void ShowTipEffect(int tipAmount)
@@ -335,7 +342,7 @@ namespace Overcooked
 
             if (_tipCoroutine != null)
             {
-                StopCoroutine( _tipCoroutine);
+                StopCoroutine(_tipCoroutine);
             }
 
             _tipCoroutine = StartCoroutine(TipFadeOutCoroutine(tipAmount));

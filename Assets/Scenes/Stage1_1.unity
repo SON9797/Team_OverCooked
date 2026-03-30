@@ -46599,7 +46599,7 @@ MonoBehaviour:
   autoInjectGameObjects:
   - {fileID: 708332613}
   _recipeList: []
-  _uiManager: {fileID: 2134727630}
+  _inGameUiManager: {fileID: 2134727632}
   _currentLevelData: {fileID: 11400000, guid: 85929ba3d3cab9243b12d41062028c67, type: 2}
   _playerSwitchManager: {fileID: 1619777137}
   _player1Injector: {fileID: 121797491}
@@ -47004,6 +47004,11 @@ MonoBehaviour:
   _chopTimeMax: 3
   _progressBar: {fileID: 540745286}
   _canvasObj: {fileID: 661604544}
+--- !u!4 &157460228 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3976803190100525783, guid: 10b4364f9509c61498290323041cff1d, type: 3}
+  m_PrefabInstance: {fileID: 7333969834650031134}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &176782436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48762,7 +48767,7 @@ GameObject:
   - component: {fileID: 380211117}
   - component: {fileID: 380211116}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Timer_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55413,6 +55418,7 @@ GameObject:
   - component: {fileID: 1640267618}
   - component: {fileID: 1640267620}
   - component: {fileID: 1640267619}
+  - component: {fileID: 1640267621}
   m_Layer: 5
   m_Name: EndingPanel
   m_TagString: Untagged
@@ -55484,6 +55490,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640267617}
   m_CullTransparentMesh: 1
+--- !u!114 &1640267621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640267617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a2640be957bbf747b86c764d9942188, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oneStarImage: {fileID: 694689656}
+  twoStarImage: {fileID: 400514843}
+  threeStarImage: {fileID: 1216498617}
+  dealyBetweenStars: 0.5
+  popAnimSpeed: 3
+  startScaleMultiplier: 1.5
 --- !u!1 &1659664260
 GameObject:
   m_ObjectHideFlags: 0
@@ -58210,7 +58234,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2134727631}
-  - component: {fileID: 2134727630}
+  - component: {fileID: 2134727632}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -58218,7 +58242,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2134727630
+--- !u!4 &2134727631
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2134727629}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1021.18, y: 484.90976, z: 153.8197}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2134727632
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -58227,7 +58266,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2134727629}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c44e49e5d0099b94f9245b04864df610, type: 3}
+  m_Script: {fileID: 11500000, guid: 803429f21d0cd7c46aae764b7300b5b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _loadingPanel: {fileID: 192451053}
@@ -58242,7 +58281,7 @@ MonoBehaviour:
   _loadingLevelText: {fileID: 15374401}
   _endingLevelText: {fileID: 221471775}
   _pauseLevelText: {fileID: 253257927}
-  _loadingImage: {fileID: 1278885589}
+  _loadingImage: {fileID: 263086945}
   _tutorialImage: {fileID: 248197651}
   _timerText: {fileID: 380211116}
   _oneStarText: {fileID: 339209443}
@@ -58274,21 +58313,7 @@ MonoBehaviour:
   _totalTipText: {fileID: 648898645}
   _totalFailOrderText: {fileID: 620347628}
   _totalScoreText: {fileID: 590424877}
---- !u!4 &2134727631
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2134727629}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1021.18, y: 484.90976, z: 153.8197}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  _endingStarsContorller: {fileID: 1640267621}
 --- !u!1001 &2878757940266531939
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58458,7 +58483,7 @@ PrefabInstance:
     - target: {fileID: 8132839006993589954, guid: 10b4364f9509c61498290323041cff1d, type: 3}
       propertyPath: _snapPoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 157460228}
     - target: {fileID: 8375827413480192382, guid: 10b4364f9509c61498290323041cff1d, type: 3}
       propertyPath: m_Name
       value: workstation_plate_return

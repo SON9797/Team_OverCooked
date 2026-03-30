@@ -11,7 +11,7 @@ public class GameLifetimeScope : LifetimeScope
 {
     [SerializeField] private PlayerInput _playerMovement;
     [SerializeField] private List<RecipeData> _recipeList;
-    [SerializeField] private UIManager _uiManager;
+    [SerializeField] private InGameUIManager _inGameUiManager;
     [SerializeField] private LevelData _currentLevelData;
     [SerializeField] private PlayerSwitchManager _playerSwitchManager;
 
@@ -36,9 +36,9 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<TimerManager>(Lifetime.Singleton)
                .AsImplementedInterfaces();
 
-        if (_uiManager != null)
+        if (_inGameUiManager != null)
         {
-            builder.RegisterComponent(_uiManager)
+            builder.RegisterComponent(_inGameUiManager)
                    .AsImplementedInterfaces()
                    .AsSelf();
         }
@@ -86,6 +86,9 @@ public class GameLifetimeScope : LifetimeScope
 
         // Pause Menu 버튼 관련
         builder.RegisterComponentInHierarchy<PauseMenuContorller>();
+
+        // Ending Panel 별 연출 관련
+        builder.RegisterComponentInHierarchy<EndingStarsContorller>();
 
     }
 }

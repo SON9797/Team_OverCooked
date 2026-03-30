@@ -1,4 +1,5 @@
 using Overcooked.Interfaces;
+using OverCooked;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -122,7 +123,7 @@ namespace Overcooked
 
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
 
-            if (_uiManager is UIManager concreteUIManager && _scoreService is ScoreManager concreteScoreManager)
+            if (_uiManager is InGameUIManager concreteUIManager && _scoreService is ScoreManager concreteScoreManager)
             {
                 concreteUIManager.UpdateEndingUI(concreteScoreManager);
             }
