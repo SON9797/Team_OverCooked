@@ -9,14 +9,13 @@ public class MouceHoverChangeImg : MonoBehaviour, IPointerEnterHandler, IPointer
 {
     [SerializeField] Sprite normalImg;
     [SerializeField] Sprite hoverImg;
-    [SerializeField] GameObject menu;
+    
 
     Image img;
     private void Start()
     {
         img = GetComponent<Image>();
         img.sprite = normalImg;
-        menu.SetActive(false);
     }
     
         
@@ -24,12 +23,10 @@ public class MouceHoverChangeImg : MonoBehaviour, IPointerEnterHandler, IPointer
     public void OnPointerEnter(PointerEventData eventData)
     {
         img.sprite = hoverImg;
-        menu.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         img.sprite = normalImg;
-        menu.SetActive(false);
     }
 }
