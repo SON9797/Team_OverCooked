@@ -32,6 +32,7 @@ namespace Overcooked.Interfaces
         IReadOnlyList<RecipeData> CurrentOrders { get; }
         void AddRandomOrder();
         void CompleteOrder(int orderIndex);
+        void RemoveFailedOrder(RecipeData failedData);
         Action<RecipeData> OnOrderAdded { get; set; }
         Action<int> OnOrderCompleted { get; set; }
 

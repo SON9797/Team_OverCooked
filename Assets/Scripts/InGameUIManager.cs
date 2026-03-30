@@ -316,11 +316,11 @@ namespace OverCooked
                 _totalTipText.text = scoreManager.TotalTips.ToString();
             }
 
-            // Æä³ÎÆ¼
-            //if (_totalFailOrderText != null)
-            //{
-            //_totalTipText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
-            //}
+            
+            if (_totalFailOrderText != null)
+            {
+                _totalFailOrderText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
+            }
 
             if (_totalScoreText != null)
             {
@@ -391,5 +391,6 @@ namespace OverCooked
             Cursor.visible = isPause;
             Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
         }
+
     }
 }

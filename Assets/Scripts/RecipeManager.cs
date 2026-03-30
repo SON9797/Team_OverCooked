@@ -122,9 +122,15 @@ namespace Overcooked
         {
             if (orderIndex >= 0 && orderIndex < _currentOrders.Count)
             {
-                // 4. 주문 처리 완료
-                _currentOrders.RemoveAt(orderIndex);
                 OnOrderCompleted?.Invoke(orderIndex);
+            }
+        }
+
+        public void RemoveCompletedOrder(RecipeData recipeData)
+        {
+            if (_currentOrders.Contains(recipeData))
+            {
+                _currentOrders.Remove(recipeData);
 
                 AddRandomOrder();
             }
@@ -174,6 +180,14 @@ namespace Overcooked
             }
 
             return null;
+        }
+
+        public void RemoveFailedOrder(RecipeData failedData)
+        {
+            if (_currentOrders.Contains(failedData))
+            {
+                _currentOrders.Remove(failedData);
+            }
         }
     }
 }

@@ -29,6 +29,9 @@ namespace Overcooked
         public int TwoStar;
         public int ThreeStar;
 
+        [Header("레시피 대기 시간")]
+        public int recipeTimer = 120;
+
         [Header("레시피 설정")]
         public List<RecipeData> Recipes;
     }
