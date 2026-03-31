@@ -51,6 +51,8 @@ public class PlateReSpawn : ItemPlaceAndTake
             Collider[] colliders = Physics.OverlapSphere(spawnPosition, 0.5f);
             foreach (var col in colliders)
             {
+                if (col.gameObject == this.gameObject) continue;
+
                 ItemPlaceAndTake counter = col.GetComponentInParent<ItemPlaceAndTake>();
                 if (counter != null)
                 {
@@ -107,30 +109,42 @@ public class PlateReSpawn : ItemPlaceAndTake
         // plate가 제거되면 totalPlates가 줄어들어 Update에서 자동으로 리스폰 트리거
     }
 
+    public new bool HasItem => _spawnedPlate.Count > 0;
+
     public override GameObject TakeItem()
     {
         GameObject topPlate = GetTopPlate();
+
         if (topPlate != null)
         {
+            if (topPlate.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            {
+                rb.isKinematic = true;
+                rb.velocity = Vector3.zero;
+            }
             topPlate.transform.SetParent(null);
 
-            _checkedOutPlates.Add(topPlate);
+            // 3. 리스폰 관리를 위해 체크아웃 리스트에 추가
+            if (!_checkedOutPlates.Contains(topPlate))
+            {
+                _checkedOutPlates.Add(topPlate);
+            }
 
+            Debug.Log($"[성공] {topPlate.name}을 손으로 넘겨줍니다.");
+            return topPlate;
         }
-        return topPlate;
+
+        return null;
     }
 
     public GameObject GetTopPlate()
     {
-        if (_spawnedPlate.Count == 0)
-        {
-            Debug.Log("가져갈 접시가 없습니다!");
-            return null;
-        }
+        if (_spawnedPlate.Count == 0) return null;
 
         int lastIndex = _spawnedPlate.Count - 1;
         GameObject topPlate = _spawnedPlate[lastIndex];
         _spawnedPlate.RemoveAt(lastIndex);
+
         return topPlate;
     }
 

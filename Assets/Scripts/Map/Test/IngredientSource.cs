@@ -18,25 +18,23 @@ public class IngredientSource : MonoBehaviour
 
     public GameObject SpawnIngredient()
     {
-        if (_animator != null)
+        if (_animator != null && _animator.GetBool("Open"))
         {
-            bool isOpen = _animator.GetBool("Open");
+            if (_placeAndTake != null && _placeAndTake.HasItem) return null;
 
-            // 상자가 열려 있다면(isOpen == true) 재료를 생성하지 않고 null을 반환합니다.
-            if (isOpen)
+            GameObject newIng = Instantiate(_ingredientPrefab);
+
+            // [추가] 생성된 아이템의 레이어를 플레이어가 잡을 수 있는 'Default'로 강제 설정
+            newIng.layer = LayerMask.NameToLayer("Default");
+
+            // 만약 자식 객체들도 있다면 모두 바꿔줘야 합니다.
+            foreach (Transform child in newIng.GetComponentsInChildren<Transform>())
             {
-                GameObject newIng = Instantiate(_ingredientPrefab);
-                return newIng;
+                child.gameObject.layer = LayerMask.NameToLayer("Default");
             }
-            if (_placeAndTake != null && _placeAndTake.HasItem)
-            {
-                Debug.Log("상자 위에 물건이 있어 재료를 꺼낼 수 없습니다.");
-                return null;
-            }
+
+            return newIng;
         }
-        Debug.Log($"{gameObject.name}이(가) 닫혀 있어서 재료를 꺼낼 수 없습니다.");
         return null;
-        // 상자가 닫혀 있을 때만 재료 생성
-
     }
 }

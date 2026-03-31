@@ -1,3 +1,5 @@
+using Overcooked;
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +11,8 @@ public class StuffBoxOpen : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] Transform _rayPoint;
     [SerializeField] private float _interactionDistance = 2.0f; // 상호작용 가능 거리
+
+    [SerializeField] private PlayerItemController _playerController;
 
     private ItemPlaceAndTake _placeAndTakeComponent;
 
@@ -35,16 +39,24 @@ public class StuffBoxOpen : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            CheckForBox();
+            if (_playerController != null && _playerController.GetCurrentHeldObject() == null)
+            {
+                CheckForBox();
+            }
         }
     }
     private void CheckForBox()
     {
-        if (_rayPoint == null)
+        if (_rayPoint == null || _placeAndTakeComponent == null)
         {
             return;
         }
-        
+
+        if (_placeAndTakeComponent.HasItem)
+        {
+            return;
+        }
+
         RaycastHit hit;
         
         if (Physics.Raycast(_rayPoint.position, _rayPoint.forward, out hit, _interactionDistance))
@@ -56,4 +68,5 @@ public class StuffBoxOpen : MonoBehaviour
             }
         }
     }
+
 }
