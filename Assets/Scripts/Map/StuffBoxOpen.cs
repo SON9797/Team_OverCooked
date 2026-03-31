@@ -12,7 +12,6 @@ public class StuffBoxOpen : MonoBehaviour
     [SerializeField] Transform _rayPoint;
     [SerializeField] private float _interactionDistance = 2.0f; // 상호작용 가능 거리
 
-    [SerializeField] private PlayerItemController _playerController;
 
     private ItemPlaceAndTake _placeAndTakeComponent;
 
