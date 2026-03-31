@@ -807,5 +807,16 @@ namespace Overcooked
 
         //추가
         public GameObject GetCurrentHeldObject() => _currentHeldObject;
+
+        public bool IsSelectedPlayer()
+        {
+            return _inputInjector != null && _inputInjector.IsSelected;
+        }
+
+        // 2. 상자가 플레이어의 레이 시작 지점을 알 수 있게 전달
+        public Transform GetRayPoint()
+        {
+            return _rayPoint;
+        }
     }
 }

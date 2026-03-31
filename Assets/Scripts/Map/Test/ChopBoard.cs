@@ -65,20 +65,13 @@ public class ChopBoard : ItemPlaceAndTake
             Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
 
             // (중복 실행 방지)
-            if (!ingredient.CanStatusAdd(CookBehaivior.chop))
+            if (ingredient == null || !ingredient.CanStatusAdd(CookBehaivior.chop))
             {
-                _isChopping = false;
-                _currentChopProgress = 0f;
+                StopChopping();
                 return;
             }
 
             _currentChopProgress += Time.deltaTime;
-
-            if (_progressBar != null)
-            {
-                _progressBar.value = _currentChopProgress / _chopTimeMax;
-            }
-
 
             if (_progressBar != null)
             {
@@ -92,6 +85,14 @@ public class ChopBoard : ItemPlaceAndTake
         }
     
     }
+
+    private void StopChopping()
+    {
+        _isChopping = false;
+        _currentChopProgress = 0f;
+        if (_canvasObj != null) _canvasObj.SetActive(false);
+    }
+
     private void FinishChop()
     {
         Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
