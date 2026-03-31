@@ -8,9 +8,13 @@ public class ItemPlaceAndTake : MonoBehaviour
     public Transform _snapPoint; // 재료 위치
     protected GameObject _onCounterItem; // 현재 조리대에 놓인 아이템
 
+    public bool HasItem => _onCounterItem != null;
 
-    public virtual bool CanPlaceItem() => _onCounterItem == null;
-
+    public virtual bool CanPlaceItem()
+    {
+        // 상자가 열려있어도 위에 아이템이 없으면 올려놓을 수 있도록 변경
+        return _onCounterItem == null;
+    }
     private void Start()
     {
         // 이미 에디터에서 할당했다면 통과, 비어있다면 주변 탐색
@@ -22,14 +26,35 @@ public class ItemPlaceAndTake : MonoBehaviour
 
     public virtual bool PlaceItem(GameObject item)
     {
+        if (HasItem || item == null || _snapPoint == null)
+        {
+            return false;
+        }
         _onCounterItem = item;
-        item.transform.SetParent(_snapPoint);
-        item.transform.localPosition = Vector3.zero;
-        item.transform.localRotation = Quaternion.identity;
 
         if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
         {
             rb.isKinematic = true;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+        }
+        //  부모 설정 (Hierarchy에서 상자 밑으로 들어감)
+        item.transform.SetParent(_snapPoint);
+        item.transform.localPosition = Vector3.zero;
+        item.transform.localRotation = Quaternion.identity;
+
+        // 레이어 분리 (매우 중요)
+        // 상자 본체: 플레이어 레이를 통과시킴
+        this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+        // 아이템: 플레이어 레이에 맞도록 설정
+        item.gameObject.layer = LayerMask.NameToLayer("Default");
+
+        
+        foreach (var col in item.GetComponentsInChildren<Collider>())
+        {
+            col.enabled = true;
         }
 
         return true;
@@ -54,45 +79,42 @@ public class ItemPlaceAndTake : MonoBehaviour
     {
         if (_onCounterItem == null)
         {
-            CheckExistingItem();
-        }
-        if (_onCounterItem == null)
-        {
             return null;
         }
-            GameObject item = _onCounterItem;
+        GameObject item = _onCounterItem;
         _onCounterItem = null;
+
+        // 1. 부모 관계 해제 (이제 플레이어가 가져갈 것이므로)
+        item.transform.SetParent(null);
+
+        // 2. 상자의 레이어를 다시 Default로 복구 (그래야 나중에 다시 아이템을 놓을 수 있음)
+        this.gameObject.layer = LayerMask.NameToLayer("Default");
+
         return item;
     }
 
-    //처음 접시 체크
+
+
     private void CheckExistingItem()
     {
         Collider[] colliders = Physics.OverlapSphere(_snapPoint.position, 0.3f);
 
         foreach (var col in colliders)
         {
-            if (col.gameObject == this.gameObject) continue;
-
+            if (col.gameObject == this.gameObject)
+            {
+                continue;
+            }
             Dish dish = col.GetComponentInParent<Dish>();
             Ingredient ing = col.GetComponentInParent<Ingredient>();
 
+            // 물리 및 부모 설정 강제 동기화
             if (dish != null || ing != null)
             {
-                // 실제 스크립트가 붙은 최상단 오브젝트를 타겟으로 잡음
-                _onCounterItem = dish != null ? dish.gameObject : ing.gameObject;
+                GameObject target = dish != null ? dish.gameObject : ing.gameObject;
 
-                // 물리 및 부모 설정 강제 동기화
-                if (_onCounterItem.TryGetComponent<Rigidbody>(out Rigidbody rb))
-                {
-                    rb.isKinematic = true;
-                }
-
-                _onCounterItem.transform.SetParent(_snapPoint);
-                _onCounterItem.transform.localPosition = Vector3.zero;
-                _onCounterItem.transform.localRotation = Quaternion.identity;
-
-                Debug.Log($"{gameObject.name}가 주변에서 {_onCounterItem.name}을 찾아 등록했습니다.");
+                // 이미 다른 곳의 자식이라면 무시하거나 새로 설정
+                PlaceItem(target);
                 break;
             }
         }

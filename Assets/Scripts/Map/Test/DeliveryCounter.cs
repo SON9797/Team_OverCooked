@@ -52,8 +52,12 @@ public class DeliveryCounter : ItemPlaceAndTake
 
             return true;
         }
-
-        return false;
+        else
+        {
+            Debug.Log("접시만 있음 제출실패");
+            return false;
+        }
+            
     }
 
 

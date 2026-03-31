@@ -58,6 +58,7 @@ namespace Overcooked
             _animationController = GetComponent<PlayerAnimationController>();
         }
 
+        //수정
         public void TryInteractionIngredient()
         {
             if (_inputInjector != null && !_inputInjector.IsSelected)
@@ -84,6 +85,23 @@ namespace Overcooked
                     return;
                 }
 
+                //추가
+                PlateReSpawn respawn = target.GetComponentInParent<PlateReSpawn>();
+                if (respawn != null && respawn.HasItem)
+                {
+                    TryPickUpFromCounter(respawn); // 여기서 TakeItem()이 실행됨
+                    return;
+                }
+
+                // 아이템박스테스트 - 조리대 위 아이템 집기
+                ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
+                if (counter != null && counter.HasItem)
+                {
+                    // 상자 위에 아이템이 있다면 무조건 '카운터에서 집기' 로직 실행
+                    TryPickUpFromCounter(counter);
+                    return;
+                }
+
                 // 아이템박스테스트 - 박스에서 아이템 꺼내기
                 IngredientSource source = target.GetComponentInParent<IngredientSource>();
                 if (source != null)
@@ -92,13 +110,7 @@ namespace Overcooked
                     return;
                 }
 
-                // 아이템박스테스트 - 조리대 위 아이템 집기
-                ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
-                if (counter != null && !counter.CanPlaceItem())
-                {
-                    TryPickUpFromCounter(counter);
-                    return;
-                }
+                
 
                 // 바닥이나 월드에 놓인 재료/접시 직접 줍기
                 TryPickUpDirectObject(target);
@@ -127,6 +139,9 @@ namespace Overcooked
                             TryPlaceHeldObject(counter);
                             return;
                         }
+                        //추가
+                        Debug.Log("조리대가 꽉 찼거나 상호작용 불가 상태입니다.");
+                        return;
                     }
                 }
 
@@ -217,6 +232,7 @@ namespace Overcooked
             transform.forward = dir.normalized;
         }
 
+        //수정
         private Transform FindClosestInteractTarget()
         {
             Collider[] hits = Physics.OverlapSphere(_rayPoint.position, _interactionDistance, _interactionLayer);
@@ -248,9 +264,19 @@ namespace Overcooked
 
                 Transform t = col.transform;
 
+                bool isPickable = t.GetComponentInParent<Ingredient>() != null ||
+                          t.GetComponentInParent<Dish>() != null;
+
+                // 만약 아이템이 아니라 상자라면 기존 로직대로 진행
+                bool isBox = t.GetComponentInParent<ItemPlaceAndTake>() != null ||
+                             t.GetComponentInParent<IngredientSource>() != null;
+
+                if (!isPickable && !isBox) continue;
+
                 bool isInteractable =
                     t.GetComponentInParent<IngredientSource>() != null ||
                     t.GetComponentInParent<ItemPlaceAndTake>() != null ||
+                    t.GetComponentInParent<PlateReSpawn>() != null ||
                     t.GetComponentInParent<ChopBoard>() != null ||
                     t.GetComponentInParent<Ingredient>() != null ||
                     t.GetComponentInParent<Dish>() != null;
@@ -570,6 +596,7 @@ namespace Overcooked
             SetCurrentHeldObject(newObject);
         }
 
+        //수정
         private void TryPickUpFromCounter(ItemPlaceAndTake counter)
         {
             // 아이템박스테스트 - 조리대에서 아이템 가져오기
@@ -580,6 +607,8 @@ namespace Overcooked
             }
 
             SetCurrentHeldObject(takeObject);
+            Debug.Log($"{takeObject.name}을(를) 상자에서 다시 집었습니다.");
+        
         }
 
         private void TryPickUpDirectObject(Transform target)
@@ -615,16 +644,29 @@ namespace Overcooked
             return null;
         }
 
+        //수정
         private void TryPlaceHeldObject(ItemPlaceAndTake counter)
         {
             if (_currentHeldObject == null)
             {
                 return;
             }
+            GameObject itemToPlace = _currentHeldObject;
 
-            PrepareHeldObjectForPlace();
-            counter.PlaceItem(_currentHeldObject);
-            ClearCurrentHeldObject();
+            itemToPlace.transform.SetParent(null);
+
+            // 상자에게 아이템을 놓으라고 명령.
+            if (counter.PlaceItem(_currentHeldObject))
+            {
+                // 성공시 플레이어 변수 초기화
+                ClearCurrentHeldObject();
+                Debug.Log($"{counter.name}에 아이템 자식 설정 성공");
+            }
+            else
+            {
+                // 실패시 다시 집어듬
+                SetCurrentHeldObject(itemToPlace);
+            }
         }
 
         private void TryDropHeldObject()
@@ -762,5 +804,8 @@ namespace Overcooked
                 Gizmos.DrawWireSphere(_holdPoint.position + forward * _throwDistance, 0.15f);
             }
         }
+
+        //추가
+        public GameObject GetCurrentHeldObject() => _currentHeldObject;
     }
 }
