@@ -40,6 +40,21 @@ namespace Overcooked
         [Header("던지기 포물선 높이")]
         [SerializeField] private float _throwArcHeight = 1.2f;
 
+        [Header("플레이어 받기 판정 시간")]
+        [SerializeField] private float _catchWindow = 0.35f;
+
+        [Header("플레이어 받기 반경")]
+        [SerializeField] private float _catchRadius = 1.0f;
+
+        [Header("플레이어 받기 판정 레이어")]
+        [SerializeField] private LayerMask _playerCatchLayer = ~0;
+
+        [Header("착지 상호작용 반경")]
+        [SerializeField] private float _landingCheckRadius = 0.45f;
+
+        [Header("착지 상호작용 레이어")]
+        [SerializeField] private LayerMask _landingInteractionLayer = ~0;
+
         private GameObject _currentHeldObject;
         private Ingredient _currentIngredient;
         private Rigidbody _currentHeldRb;
@@ -58,7 +73,7 @@ namespace Overcooked
             _animationController = GetComponent<PlayerAnimationController>();
         }
 
-        //수정
+        
         public void TryInteractionIngredient()
         {
             if (_inputInjector != null && !_inputInjector.IsSelected)
@@ -85,7 +100,7 @@ namespace Overcooked
                     return;
                 }
 
-                //추가
+                
                 PlateReSpawn respawn = target.GetComponentInParent<PlateReSpawn>();
                 if (respawn != null && respawn.HasItem)
                 {
@@ -109,8 +124,6 @@ namespace Overcooked
                     TryPickUpIngredientFromSource(source);
                     return;
                 }
-
-                
 
                 // 바닥이나 월드에 놓인 재료/접시 직접 줍기
                 TryPickUpDirectObject(target);
@@ -139,6 +152,7 @@ namespace Overcooked
                             TryPlaceHeldObject(counter);
                             return;
                         }
+
                         //추가
                         Debug.Log("조리대가 꽉 찼거나 상호작용 불가 상태입니다.");
                         return;
@@ -210,8 +224,20 @@ namespace Overcooked
                 return;
             }
 
-            // 아이템던지기 - 플레이어 우선, 그다음 조리대/선반, 마지막은 바닥
-            ResolveThrow();
+            if (_holdPoint == null)
+            {
+                return;
+            }
+
+            GameObject throwObject = _currentHeldObject;
+            Rigidbody throwRb = _currentHeldRb;
+            Collider[] throwCols = _currentHeldCols;
+
+            throwObject.transform.SetParent(null);
+            ClearCurrentHeldObject();
+
+            // 아이템던지기 - 던질 때 미리 목표를 확정하지 않고 실제 비행 후 처리
+            StartCoroutine(CoThrowObject(throwObject, throwRb, throwCols));
         }
 
         public bool CanReceiveThrownItem()
@@ -232,7 +258,21 @@ namespace Overcooked
             transform.forward = dir.normalized;
         }
 
-        //수정
+        
+        public void FaceThrowTarget(Vector3 targetPosition)
+        {
+            Vector3 dir = targetPosition - transform.position;
+            dir.y = 0f;
+
+            if (dir.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            transform.forward = dir.normalized;
+        }
+
+        
         private Transform FindClosestInteractTarget()
         {
             Collider[] hits = Physics.OverlapSphere(_rayPoint.position, _interactionDistance, _interactionLayer);
@@ -265,7 +305,7 @@ namespace Overcooked
                 Transform t = col.transform;
 
                 bool isPickable = t.GetComponentInParent<Ingredient>() != null ||
-                          t.GetComponentInParent<Dish>() != null;
+                                  t.GetComponentInParent<Dish>() != null;
 
                 // 만약 아이템이 아니라 상자라면 기존 로직대로 진행
                 bool isBox = t.GetComponentInParent<ItemPlaceAndTake>() != null ||
@@ -314,58 +354,185 @@ namespace Overcooked
             return bestTarget;
         }
 
-        private void ResolveThrow()
+        
+        private IEnumerator CoThrowObject(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols)
         {
-            Vector3 origin = _holdPoint.position;
+            if (throwObject == null || _holdPoint == null)
+            {
+                yield break;
+            }
+
+            _isThrowing = true;
+
+            PrepareThrownObject(throwRb, throwCols);
+
+            Vector3 startPos = _holdPoint.position;
             Vector3 forward = transform.forward;
             forward.y = 0f;
 
             if (forward.sqrMagnitude <= 0.0001f)
             {
-                return;
+                forward = Vector3.forward;
             }
 
             forward.Normalize();
 
-            RaycastHit[] hits = Physics.RaycastAll(origin, forward, _throwDistance, _throwLayer);
-            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            Vector3 endPos = GetThrowFloorPosition(startPos, forward);
 
-            // 아이템던지기 - 경로 내 다른 플레이어가 있으면 자동으로 회전해서 받기
+            float duration = Mathf.Max(0.01f, _throwDuration);
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+
+                Vector3 pos = Vector3.Lerp(startPos, endPos, t);
+                pos.y += Mathf.Sin(t * Mathf.PI) * _throwArcHeight;
+
+                throwObject.transform.position = pos;
+
+                // 던져진 아이템을 바라보는 조건은
+                // 손에 들고있는 아이템이 없고, 던져지고있는 아이템이 일정 거리내로 들어올때
+                if (elapsed <= _catchWindow)
+                {
+                    TryNotifyPlayersToFaceThrow(pos);
+
+                    PlayerItemController catchPlayer = FindCatchPlayer(pos);
+                    if (catchPlayer != null)
+                    {
+                        catchPlayer.SetCurrentHeldObject(throwObject);
+                        _isThrowing = false;
+                        yield break;
+                    }
+                }
+
+                yield return null;
+            }
+
+            throwObject.transform.position = endPos;
+
+            ResolveLandingInteraction(throwObject, throwRb, throwCols, endPos);
+
+            _isThrowing = false;
+        }
+
+        
+        private void TryNotifyPlayersToFaceThrow(Vector3 throwPos)
+        {
+            Collider[] hits = Physics.OverlapSphere(throwPos, _catchRadius, _playerCatchLayer);
+
             for (int i = 0; i < hits.Length; i++)
             {
-                Transform hitTransform = hits[i].transform;
-                if (hitTransform == null)
+                if (hits[i] == null)
                 {
                     continue;
                 }
 
-                PlayerItemController otherPlayer = hitTransform.GetComponentInParent<PlayerItemController>();
-                if (otherPlayer != null && otherPlayer != this && otherPlayer.CanReceiveThrownItem())
-                {
-                    ThrowToPlayer(otherPlayer);
-                    return;
-                }
-            }
-
-            // 아이템던지기 - 경로 내 조리대/선반이 있으면 그곳에 올려두기
-            for (int i = 0; i < hits.Length; i++)
-            {
-                Transform hitTransform = hits[i].transform;
-                if (hitTransform == null)
+                PlayerItemController otherPlayer = hits[i].GetComponentInParent<PlayerItemController>();
+                if (otherPlayer == null || otherPlayer == this)
                 {
                     continue;
                 }
 
-                ItemPlaceAndTake counter = hitTransform.GetComponentInParent<ItemPlaceAndTake>();
-                if (counter != null && counter.CanPlaceItem())
+                // 손에 들고있는 아이템이 없고, 던져지고있는 아이템이 일정 거리내로 들어올때
+                if (otherPlayer.HasIngredient)
                 {
-                    ThrowToCounter(counter);
+                    continue;
+                }
+
+                otherPlayer.FaceThrowTarget(throwPos);
+            }
+        }
+
+        
+        private PlayerItemController FindCatchPlayer(Vector3 throwPos)
+        {
+            Collider[] hits = Physics.OverlapSphere(throwPos, _catchRadius, _playerCatchLayer);
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i] == null)
+                {
+                    continue;
+                }
+
+                PlayerItemController otherPlayer = hits[i].GetComponentInParent<PlayerItemController>();
+                if (otherPlayer == null || otherPlayer == this)
+                {
+                    continue;
+                }
+
+                if (!otherPlayer.CanReceiveThrownItem())
+                {
+                    continue;
+                }
+
+                otherPlayer.FaceThrowTarget(throwPos);
+                return otherPlayer;
+            }
+
+            return null;
+        }
+
+       
+        private void ResolveLandingInteraction(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 landingPos)
+        {
+            Collider[] hits = Physics.OverlapSphere(landingPos, _landingCheckRadius, _landingInteractionLayer);
+
+            // 쓰레기통에 던지게되면 그럼 버려짐.
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i] == null)
+                {
+                    continue;
+                }
+
+                TrashCan trashCan = hits[i].GetComponentInParent<TrashCan>();
+                if (trashCan != null)
+                {
+                    trashCan.PlaceItem(throwObject);
                     return;
                 }
             }
 
-            // 아이템던지기 - 경로 내 아무것도 없으면 바닥으로 던지기
-            ThrowToFloor(GetThrowFloorPosition(origin, forward));
+            // 던져져서 재료가 멈춘위치가 테이블 위면 테이블과 상호작용.
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i] == null)
+                {
+                    continue;
+                }
+
+                ItemPlaceAndTake counter = hits[i].GetComponentInParent<ItemPlaceAndTake>();
+                if (counter == null)
+                {
+                    continue;
+                }
+
+                // 쓰레기통은 위에서 먼저 처리했으므로 제외
+                if (counter is TrashCan)
+                {
+                    continue;
+                }
+
+                // 만약 테이블에 이미 다른 재료가 올라가있다면 그냥 얹혀있음.
+                if (counter.CanPlaceItem())
+                {
+                    if (throwRb != null)
+                    {
+                        throwRb.velocity = Vector3.zero;
+                        throwRb.angularVelocity = Vector3.zero;
+                        throwRb.isKinematic = true;
+                    }
+
+                    SetColliderEnabled(throwCols, true);
+                    counter.PlaceItem(throwObject);
+                    return;
+                }
+            }
+
+            ReleaseObjectToFloor(throwObject, throwRb, throwCols, landingPos);
         }
 
         private Vector3 GetThrowFloorPosition(Vector3 origin, Vector3 forward)
@@ -390,169 +557,6 @@ namespace Overcooked
             }
 
             return _currentHeldObject.GetComponent<Ingredient>() != null;
-        }
-
-        private void ThrowToPlayer(PlayerItemController targetPlayer)
-        {
-            if (_currentHeldObject == null || targetPlayer == null)
-            {
-                return;
-            }
-
-            GameObject throwObject = _currentHeldObject;
-
-            throwObject.transform.SetParent(null);
-
-            // 아이템던지기 - 받는 플레이어가 날아오는 아이템 방향으로 자동 회전
-            targetPlayer.FaceThrowOrigin(transform.position);
-
-            Rigidbody throwRb = _currentHeldRb;
-            Collider[] throwCols = _currentHeldCols;
-
-            ClearCurrentHeldObject();
-            StartCoroutine(CoThrowToPlayer(throwObject, throwRb, throwCols, targetPlayer));
-        }
-
-        private void ThrowToCounter(ItemPlaceAndTake counter)
-        {
-            if (_currentHeldObject == null || counter == null)
-            {
-                return;
-            }
-
-            GameObject throwObject = _currentHeldObject;
-            Rigidbody throwRb = _currentHeldRb;
-            Collider[] throwCols = _currentHeldCols;
-
-            throwObject.transform.SetParent(null);
-            ClearCurrentHeldObject();
-
-            StartCoroutine(CoThrowToCounter(throwObject, throwRb, throwCols, counter));
-        }
-
-        private void ThrowToFloor(Vector3 targetPos)
-        {
-            if (_currentHeldObject == null)
-            {
-                return;
-            }
-
-            GameObject throwObject = _currentHeldObject;
-            Rigidbody throwRb = _currentHeldRb;
-            Collider[] throwCols = _currentHeldCols;
-
-            throwObject.transform.SetParent(null);
-            ClearCurrentHeldObject();
-
-            StartCoroutine(CoThrowToFloor(throwObject, throwRb, throwCols, targetPos));
-        }
-
-        private IEnumerator CoThrowToPlayer(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, PlayerItemController targetPlayer)
-        {
-            if (throwObject == null || targetPlayer == null || targetPlayer._holdPoint == null)
-            {
-                yield break;
-            }
-
-            _isThrowing = true;
-
-            PrepareThrownObject(throwRb, throwCols);
-
-            Vector3 startPos = throwObject.transform.position;
-            Vector3 endPos = targetPlayer._holdPoint.position;
-
-            yield return StartCoroutine(CoMoveAlongArc(throwObject.transform, startPos, endPos));
-
-            if (targetPlayer != null && targetPlayer.CanReceiveThrownItem())
-            {
-                targetPlayer.SetCurrentHeldObject(throwObject);
-            }
-            else
-            {
-                ReleaseObjectToFloor(throwObject, throwRb, throwCols, endPos);
-            }
-
-            _isThrowing = false;
-        }
-
-        private IEnumerator CoThrowToCounter(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, ItemPlaceAndTake counter)
-        {
-            if (throwObject == null || counter == null)
-            {
-                yield break;
-            }
-
-            _isThrowing = true;
-
-            PrepareThrownObject(throwRb, throwCols);
-
-            Vector3 startPos = throwObject.transform.position;
-            Vector3 endPos = counter.transform.position;
-
-            yield return StartCoroutine(CoMoveAlongArc(throwObject.transform, startPos, endPos));
-
-            if (counter != null && counter.CanPlaceItem())
-            {
-                if (throwRb != null)
-                {
-                    throwRb.isKinematic = true;
-                }
-
-                SetColliderEnabled(throwCols, false);
-                counter.PlaceItem(throwObject);
-            }
-            else
-            {
-                ReleaseObjectToFloor(throwObject, throwRb, throwCols, endPos);
-            }
-
-            _isThrowing = false;
-        }
-
-        private IEnumerator CoThrowToFloor(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 targetPos)
-        {
-            if (throwObject == null)
-            {
-                yield break;
-            }
-
-            _isThrowing = true;
-
-            PrepareThrownObject(throwRb, throwCols);
-
-            Vector3 startPos = throwObject.transform.position;
-            Vector3 endPos = targetPos;
-
-            yield return StartCoroutine(CoMoveAlongArc(throwObject.transform, startPos, endPos));
-
-            ReleaseObjectToFloor(throwObject, throwRb, throwCols, endPos);
-
-            _isThrowing = false;
-        }
-
-        private IEnumerator CoMoveAlongArc(Transform target, Vector3 startPos, Vector3 endPos)
-        {
-            if (target == null)
-            {
-                yield break;
-            }
-
-            float duration = Mathf.Max(0.01f, _throwDuration);
-            float elapsed = 0f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-
-                Vector3 pos = Vector3.Lerp(startPos, endPos, t);
-                pos.y += Mathf.Sin(t * Mathf.PI) * _throwArcHeight;
-
-                target.position = pos;
-                yield return null;
-            }
-
-            target.position = endPos;
         }
 
         private void PrepareThrownObject(Rigidbody throwRb, Collider[] throwCols)
@@ -596,7 +600,7 @@ namespace Overcooked
             SetCurrentHeldObject(newObject);
         }
 
-        //수정
+        
         private void TryPickUpFromCounter(ItemPlaceAndTake counter)
         {
             // 아이템박스테스트 - 조리대에서 아이템 가져오기
@@ -608,7 +612,6 @@ namespace Overcooked
 
             SetCurrentHeldObject(takeObject);
             Debug.Log($"{takeObject.name}을(를) 상자에서 다시 집었습니다.");
-        
         }
 
         private void TryPickUpDirectObject(Transform target)
@@ -644,13 +647,14 @@ namespace Overcooked
             return null;
         }
 
-        //수정
+        
         private void TryPlaceHeldObject(ItemPlaceAndTake counter)
         {
             if (_currentHeldObject == null)
             {
                 return;
             }
+
             GameObject itemToPlace = _currentHeldObject;
 
             itemToPlace.transform.SetParent(null);
@@ -803,9 +807,13 @@ namespace Overcooked
                 Gizmos.DrawLine(_holdPoint.position, _holdPoint.position + forward * _throwDistance);
                 Gizmos.DrawWireSphere(_holdPoint.position + forward * _throwDistance, 0.15f);
             }
+
+            
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, _catchRadius);
         }
 
-        //추가
+        
         public GameObject GetCurrentHeldObject() => _currentHeldObject;
 
         public bool IsSelectedPlayer()

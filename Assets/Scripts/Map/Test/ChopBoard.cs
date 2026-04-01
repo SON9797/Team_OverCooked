@@ -6,52 +6,32 @@ using UnityEngine.UI;
 public class ChopBoard : ItemPlaceAndTake
 {
     [SerializeField] private float _chopTimeMax = 3f;
-    [SerializeField] private Slider _progressBar;    
-    [SerializeField] private GameObject _canvasObj;  
+    [SerializeField] private Slider _progressBar;
+    [SerializeField] private GameObject _canvasObj;
 
     private float _currentChopProgress = 0f;
 
     // 현재 다지기가 진행 중인지 나타내는 변수
     private bool _isChopping = false;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         if (_canvasObj != null) _canvasObj.SetActive(false);
     }
 
-    // 플레이어가 컨트롤 키를 눌렀을 때 호출
-    public void ToggleChop()
+    protected override void Update()
     {
-        if (_onCounterItem == null)
-        {
-            _isChopping = false;
-            return;
-        }
+        base.Update();
 
-        Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
-        if (ingredient == null || !ingredient.CanStatusAdd(CookBehaivior.chop))
-        {
-            _isChopping = false;
-            return;
-        }
-
-        // 상태 반전
-        _isChopping = !_isChopping;
-
-        if (_canvasObj != null) _canvasObj.SetActive(_isChopping);
-
-        Debug.Log(_isChopping ? "다지기 시작!" : "다지기 일시정지");
-    }
-
-    private void Update()
-    {
         if (_onCounterItem != null)
         {
             // 매 프레임 아이템이 낙하하지 않도록 물리 설정을 강제 고정
             if (_onCounterItem.TryGetComponent<Rigidbody>(out Rigidbody rb))
             {
                 rb.useGravity = false;   // 중력 끄기
-                rb.isKinematic = true;  // 물리 연산 중단 (고정)
+                rb.isKinematic = true;   // 물리 연산 중단 (고정)
             }
         }
 
@@ -83,7 +63,30 @@ public class ChopBoard : ItemPlaceAndTake
                 FinishChop();
             }
         }
-    
+    }
+
+    // 플레이어가 컨트롤 키를 눌렀을 때 호출
+    public void ToggleChop()
+    {
+        if (_onCounterItem == null)
+        {
+            _isChopping = false;
+            return;
+        }
+
+        Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
+        if (ingredient == null || !ingredient.CanStatusAdd(CookBehaivior.chop))
+        {
+            _isChopping = false;
+            return;
+        }
+
+        // 상태 반전
+        _isChopping = !_isChopping;
+
+        if (_canvasObj != null) _canvasObj.SetActive(_isChopping);
+
+        Debug.Log(_isChopping ? "다지기 시작!" : "다지기 일시정지");
     }
 
     private void StopChopping()
