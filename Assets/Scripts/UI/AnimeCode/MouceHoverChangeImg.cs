@@ -22,11 +22,24 @@ public class MouceHoverChangeImg : MonoBehaviour, IPointerEnterHandler, IPointer
     
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (normalImg == null)
+        {
+            Color c = img.color;
+            c.a = 1f;
+            img.color = c;
+        }
+            
         img.sprite = hoverImg;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (normalImg == null)
+        {
+            Color c = img.color;
+            c.a = 0f;
+            img.color = c;
+        }
         img.sprite = normalImg;
     }
 }

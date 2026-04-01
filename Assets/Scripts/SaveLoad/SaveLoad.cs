@@ -40,6 +40,7 @@ public class SaveLoad : MonoBehaviour
             return;
         }
         instance = this;
+        DontDestroyOnLoad(gameObject);
         SaveData testData = new SaveData();
         testData.currentChapter = 1;
         testData.currentSubChapter = 1;

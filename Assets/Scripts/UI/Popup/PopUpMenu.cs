@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class buttonhoverAnime : MonoBehaviour
+public class PopUpMenu : MonoBehaviour
 {
     void Start()
     {
