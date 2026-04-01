@@ -13,7 +13,7 @@ public class ItemPlaceAndTake : MonoBehaviour
     public virtual bool CanPlaceItem()
     {
         // 상자가 열려있어도 위에 아이템이 없으면 올려놓을 수 있도록 변경
-        return _onCounterItem == null;
+        return true;
     }
     private void Start()
     {
@@ -26,38 +26,70 @@ public class ItemPlaceAndTake : MonoBehaviour
 
     public virtual bool PlaceItem(GameObject item)
     {
-        if (HasItem || item == null || _snapPoint == null)
+        if (HasItem)
         {
+            // 상황 A: 조리대에 접시(Dish)가 있고, 플레이어가 재료(Ingredient)를 들고 올 때
+            if (HasDish(out Dish dishOnCounter))
+            {
+                if (item.TryGetComponent<Ingredient>(out Ingredient incomingIng))
+                {
+                    if (dishOnCounter.AddIngredient(incomingIng))
+                    {
+                        // 합치기 성공: 들어온 아이템은 Dish 내부에서 Destroy됨
+                        return true;
+                    }
+                }
+            }
+            // 상황 B: 조리대에 재료(Ingredient)가 있고, 플레이어가 접시(Dish)를 들고 올 때
+            else if (_onCounterItem.TryGetComponent<Ingredient>(out Ingredient ingOnCounter))
+            {
+                if (item.TryGetComponent<Dish>(out Dish incomingDish))
+                {
+                    if (incomingDish.AddIngredient(ingOnCounter))
+                    {
+                        // 합치기 성공: 조리대에 있던 재료를 접시에 담음
+                        // 조리대 아이템 정보를 새로 들어온 접시로 교체
+                        _onCounterItem = item;
+                        SetupItemTransform(item); // 위치 고정 로직
+                        return true;
+                    }
+                }
+            }
+
+            // 합치기가 불가능하면(둘 다 접시거나, 레시피가 아니거나 등) 놓기 실패
             return false;
         }
-        _onCounterItem = item;
 
+        // 2. 아이템이 없는 경우 (기존 로직 수행)
+        if (item == null || _snapPoint == null) return false;
+
+        _onCounterItem = item;
+        SetupItemTransform(item);
+        return true;
+    }
+
+    // 중복되는 트랜스폼 설정을 별도 함수로 분리
+    private void SetupItemTransform(GameObject item)
+    {
         if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
         {
             rb.isKinematic = true;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-
         }
-        //  부모 설정 (Hierarchy에서 상자 밑으로 들어감)
+
         item.transform.SetParent(_snapPoint);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
 
-        // 레이어 분리 (매우 중요)
-        // 상자 본체: 플레이어 레이를 통과시킴
+        // 레이어 설정
         this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-
-        // 아이템: 플레이어 레이에 맞도록 설정
         item.gameObject.layer = LayerMask.NameToLayer("Default");
 
-        
         foreach (var col in item.GetComponentsInChildren<Collider>())
         {
             col.enabled = true;
         }
-
-        return true;
     }
 
     public bool HasDish(out Dish dish)
@@ -84,10 +116,8 @@ public class ItemPlaceAndTake : MonoBehaviour
         GameObject item = _onCounterItem;
         _onCounterItem = null;
 
-        // 1. 부모 관계 해제 (이제 플레이어가 가져갈 것이므로)
         item.transform.SetParent(null);
 
-        // 2. 상자의 레이어를 다시 Default로 복구 (그래야 나중에 다시 아이템을 놓을 수 있음)
         this.gameObject.layer = LayerMask.NameToLayer("Default");
 
         return item;

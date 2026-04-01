@@ -14,10 +14,12 @@ public class PlateReSpawn : ItemPlaceAndTake
 
     [Inject] PlateFactory _factory;
 
-    // 현재 쌓여있는 아이템들을 관리할 리스트
-    public List<GameObject> _spawnedPlate = new List<GameObject>();
+    // 현재 아이템
+    public List<GameObject> _spawnedPlates = new List<GameObject>();
 
-    private List<GameObject> _checkedOutPlates = new List<GameObject>();
+    public List<GameObject> _checkedOutPlates = new List<GameObject>();
+
+    private int _activeOutsideCount = 0;
 
     private bool _isRespawning = false;
 
@@ -28,13 +30,9 @@ public class PlateReSpawn : ItemPlaceAndTake
 
     private void Update()
     {
-        _spawnedPlate.RemoveAll(item => item == null);
+        int currentTotal = _spawnedPlates.Count + _activeOutsideCount;
 
-        _checkedOutPlates.RemoveAll(item => item == null);
-
-        int totalPlates = _spawnedPlate.Count + _checkedOutPlates.Count;
-
-        if (!_isRespawning && totalPlates < _maxPlate)
+        if (!_isRespawning && currentTotal < _maxPlate)
         {
             StartCoroutine(RespawnRoutine());
         }
@@ -46,7 +44,6 @@ public class PlateReSpawn : ItemPlaceAndTake
         {
             Vector3 spawnPosition = _plates[i];
             GameObject newItem = _factory.Create(spawnPosition);
-            _spawnedPlate.Add(newItem);
 
             Collider[] colliders = Physics.OverlapSphere(spawnPosition, 0.5f);
             foreach (var col in colliders)
@@ -61,90 +58,79 @@ public class PlateReSpawn : ItemPlaceAndTake
                     break;
                 }
             }
+            _activeOutsideCount++;
         }
     }
-
-    void SpawnStackedItem()
-    {
-        float currentYOffset = _spawnedPlate.Count * _heightInterval;
-        Vector3 spawnPosition = transform.position + new Vector3(0, currentYOffset, 0);
-
-        GameObject newItem = _factory.Create(spawnPosition);
-
-        newItem.transform.SetParent(_snapPoint);
-        newItem.transform.position = spawnPosition;
-        newItem.transform.localRotation = Quaternion.identity;
-        if (newItem.TryGetComponent<Rigidbody>(out Rigidbody rb))
-        {
-            rb.isKinematic = true;
-        }
-
-        _spawnedPlate.Add(newItem);
-    }
-
     IEnumerator RespawnRoutine()
     {
         _isRespawning = true;
 
-        // 대기 시간 동안 Update가 중복 실행되지 않도록 
         yield return new WaitForSeconds(_respawnTime);
 
-        int totalPlates = _spawnedPlate.Count + _checkedOutPlates.Count;
-        while (totalPlates < _maxPlate)
+        if ((_spawnedPlates.Count + _activeOutsideCount) < _maxPlate)
         {
-            SpawnStackedItem();
-            // SpawnStackedItem 안에서 _spawnedPlate.Add를 하므로 개수를 갱신해줘야 합니다.
-            totalPlates = _spawnedPlate.Count + _checkedOutPlates.Count;
-
-            // 한꺼번에 생기지 않고 하나씩 생기게 하고 싶다면 여기도 yield를 넣으세요.
-            yield return new WaitForSeconds(0.1f);
+            SpawnAtStack();
         }
 
         _isRespawning = false;
     }
 
-    public void OnPlateDestroyed(GameObject plate)
+    private void SpawnAtStack()
     {
-        _checkedOutPlates.Remove(plate);
-        // plate가 제거되면 totalPlates가 줄어들어 Update에서 자동으로 리스폰 트리거
+        // 리스폰 지점에 차곡차곡 쌓기
+        int stackIndex = _spawnedPlates.Count;
+        float yOffset = stackIndex * _heightInterval;
+
+        Vector3 spawnPos = (_snapPoint != null ? _snapPoint.position : transform.position) + new Vector3(0, yOffset, 0);
+        GameObject newPlate = _factory.Create(spawnPos);
+
+        newPlate.transform.SetParent(_snapPoint);
+        newPlate.transform.localPosition = new Vector3(0, yOffset, 0);
+        newPlate.transform.localRotation = Quaternion.identity;
+
+        if (newPlate.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            rb.isKinematic = true;
+
+        _spawnedPlates.Add(newPlate);
+
+        _onCounterItem = newPlate;
     }
 
-    public new bool HasItem => _spawnedPlate.Count > 0;
+    public void OnPlateDestroyed(GameObject plate)
+    {
+        _activeOutsideCount--;
+    }
 
     public override GameObject TakeItem()
     {
-        GameObject topPlate = GetTopPlate();
-
-        if (topPlate != null)
+        if (_spawnedPlates.Count == 0)
         {
-            if (topPlate.TryGetComponent<Rigidbody>(out Rigidbody rb))
-            {
-                rb.isKinematic = true;
-                rb.velocity = Vector3.zero;
-            }
-            topPlate.transform.SetParent(null);
-
-            // 3. 리스폰 관리를 위해 체크아웃 리스트에 추가
-            if (!_checkedOutPlates.Contains(topPlate))
-            {
-                _checkedOutPlates.Add(topPlate);
-            }
-
-            Debug.Log($"[성공] {topPlate.name}을 손으로 넘겨줍니다.");
-            return topPlate;
+            Debug.LogWarning("스택에 접시가 없습니다!");
+            return null;
         }
 
-        return null;
-    }
+        // 가장 위에 있는(마지막 인덱스) 접시 가져오기
+        int lastIndex = _spawnedPlates.Count - 1;
+        GameObject topPlate = _spawnedPlates[lastIndex];
 
-    public GameObject GetTopPlate()
-    {
-        if (_spawnedPlate.Count == 0) return null;
+        _spawnedPlates.RemoveAt(lastIndex);
+        _activeOutsideCount++;
 
-        int lastIndex = _spawnedPlate.Count - 1;
-        GameObject topPlate = _spawnedPlate[lastIndex];
-        _spawnedPlate.RemoveAt(lastIndex);
+        topPlate.transform.SetParent(null);
+        if (topPlate.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb.isKinematic = false; // 집어갈 때는 물리 연산 다시 활성화 (필요 시)
+        }
+        if (_spawnedPlates.Count > 0)
+        {
+            _onCounterItem = _spawnedPlates[_spawnedPlates.Count - 1];
+        }
+        else
+        {
+            _onCounterItem = null;
+        }
 
+        Debug.Log($"접시를 집어갔습니다. 남은 스택: {_spawnedPlates.Count}");
         return topPlate;
     }
 
