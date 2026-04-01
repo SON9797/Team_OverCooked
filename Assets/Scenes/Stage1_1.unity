@@ -5423,7 +5423,7 @@ GameObject:
   - component: {fileID: 5130}
   - component: {fileID: 5129}
   - component: {fileID: 5131}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: NewCrate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58411,6 +58411,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3326314016400662447, guid: 1d3ebdc80d9254d468edead6b56cd3c8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4530260185453501553, guid: 1d3ebdc80d9254d468edead6b56cd3c8, type: 3}
+      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7095858562762359691, guid: 1d3ebdc80d9254d468edead6b56cd3c8, type: 3}

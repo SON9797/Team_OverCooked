@@ -12,6 +12,11 @@ public class TrashCan : ItemPlaceAndTake
 
     public override bool PlaceItem(GameObject item)
     {
+        if (item == null)
+        {
+            return false;
+        }
+
         Dish dish = item.GetComponent<Dish>();
 
         if (dish != null)
@@ -20,7 +25,7 @@ public class TrashCan : ItemPlaceAndTake
             if (dish.GetRecipe().Count > 0)
             {
                 Debug.Log("접시의 음식을 비웁니다!");
-                dish.ClearDish(); 
+                dish.ClearDish();
 
                 return false; // false를 반환하여 플레이어가 접시를 계속 들고 있게 합니다.
             }
@@ -32,6 +37,14 @@ public class TrashCan : ItemPlaceAndTake
         }
 
         item.transform.SetParent(null);
+
+        if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
 
         // 애니메이션 연출
         StartCoroutine(ShrinkAndRotateEffect(item));
@@ -49,7 +62,7 @@ public class TrashCan : ItemPlaceAndTake
             yield break;
         }
 
-        if (item.TryGetComponent<Collider>(out Collider col))
+        foreach (Collider col in item.GetComponentsInChildren<Collider>())
         {
             col.enabled = false;
         }
@@ -58,6 +71,8 @@ public class TrashCan : ItemPlaceAndTake
 
         while (item != null && item.transform.localScale.x > 0.01f)
         {
+            item.transform.position = Vector3.Lerp(item.transform.position, targetPos, 10f * Time.deltaTime);
+
             // 회전
             item.transform.Rotate(Vector3.up * _rotateSpeed * Time.deltaTime);
 
