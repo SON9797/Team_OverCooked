@@ -87,4 +87,11 @@ namespace Overcooked.Interfaces
         GameObject EndingPanel { get; }
         GameObject TimesUpPanel { get; }
     }
+
+    public interface IInGameSoundManager
+    {
+        void PlaySFX(SFXType sfxType);
+        void PlayBGM(AudioClip clip);
+        void StopBGM();
+    }
 }

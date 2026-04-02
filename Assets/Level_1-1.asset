@@ -15,6 +15,7 @@ MonoBehaviour:
   LevelName: 1-1
   GamePlayTime: 150
   NewRecipe: SASHIMI
+  LevelBGM: {fileID: 8300000, guid: 3483cfa46a6c6da4b9d1f20451161318, type: 3}
   LoadingImage: {fileID: 21300000, guid: b6c89082dcdfd4641876d205ddffd3a4, type: 3}
   TutorialImage: {fileID: 21300000, guid: f673e20971c60c94caa2a5de44db1428, type: 3}
   BaseTipAmount: 8
@@ -22,7 +23,7 @@ MonoBehaviour:
   OneStar: 20
   TwoStar: 200
   ThreeStar: 400
-  recipeTimer: 20
+  recipeTimer: 120
   Recipes:
   - {fileID: 11400000, guid: 5dd70249e42de32419495f9c1afc831a, type: 2}
   - {fileID: 11400000, guid: 0247a067360b53841955036a092f8917, type: 2}

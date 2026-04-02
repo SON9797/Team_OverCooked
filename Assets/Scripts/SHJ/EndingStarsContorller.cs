@@ -1,4 +1,5 @@
 using Overcooked;
+using Overcooked.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,15 +21,17 @@ namespace OverCooked
         public float startScaleMultiplier = 1.5f;
 
         private LevelData _levelData;
+        private IInGameSoundManager _inGameSoundManager;
 
         private Vector3 _oneStarOriginScale;
         private Vector3 _twoStarOriginScale;
         private Vector3 _threeStarOriginScale;
 
         [Inject]
-        public void Construct(LevelData levelData)
+        public void Construct(LevelData levelData, IInGameSoundManager inGameSoundManager)
         {
             _levelData = levelData;
+            _inGameSoundManager = inGameSoundManager;
         }
 
         private void Awake()
@@ -66,18 +69,21 @@ namespace OverCooked
 
             if (score >= _levelData.OneStar)
             {
+                _inGameSoundManager.PlaySFX(SFXType.UI_ResultStar);
                 StartCoroutine(ScaleDownRoutin(oneStarImage, _oneStarOriginScale));
                 yield return new WaitForSeconds(dealyBetweenStars);
             }
 
             if (score >= _levelData.TwoStar)
             {
+                _inGameSoundManager.PlaySFX(SFXType.UI_ResultStar);
                 StartCoroutine(ScaleDownRoutin(twoStarImage, _twoStarOriginScale));
                 yield return new WaitForSeconds(dealyBetweenStars);
             }
 
             if (score >= _levelData.ThreeStar)
             {
+                _inGameSoundManager.PlaySFX(SFXType.UI_ResultStar);
                 StartCoroutine(ScaleDownRoutin(threeStarImage, _threeStarOriginScale));
             }
         }

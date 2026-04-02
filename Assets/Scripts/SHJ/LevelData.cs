@@ -14,6 +14,9 @@ namespace Overcooked
         public float GamePlayTime;
         public string NewRecipe;
 
+        [Header("스테이지 BGM")]
+        public AudioClip LevelBGM;
+
         [Header("스테이지 UI 이미지")]
         public Sprite LoadingImage;
         public Sprite TutorialImage;

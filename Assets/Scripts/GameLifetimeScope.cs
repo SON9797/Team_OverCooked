@@ -90,5 +90,10 @@ public class GameLifetimeScope : LifetimeScope
         // Ending Panel 별 연출 관련
         builder.RegisterComponentInHierarchy<EndingStarsContorller>();
 
+        // 인게임 사운드 관련
+        builder.RegisterComponentInHierarchy<IInGameSoundManager>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+
     }
 }
