@@ -11,22 +11,22 @@ public class HoverAnime_BigtoOrigin : MonoBehaviour, IPointerEnterHandler
     [SerializeField] float duration=0.5f;
 
 
-    bool coStart = false;
+    Coroutine current;
     private void Start()
     {
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        StartCoroutine(BigToOrigin());
+        if (current!=null)
+        {
+            StopCoroutine(current);
+        }
+        current=StartCoroutine(BigToOrigin());
     }
 
     IEnumerator BigToOrigin()
     {
-        if (coStart)
-        {
-            yield break;
-        }
-        coStart = true;
+       
         Vector3 originScale = transform.localScale;
         Vector3 targetScale = transform.localScale * bigScale;
         transform.localScale = targetScale;
@@ -39,6 +39,5 @@ public class HoverAnime_BigtoOrigin : MonoBehaviour, IPointerEnterHandler
         }
         transform.localScale = originScale;
         
-        coStart = false;
     }
 }
