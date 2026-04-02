@@ -190,17 +190,20 @@ namespace Overcooked
             // 손에 아이템 들고 있으면 칼질 막기
             if (HasIngredient)
             {
+                _animationController?.SetChopping(false);
                 return;
             }
 
             if (_rayPoint == null)
             {
+                _animationController?.SetChopping(false);
                 return;
             }
 
             Transform target = FindClosestInteractTarget();
             if (target == null)
             {
+                _animationController?.SetChopping(false);
                 return;
             }
 
@@ -208,9 +211,13 @@ namespace Overcooked
             ChopBoard chopBoard = target.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
-                _animationController?.SetChopping(true);
-                chopBoard.ToggleChop();
+                //사운드 - 칼질
+                bool isNowChopping = chopBoard.ToggleChop(this);
+                _animationController?.SetChopping(isNowChopping);
+                return;
             }
+
+            _animationController?.SetChopping(false);
         }
 
         public void TryThrowHeldObject()
@@ -247,6 +254,8 @@ namespace Overcooked
 
             throwObject.transform.SetParent(null);
             ClearCurrentHeldObject();
+
+            //사운드 던지기
 
             // 아이템던지기 - 던질 때 미리 목표를 확정하지 않고 실제 비행 후 처리
             StartCoroutine(CoThrowObject(throwObject, throwRb, throwCols));
@@ -642,6 +651,7 @@ namespace Overcooked
                 return;
             }
 
+            //사운드 - 아이템 들기
             SetCurrentHeldObject(newObject);
         }
 
@@ -655,6 +665,7 @@ namespace Overcooked
                 return;
             }
 
+            //사운드 - 아이템 들기
             SetCurrentHeldObject(takeObject);
             Debug.Log($"{takeObject.name}을(를) 상자에서 다시 집었습니다.");
         }
@@ -667,6 +678,7 @@ namespace Overcooked
                 return;
             }
 
+            //사운드 - 아이템 들기
             SetCurrentHeldObject(directObject);
         }
 
@@ -707,6 +719,8 @@ namespace Overcooked
             // 상자에게 아이템을 놓으라고 명령.
             if (counter.PlaceItem(_currentHeldObject))
             {
+                //사운드 - 아이템 놓기
+
                 // 성공시 플레이어 변수 초기화
                 ClearCurrentHeldObject();
                 Debug.Log($"{counter.name}에 아이템 자식 설정 성공");
@@ -739,6 +753,8 @@ namespace Overcooked
             }
 
             SetHeldColliderEnabled(true);
+
+            //사운드 - 아이템 놓기
             ClearCurrentHeldObject();
         }
 

@@ -176,7 +176,7 @@ public class ItemBoxTest : MonoBehaviour
             ChopBoard chopBoard = hit.transform.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
-                chopBoard.ToggleChop();
+                chopBoard.ToggleChop(null);
             }
         }
     }
