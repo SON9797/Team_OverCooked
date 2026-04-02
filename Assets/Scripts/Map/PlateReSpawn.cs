@@ -39,16 +39,16 @@ public class PlateReSpawn : ItemPlaceAndTake
             StartCoroutine(RespawnRoutine());
         }
     }
-
     private void StartItemSpawn()
     {
         for (int i = 0; i < _maxPlate; i++)
         {
             Vector3 spawnPosition = _plates[i];
             GameObject newItem = _factory.Create(spawnPosition);
-            _spawnedPlate.Add(newItem);
 
             Collider[] colliders = Physics.OverlapSphere(spawnPosition, 0.5f);
+            bool isPlacedElsewhere = false;
+
             foreach (var col in colliders)
             {
                 if (col.gameObject == this.gameObject) continue;
@@ -57,17 +57,26 @@ public class PlateReSpawn : ItemPlaceAndTake
                 if (counter != null)
                 {
                     counter.PlaceItem(newItem);
-                    Debug.Log($"{newItem.name}이(가) {counter.gameObject.name}에 자동으로 등록되었습니다.");
+
+                    _checkedOutPlates.Add(newItem);
+                    isPlacedElsewhere = true;
                     break;
                 }
+            }
+
+            if (!isPlacedElsewhere)
+            {
+                _spawnedPlate.Add(newItem);
+                _onCounterItem = newItem;
             }
         }
     }
 
+
     void SpawnStackedItem()
     {
         float currentYOffset = _spawnedPlate.Count * _heightInterval;
-        Vector3 spawnPosition = transform.position + new Vector3(0, currentYOffset, 0);
+        Vector3 spawnPosition = _snapPoint.position + new Vector3(0, currentYOffset, 0);
 
         GameObject newItem = _factory.Create(spawnPosition);
 
@@ -80,23 +89,21 @@ public class PlateReSpawn : ItemPlaceAndTake
         }
 
         _spawnedPlate.Add(newItem);
+        _onCounterItem = newItem;
     }
 
     IEnumerator RespawnRoutine()
     {
         _isRespawning = true;
 
-        // 대기 시간 동안 Update가 중복 실행되지 않도록 
         yield return new WaitForSeconds(_respawnTime);
 
         int totalPlates = _spawnedPlate.Count + _checkedOutPlates.Count;
         while (totalPlates < _maxPlate)
         {
             SpawnStackedItem();
-            // SpawnStackedItem 안에서 _spawnedPlate.Add를 하므로 개수를 갱신해줘야 합니다.
             totalPlates = _spawnedPlate.Count + _checkedOutPlates.Count;
 
-            // 한꺼번에 생기지 않고 하나씩 생기게 하고 싶다면 여기도 yield를 넣으세요.
             yield return new WaitForSeconds(0.1f);
         }
 
@@ -106,7 +113,6 @@ public class PlateReSpawn : ItemPlaceAndTake
     public void OnPlateDestroyed(GameObject plate)
     {
         _checkedOutPlates.Remove(plate);
-        // plate가 제거되면 totalPlates가 줄어들어 Update에서 자동으로 리스폰 트리거
     }
 
     public new bool HasItem => _spawnedPlate.Count > 0;
@@ -124,7 +130,6 @@ public class PlateReSpawn : ItemPlaceAndTake
             }
             topPlate.transform.SetParent(null);
 
-            // 3. 리스폰 관리를 위해 체크아웃 리스트에 추가
             if (!_checkedOutPlates.Contains(topPlate))
             {
                 _checkedOutPlates.Add(topPlate);
