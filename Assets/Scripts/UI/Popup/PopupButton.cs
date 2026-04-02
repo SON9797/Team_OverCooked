@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PopupButton : MonoBehaviour
 {
-    [SerializeField]private GameObject button;
     [SerializeField]private TextMeshProUGUI btnText;
 
     public void Setting(string text)

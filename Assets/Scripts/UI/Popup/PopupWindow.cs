@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class PopupWindow : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI title;
-    [SerializeField] TextMeshProUGUI content;
+    [SerializeField] public TextMeshProUGUI title;
+    [SerializeField] public TextMeshProUGUI content;
+    [SerializeField] public Transform buttonRoot;
+    [SerializeField] GameObject buttonPrefab;
 
     public void Setting(string titleText,string contentText)
     {
