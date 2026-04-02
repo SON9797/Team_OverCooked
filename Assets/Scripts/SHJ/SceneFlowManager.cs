@@ -140,7 +140,7 @@ namespace Overcooked
             else
             {
                 _uiManager.SetPanelActive(_uiManager.EndingPanel, true);
-            }
+            }            
         }
     }
 }

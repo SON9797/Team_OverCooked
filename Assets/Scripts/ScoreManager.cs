@@ -37,9 +37,6 @@ public class ScoreManager : MonoBehaviour, IScoreService
             DeliveryOrderScore += earnedScore;
             TotalTips += tip;
 
-            CurrentCombo++;
-            _uiManager.UpdateComboUI(CurrentCombo);
-
             UpdateScoreUI();
 
             if (tip > 0)
@@ -61,9 +58,6 @@ public class ScoreManager : MonoBehaviour, IScoreService
     {
         FailedOrderCount++;
         FailedOrderPenalty += penaltyScore;
-
-        CurrentCombo = 0;
-        _uiManager.UpdateComboUI(CurrentCombo);
 
         UpdateScoreUI();
     }

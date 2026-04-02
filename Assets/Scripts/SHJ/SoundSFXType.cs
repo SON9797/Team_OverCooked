@@ -20,5 +20,7 @@ namespace OverCooked
         UI_ResultBG,
         UI_ResultStar,
         UI_ResultText,
+        UI_ResultEnding,
+        UI_ResultScore,
     }
 }

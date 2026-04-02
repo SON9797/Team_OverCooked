@@ -266,12 +266,18 @@ namespace OverCooked
                 }
             }
 
-            int targetIndex = 0;
-
-            if (combo > 0 && combo <= _comboIcons.Length)
+            if (combo <= 0)
             {
-                targetIndex = combo - 1;
+                if (_flameEffect != null)
+                {
+                    _flameEffect.SetActive(false);
+                }
             }
+
+            int maxCombo = _comboIcons.Length;
+            int displayCombo = Mathf.Clamp(combo, 1, maxCombo);
+
+            int targetIndex = displayCombo - 1;
 
             if (_comboIcons[targetIndex] != null)
             {
@@ -280,7 +286,7 @@ namespace OverCooked
 
             if (_flameEffect != null)
             {
-                bool isMaxCombo = (combo == 4);
+                bool isMaxCombo = (combo >= maxCombo);
 
                 if (_flameEffect.activeSelf != isMaxCombo)
                 {
@@ -309,53 +315,126 @@ namespace OverCooked
 
         public void UpdateEndingUI(ScoreManager scoreManager)
         {
+            SetPanelActive(_endingPanel, true);
+
             _inGameSoundManager.PlaySFX(SFXType.UI_ResultBG);
 
+            SetEndingTextsEnabled(false);
+
+            StartCoroutine(EndingSequenceCoroutine(scoreManager));
+        }
+
+        private IEnumerator EndingSequenceCoroutine(ScoreManager scoreManager)
+        {
+            float delay = 0.3f;
+
+            // µÙ∏Æπˆ∏Æ
             if (_deliveryOrderText != null)
             {
                 _deliveryOrderText.text = $"Delivery Order X {scoreManager.DeliveryOrderCount}";
+                _deliveryOrderText.enabled = true;
             }
-
-            if (_tipOrderText != null)
-            {
-                _tipOrderText.text = "Tip";
-            }
-
-            if (_failOrderText != null)
-            {
-                _failOrderText.text = $"Fail Order X {scoreManager.FailedOrderCount}";
-            }
-
-            if (_totalText != null)
-            {
-                _totalText.text = "Total :";
-            }
+            yield return new WaitForSeconds(delay);
 
             if (_totalDeliveryOrderText != null)
             {
                 _totalDeliveryOrderText.text = scoreManager.DeliveryOrderScore.ToString();
+                _totalDeliveryOrderText.enabled = true;
+                _inGameSoundManager.PlaySFX(SFXType.UI_ResultScore);
             }
+            yield return new WaitForSeconds(delay);
+
+            // ∆¡
+            if (_tipOrderText != null)
+            {
+                _tipOrderText.text = "Tip";
+                _tipOrderText.enabled = true;
+            }
+            yield return new WaitForSeconds(delay);
 
             if (_totalTipText != null)
             {
                 _totalTipText.text = scoreManager.TotalTips.ToString();
+                _totalTipText.enabled = true;
+                _inGameSoundManager.PlaySFX(SFXType.UI_ResultScore);
             }
+            yield return new WaitForSeconds(delay);
 
-            
+            // failø¿¥ı
+            if (_failOrderText != null)
+            {
+                _failOrderText.text = $"Fail Order X {scoreManager.FailedOrderCount}";
+                _failOrderText.enabled = true;
+            }
+            yield return new WaitForSeconds(delay);
+
             if (_totalFailOrderText != null)
             {
                 _totalFailOrderText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
+                _totalFailOrderText.enabled = true;
+                _inGameSoundManager.PlaySFX(SFXType.UI_ResultScore);
             }
+            yield return new WaitForSeconds(delay);
+
+            // ≈‰≈ª
+            if (_totalText != null)
+            {
+                _totalText.text = "Total :";
+                _totalText.enabled = true;
+            }
+            yield return new WaitForSeconds(delay);
 
             if (_totalScoreText != null)
             {
                 _totalScoreText.text = scoreManager.CurrentScore.ToString();
+                _totalScoreText.enabled = true;
+                _inGameSoundManager.PlaySFX(SFXType.UI_ResultScore);
             }
+            yield return new WaitForSeconds(0.5f);
+
+            _inGameSoundManager.PlaySFX(SFXType.UI_ResultEnding);
 
             if (_endingStarsContorller != null)
             {
                 _endingStarsContorller.ShowEndingStarEffect(scoreManager.CurrentScore);
             }
+        }
+
+        private void SetEndingTextsEnabled(bool isEnabled)
+        {
+            if (_deliveryOrderText != null)
+            {
+                _deliveryOrderText.enabled = isEnabled;
+            }
+            if (_tipOrderText != null)
+            {
+                _tipOrderText.enabled = isEnabled;
+            }
+            if (_failOrderText != null)
+            {
+                _failOrderText.enabled = isEnabled;
+            }
+            if (_totalText != null)
+            {
+                _totalText.enabled = isEnabled;
+            }
+            if (_totalDeliveryOrderText != null)
+            {
+                _totalDeliveryOrderText.enabled = isEnabled;
+            }
+            if (_totalTipText != null)
+            {
+                _totalTipText.enabled = isEnabled;
+            }
+            if (_totalFailOrderText != null)
+            {
+                _totalFailOrderText.enabled = isEnabled;
+            }
+            if (_totalScoreText != null)
+            {
+                _totalScoreText.enabled = isEnabled;
+            }
+
         }
 
         public void ShowTipEffect(int tipAmount)
