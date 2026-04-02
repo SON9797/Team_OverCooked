@@ -35,6 +35,12 @@ namespace Overcooked
         [Header("바닥 판정 레이어")]
         [SerializeField] private LayerMask _groundLayer = ~0;
 
+        [Header("벽 판정 레이어")]
+        [SerializeField] private LayerMask _wallLayer = 0;
+
+        [Header("벽 앞 여유 거리")]
+        [SerializeField] private float _wallStopOffset = 0.1f;
+
         [Header("던지기 연출 시간")]
         [SerializeField] private float _throwDuration = 0.25f;
 
@@ -56,6 +62,12 @@ namespace Overcooked
         [Header("착지 상호작용 레이어")]
         [SerializeField] private LayerMask _landingInteractionLayer = ~0;
 
+        [Header("착지 보정 시작 높이")]
+        [SerializeField] private float _landingRayStartHeight = 2f;
+
+        [Header("착지 보정 레이 길이")]
+        [SerializeField] private float _landingRayDistance = 10f;
+
         private GameObject _currentHeldObject;
         private Ingredient _currentIngredient;
         private Rigidbody _currentHeldRb;
@@ -74,7 +86,7 @@ namespace Overcooked
             _animationController = GetComponent<PlayerAnimationController>();
         }
 
-        
+
         public void TryInteractionIngredient()
         {
             if (_inputInjector != null && !_inputInjector.IsSelected)
@@ -101,7 +113,7 @@ namespace Overcooked
                     return;
                 }
 
-                
+
                 PlateReSpawn respawn = target.GetComponentInParent<PlateReSpawn>();
                 if (respawn != null && respawn.HasItem)
                 {
@@ -259,7 +271,7 @@ namespace Overcooked
             transform.forward = dir.normalized;
         }
 
-        
+
         public void FaceThrowTarget(Vector3 targetPosition)
         {
             Vector3 dir = targetPosition - transform.position;
@@ -273,7 +285,7 @@ namespace Overcooked
             transform.forward = dir.normalized;
         }
 
-        
+
         private Transform FindClosestInteractTarget()
         {
             Collider[] hits = Physics.OverlapSphere(_rayPoint.position, _interactionDistance, _interactionLayer);
@@ -355,7 +367,7 @@ namespace Overcooked
             return bestTarget;
         }
 
-        
+
         private IEnumerator CoThrowObject(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols)
         {
             if (throwObject == null || _holdPoint == null)
@@ -418,7 +430,7 @@ namespace Overcooked
             _isThrowing = false;
         }
 
-        
+
         private void TryNotifyPlayersToFaceThrow(Vector3 throwPos)
         {
             Collider[] hits = Physics.OverlapSphere(throwPos, _catchRadius, _playerCatchLayer);
@@ -446,7 +458,7 @@ namespace Overcooked
             }
         }
 
-        
+
         private PlayerItemController FindCatchPlayer(Vector3 throwPos)
         {
             Collider[] hits = Physics.OverlapSphere(throwPos, _catchRadius, _playerCatchLayer);
@@ -476,7 +488,7 @@ namespace Overcooked
             return null;
         }
 
-       
+
         private void ResolveLandingInteraction(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 landingPos)
         {
             Collider[] hits = Physics.OverlapSphere(landingPos, _landingCheckRadius, _landingInteractionLayer);
@@ -498,23 +510,13 @@ namespace Overcooked
             }
 
             // 던져져서 재료가 멈춘위치가 테이블 위면 테이블과 상호작용.
-            for (int i = 0; i < hits.Length; i++)
+            ItemPlaceAndTake counter = FindBestLandingCounter(landingPos);
+            if (counter != null)
             {
-                if (hits[i] == null)
-                {
-                    continue;
-                }
-
-                ItemPlaceAndTake counter = hits[i].GetComponentInParent<ItemPlaceAndTake>();
-                if (counter == null)
-                {
-                    continue;
-                }
-
                 // 쓰레기통은 위에서 먼저 처리했으므로 제외
                 if (counter is TrashCan)
                 {
-                    continue;
+                    return;
                 }
 
                 // 만약 테이블에 이미 다른 재료가 올라가있다면 그냥 얹혀있음.
@@ -538,16 +540,59 @@ namespace Overcooked
 
         private Vector3 GetThrowFloorPosition(Vector3 origin, Vector3 forward)
         {
-            Vector3 target = origin + forward * _throwDistance;
+            float finalDistance = _throwDistance;
 
-            Ray ray = new Ray(target + Vector3.up * 2f, Vector3.down);
-            if (Physics.Raycast(ray, out RaycastHit hit, 10f, _groundLayer))
+            // 던지는 방향 앞에 벽이 있으면 벽 바로 앞까지만 던짐
+            Ray wallRay = new Ray(origin, forward);
+            if (Physics.Raycast(wallRay, out RaycastHit wallHit, _throwDistance, _wallLayer))
+            {
+                finalDistance = Mathf.Max(0f, wallHit.distance - _wallStopOffset);
+            }
+
+            Vector3 target = origin + forward * finalDistance;
+
+            // 바닥은 _groundLayer만 맞게 해서 테이블 상판을 바닥으로 잘못 잡지 않게 함
+            Ray ray = new Ray(target + Vector3.up * _landingRayStartHeight, Vector3.down);
+            if (Physics.Raycast(ray, out RaycastHit hit, _landingRayDistance, _groundLayer))
             {
                 return hit.point;
             }
 
             target.y = transform.position.y;
             return target;
+        }
+
+        private ItemPlaceAndTake FindBestLandingCounter(Vector3 landingPos)
+        {
+            Collider[] hits = Physics.OverlapSphere(landingPos, _landingCheckRadius, _landingInteractionLayer);
+
+            ItemPlaceAndTake bestCounter = null;
+            float bestSqrDistance = float.MaxValue;
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i] == null)
+                {
+                    continue;
+                }
+
+                ItemPlaceAndTake counter = hits[i].GetComponentInParent<ItemPlaceAndTake>();
+                if (counter == null)
+                {
+                    continue;
+                }
+
+                Vector3 closestPoint = hits[i].ClosestPoint(landingPos);
+                float sqrDistance = (closestPoint - landingPos).sqrMagnitude;
+
+                if (sqrDistance < bestSqrDistance)
+                {
+                    bestSqrDistance = sqrDistance;
+                    bestCounter = counter;
+                }
+            }
+
+            return bestCounter;
         }
 
         private bool CanThrowCurrentHeldObject()
@@ -601,7 +646,7 @@ namespace Overcooked
             SetCurrentHeldObject(newObject);
         }
 
-        
+
         private void TryPickUpFromCounter(ItemPlaceAndTake counter)
         {
             // 아이템박스테스트 - 조리대에서 아이템 가져오기
@@ -648,7 +693,7 @@ namespace Overcooked
             return null;
         }
 
-        
+
         private void TryPlaceHeldObject(ItemPlaceAndTake counter)
         {
             if (_currentHeldObject == null)
@@ -809,12 +854,12 @@ namespace Overcooked
                 Gizmos.DrawWireSphere(_holdPoint.position + forward * _throwDistance, 0.15f);
             }
 
-            
+
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(transform.position, _catchRadius);
         }
 
-        
+
         public GameObject GetCurrentHeldObject() => _currentHeldObject;
 
         public bool IsSelectedPlayer()
