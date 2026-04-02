@@ -77,6 +77,9 @@ namespace OverCooked
         private float _shakeSpeed = 20f;
         private float _shakeAmount = 15f;
 
+        private float _beepTimer = 1f;
+        private IInGameSoundManager _inGameSoundManager;
+
         public GameObject PausePanel => _pausePanel;
         public GameObject LoadingPanel => _loadingPanel;
         public GameObject TutorialPanel => _recipeTutorialPanel;
@@ -87,6 +90,12 @@ namespace OverCooked
         public GameObject EndingPanel => _endingPanel;
         public GameObject TimesUpPanel => _timesUpPanel;
 
+        [Inject]
+        public void Construct(IInGameSoundManager inGameSoundManager)
+        {
+            _inGameSoundManager = inGameSoundManager;
+        }
+
 
         private void Update()
         {
@@ -94,10 +103,24 @@ namespace OverCooked
             {
                 float angle = Mathf.Sin(Time.time * _shakeSpeed) * _shakeAmount;
                 _hourglassIcon.localRotation = Quaternion.Euler(0, 0, angle);
+
+                _beepTimer += Time.deltaTime;
+
+                if (_beepTimer >= 1f)
+                {
+                    _inGameSoundManager.PlaySFX(SFXType.UI_TimerBeep);
+                    _beepTimer = 0f;
+                }
+            
             }
-            else if (_hourglassIcon != null)
+            else
             {
-                _hourglassIcon.localRotation = Quaternion.identity;
+                if (_hourglassIcon != null)
+                {
+                    _hourglassIcon.localRotation = Quaternion.identity;
+                }
+
+                _beepTimer = 1f;
             }
 
         }
@@ -286,6 +309,8 @@ namespace OverCooked
 
         public void UpdateEndingUI(ScoreManager scoreManager)
         {
+            _inGameSoundManager.PlaySFX(SFXType.UI_ResultBG);
+
             if (_deliveryOrderText != null)
             {
                 _deliveryOrderText.text = $"Delivery Order X {scoreManager.DeliveryOrderCount}";
@@ -316,11 +341,11 @@ namespace OverCooked
                 _totalTipText.text = scoreManager.TotalTips.ToString();
             }
 
-            // Æä³ÎÆ¼
-            //if (_totalFailOrderText != null)
-            //{
-            //_totalTipText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
-            //}
+            
+            if (_totalFailOrderText != null)
+            {
+                _totalFailOrderText.text = scoreManager.FailedOrderPenalty > 0 ? $"-{scoreManager.FailedOrderPenalty}" : "0";
+            }
 
             if (_totalScoreText != null)
             {
@@ -391,5 +416,6 @@ namespace OverCooked
             Cursor.visible = isPause;
             Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
         }
+
     }
 }

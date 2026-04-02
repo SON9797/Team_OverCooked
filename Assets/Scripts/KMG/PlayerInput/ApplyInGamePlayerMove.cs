@@ -1,6 +1,9 @@
+using OverCooked;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Overcooked.Interfaces;
+using VContainer;
 
 /// <summary>
 /// 플레이어이동 적용, 인터페이스로 구현된 플레이어 인폿을
@@ -26,6 +29,8 @@ namespace Overcooked
 
         [Header("대쉬 쿨타임")]
         [SerializeField] private float _dashCoolTime = 0.5f;
+
+        private IInGameSoundManager _inGameSoundManager;
         #endregion
 
         #region 내부 변수
@@ -34,6 +39,12 @@ namespace Overcooked
         private bool _canDash = true;
         private bool _isDashing;
         #endregion
+
+        [Inject]
+        public void Construct(IInGameSoundManager inGameSoundManager)
+        {
+            _inGameSoundManager = inGameSoundManager;
+        }
 
         private void Awake()
         {
@@ -54,6 +65,8 @@ namespace Overcooked
             {
                 return;
             }
+
+            _inGameSoundManager.PlaySFX(SFXType.Dash);
 
             Vector3 dashDir;
 

@@ -1,38 +1,103 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemPlaceAndTake : MonoBehaviour
 {
-    //Á¶¸®´ë¿¡ Àû¿ëÇÏ´Â ÄÚµå
-    public Transform _snapPoint; // Àç·á À§Ä¡
-    protected GameObject _onCounterItem; // ÇöÀç Á¶¸®´ë¿¡ ³õÀÎ ¾ÆÀÌÅÛ
+    //ì¡°ë¦¬ëŒ€ì— ì ìš©í•˜ëŠ” ì½”ë“œ
+    public Transform _snapPoint; // ì¬ë£Œ ìœ„ì¹˜
+    protected GameObject _onCounterItem; // í˜„ì¬ ì¡°ë¦¬ëŒ€ì— ë†“ì¸ ì•„ì´í…œ
 
+    public bool HasItem => _onCounterItem != null;
 
-    public virtual bool CanPlaceItem() => _onCounterItem == null;
-
-    private void Start()
+    public virtual bool CanPlaceItem()
     {
-        // ÀÌ¹Ì ¿¡µğÅÍ¿¡¼­ ÇÒ´çÇß´Ù¸é Åë°ú, ºñ¾îÀÖ´Ù¸é ÁÖº¯ Å½»ö
+        // ìƒìê°€ ì—´ë ¤ìˆì–´ë„ ìœ„ì— ì•„ì´í…œì´ ì—†ìœ¼ë©´ ì˜¬ë ¤ë†“ì„ ìˆ˜ ìˆë„ë¡ ë³€ê²½
+        return true;
+    }
+    protected virtual void Start()
+    {
+        // ì´ë¯¸ ì—ë””í„°ì—ì„œ í• ë‹¹í–ˆë‹¤ë©´ í†µê³¼, ë¹„ì–´ìˆë‹¤ë©´ ì£¼ë³€ íƒìƒ‰
         if (_onCounterItem == null)
         {
             CheckExistingItem();
         }
     }
 
+    protected virtual void Update()
+    {
+        if (_onCounterItem == null)
+        {
+            TryAbsorbFloatingItem();
+        }
+    }
+
     public virtual bool PlaceItem(GameObject item)
     {
+        if (HasItem)
+        {
+            // ì¡°ë¦¬ëŒ€ì— ì ‘ì‹œ(Dish)ê°€ ìˆê³ , í”Œë ˆì´ì–´ê°€ ì¬ë£Œ(Ingredient)ë¥¼ ë“¤ê³  ì˜¬ ë•Œ
+            if (HasDish(out Dish dishOnCounter))
+            {
+                if (item.TryGetComponent<Ingredient>(out Ingredient incomingIng))
+                {
+                    if (dishOnCounter.AddIngredient(incomingIng))
+                    {
+                        // í•©ì¹˜ê¸° ì„±ê³µ: ë“¤ì–´ì˜¨ ì•„ì´í…œì€ Dish ë‚´ë¶€ì—ì„œ Destroyë¨
+                        return true;
+                    }
+                }
+            }
+            // ì¡°ë¦¬ëŒ€ì— ì¬ë£Œ(Ingredient)ê°€ ìˆê³ , í”Œë ˆì´ì–´ê°€ ì ‘ì‹œ(Dish)ë¥¼ ë“¤ê³  ì˜¬ ë•Œ
+            else if (_onCounterItem.TryGetComponent<Ingredient>(out Ingredient ingOnCounter))
+            {
+                if (item.TryGetComponent<Dish>(out Dish incomingDish))
+                {
+                    if (incomingDish.AddIngredient(ingOnCounter))
+                    {
+                        // í•©ì¹˜ê¸° ì„±ê³µ: ì¡°ë¦¬ëŒ€ì— ìˆë˜ ì¬ë£Œë¥¼ ì ‘ì‹œì— ë‹´ìŒ
+                        // ì¡°ë¦¬ëŒ€ ì•„ì´í…œ ì •ë³´ë¥¼ ìƒˆë¡œ ë“¤ì–´ì˜¨ ì ‘ì‹œë¡œ êµì²´
+                        _onCounterItem = item;
+                        SetupItemTransform(item); // ìœ„ì¹˜ ê³ ì • ë¡œì§
+                        return true;
+                    }
+                }
+            }
+
+            // í•©ì¹˜ê¸°ê°€ ë¶ˆê°€ëŠ¥í•˜ë©´(ë‘˜ ë‹¤ ì ‘ì‹œê±°ë‚˜, ë ˆì‹œí”¼ê°€ ì•„ë‹ˆê±°ë‚˜ ë“±) ë†“ê¸° ì‹¤íŒ¨
+            return false;
+        }
+
+        // 2. ì•„ì´í…œì´ ì—†ëŠ” ê²½ìš° (ê¸°ì¡´ ë¡œì§ ìˆ˜í–‰)
+        if (item == null || _snapPoint == null) return false;
+
         _onCounterItem = item;
+        SetupItemTransform(item);
+        return true;
+    }
+
+    // ì¤‘ë³µë˜ëŠ” íŠ¸ëœìŠ¤í¼ ì„¤ì •ì„ ë³„ë„ í•¨ìˆ˜ë¡œ ë¶„ë¦¬
+    private void SetupItemTransform(GameObject item)
+    {
+        if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb.isKinematic = true;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
         item.transform.SetParent(_snapPoint);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
 
-        if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
-        {
-            rb.isKinematic = true;
-        }
+        // ë ˆì´ì–´ ì„¤ì •
+        this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        item.gameObject.layer = LayerMask.NameToLayer("Default");
 
-        return true;
+        foreach (var col in item.GetComponentsInChildren<Collider>())
+        {
+            col.enabled = true;
+        }
     }
 
     public bool HasDish(out Dish dish)
@@ -42,59 +107,111 @@ public class ItemPlaceAndTake : MonoBehaviour
         {
             return false;
         }
-        // À§¿¡ ³õÀÎ ¾ÆÀÌÅÛ¿¡¼­ Dish ÄÄÆ÷³ÍÆ®¸¦ Ã£À½
+        // ìœ„ì— ë†“ì¸ ì•„ì´í…œì—ì„œ Dish ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ìŒ
         dish = _onCounterItem.GetComponent<Dish>();
 
-        // Ã£¾Ò´Ù¸é true, ¾øÀ¸¸é false 
+        // ì°¾ì•˜ë‹¤ë©´ true, ì—†ìœ¼ë©´ false 
         return dish != null;
     }
 
-    //´Ù½Ã Áı¾î°¥ ¶§
+    //ë‹¤ì‹œ ì§‘ì–´ê°ˆ ë•Œ
     public virtual GameObject TakeItem()
     {
         if (_onCounterItem == null)
         {
-            CheckExistingItem();
-        }
-        if (_onCounterItem == null)
-        {
             return null;
         }
-            GameObject item = _onCounterItem;
+        GameObject item = _onCounterItem;
         _onCounterItem = null;
+
+        item.transform.SetParent(null);
+
+        this.gameObject.layer = LayerMask.NameToLayer("Default");
+
         return item;
     }
 
-    //Ã³À½ Á¢½Ã Ã¼Å©
+
+
     private void CheckExistingItem()
     {
+        if (_snapPoint == null)
+        {
+            return;
+        }
+
         Collider[] colliders = Physics.OverlapSphere(_snapPoint.position, 0.3f);
 
         foreach (var col in colliders)
         {
-            if (col.gameObject == this.gameObject) continue;
+            if (col.gameObject == this.gameObject)
+            {
+                continue;
+            }
+            Dish dish = col.GetComponentInParent<Dish>();
+            Ingredient ing = col.GetComponentInParent<Ingredient>();
+
+            // ë¬¼ë¦¬ ë° ë¶€ëª¨ ì„¤ì • ê°•ì œ ë™ê¸°í™”
+            if (dish != null || ing != null)
+            {
+                GameObject target = dish != null ? dish.gameObject : ing.gameObject;
+
+                // ì´ë¯¸ ë‹¤ë¥¸ ê³³ì˜ ìì‹ì´ë¼ë©´ ë¬´ì‹œí•˜ê±°ë‚˜ ìƒˆë¡œ ì„¤ì •
+                PlaceItem(target);
+                break;
+            }
+        }
+    }
+    protected virtual void TryAbsorbFloatingItem()
+    {
+        if (_snapPoint == null || _onCounterItem != null)
+        {
+            return;
+        }
+
+        Collider[] colliders = Physics.OverlapSphere(_snapPoint.position, 0.45f);
+
+        GameObject closestItem = null;
+        float closestSqrDistance = float.MaxValue;
+
+        foreach (var col in colliders)
+        {
+            if (col == null)
+            {
+                continue;
+            }
+
+            if (col.gameObject == this.gameObject)
+            {
+                continue;
+            }
 
             Dish dish = col.GetComponentInParent<Dish>();
             Ingredient ing = col.GetComponentInParent<Ingredient>();
 
-            if (dish != null || ing != null)
+            if (dish == null && ing == null)
             {
-                // ½ÇÁ¦ ½ºÅ©¸³Æ®°¡ ºÙÀº ÃÖ»ó´Ü ¿ÀºêÁ§Æ®¸¦ Å¸°ÙÀ¸·Î ÀâÀ½
-                _onCounterItem = dish != null ? dish.gameObject : ing.gameObject;
-
-                // ¹°¸® ¹× ºÎ¸ğ ¼³Á¤ °­Á¦ µ¿±âÈ­
-                if (_onCounterItem.TryGetComponent<Rigidbody>(out Rigidbody rb))
-                {
-                    rb.isKinematic = true;
-                }
-
-                _onCounterItem.transform.SetParent(_snapPoint);
-                _onCounterItem.transform.localPosition = Vector3.zero;
-                _onCounterItem.transform.localRotation = Quaternion.identity;
-
-                Debug.Log($"{gameObject.name}°¡ ÁÖº¯¿¡¼­ {_onCounterItem.name}À» Ã£¾Æ µî·ÏÇß½À´Ï´Ù.");
-                break;
+                continue;
             }
+
+            GameObject target = dish != null ? dish.gameObject : ing.gameObject;
+
+            if (target == _onCounterItem)
+            {
+                continue;
+            }
+
+            float sqrDistance = (target.transform.position - _snapPoint.position).sqrMagnitude;
+            if (sqrDistance < closestSqrDistance)
+            {
+                closestSqrDistance = sqrDistance;
+                closestItem = target;
+            }
+        }
+
+        if (closestItem != null)
+        {
+            PlaceItem(closestItem);
         }
     }
 }

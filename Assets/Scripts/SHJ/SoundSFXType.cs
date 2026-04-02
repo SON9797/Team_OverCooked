@@ -1,0 +1,24 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace OverCooked
+{
+    public enum SFXType
+    {
+        None,
+        ItemPickUp,
+        ItemDrop,
+        Chop,
+        Step,
+        Dash,
+        Throw,
+        SuccessDelivery,
+        UI_Ready,
+        UI_TimerBeep,
+        UI_TimesUp,
+        UI_ResultBG,
+        UI_ResultStar,
+        UI_ResultText,
+    }
+}

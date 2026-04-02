@@ -1,8 +1,6 @@
 using Overcooked.Interfaces;
 using OverCooked;
 using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -15,6 +13,7 @@ namespace Overcooked
         private readonly ITimerService _timerService;
         private readonly IRecipeService _recipeService;
         private readonly IScoreService _scoreService;
+        private IInGameSoundManager _inGameSoundManager;
 
         private readonly LevelData _currentLevelData;
 
@@ -26,13 +25,15 @@ namespace Overcooked
             ITimerService timerService,
             LevelData levelData,
             IRecipeService recipeService,
-            IScoreService scoreService)
+            IScoreService scoreService,
+            IInGameSoundManager inGameSoundManager)
         {
             _uiManager = uiManager;
             _timerService = timerService;
             _currentLevelData = levelData;
             _recipeService = recipeService;
             _scoreService = scoreService;
+            _inGameSoundManager = inGameSoundManager;
         }
 
         public void Start()
@@ -86,6 +87,8 @@ namespace Overcooked
 
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, false);
 
+            _inGameSoundManager.PlaySFX(SFXType.UI_Ready);
+
             _uiManager.SetPanelActive(_uiManager.CoinPanel, true);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, true);
 
@@ -104,8 +107,12 @@ namespace Overcooked
             _timerService.StartTimer();
             _uiManager.SetPanelActive(_uiManager.StartPanel, false);
 
-            _recipeService.StartGeneration((MonoBehaviour)_uiManager);
+            if (_currentLevelData != null && _currentLevelData.LevelBGM != null)
+            {
+                _inGameSoundManager.PlayBGM(_currentLevelData.LevelBGM);
+            }
 
+            _recipeService.StartGeneration((MonoBehaviour)_uiManager);
 
             // 7. ¿£µù
             yield return new WaitUntil(() => _timerService.IsTimeOver);
@@ -117,9 +124,12 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
 
-            _uiManager.SetPanelActive(_uiManager.TimesUpPanel, true);
+            _inGameSoundManager.StopBGM();
 
-            yield return new WaitForSeconds(1.5f);
+            _uiManager.SetPanelActive(_uiManager.TimesUpPanel, true);
+            _inGameSoundManager.PlaySFX(SFXType.UI_TimesUp);
+
+            yield return new WaitForSeconds(3f);
 
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, false);
 

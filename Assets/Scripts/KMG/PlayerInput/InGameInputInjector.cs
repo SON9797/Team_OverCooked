@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
+using Overcooked.Interfaces;
 
 
 namespace Overcooked
@@ -19,12 +20,19 @@ namespace Overcooked
 
         private InGameUIManager _inGameUIManager;
 
+        private IInGameSoundManager _inGameSoundManager;
+
         private bool _isPaused = false;
 
         public bool IsSelected { get; private set; }
 
         [Inject]
-        public void Construct(IInGamePlayerInput input, SceneFlowManager sceneFlowManager, InGameUIManager inGameUIManager)
+        public void Construct(
+            IInGamePlayerInput input,
+            SceneFlowManager sceneFlowManager,
+            InGameUIManager inGameUIManager,
+            IInGameSoundManager inGameSoundManager
+            )
         {
             _input = input;
             _sceneFlowManager = sceneFlowManager;
@@ -66,7 +74,7 @@ namespace Overcooked
 
             if (_input.DashInput)
             {
-                _move.TryDash();
+                _move.TryDash();                
             }
 
             if (_input.InteractionIngredientInput)
@@ -76,7 +84,17 @@ namespace Overcooked
 
             if (_input.InteractionCookInput)
             {
-                _holdIngredient.TryInteractionCook();
+                if (_holdIngredient.HasIngredient)
+                {
+                    if (_holdIngredient.CanThrowHeldObject)
+                    {
+                        _holdIngredient.TryThrowHeldObject();
+                    }
+                }
+                else
+                {
+                    _holdIngredient.TryInteractionCook();
+                }
             }
         }
 
