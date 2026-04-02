@@ -147,6 +147,8 @@ GameObject:
   - component: {fileID: 9092952389362638018}
   - component: {fileID: 3754350881645499225}
   - component: {fileID: 4408015820694497699}
+  - component: {fileID: 3847224880522366449}
+  - component: {fileID: -3476611348478063105}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -269,3 +271,31 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3847224880522366449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2914841742688121790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94aedba661360df498137e201759d0a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bigScale: 1.5
+  duration: 0.5
+--- !u!114 &-3476611348478063105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2914841742688121790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad87894a01a22740b06447e473e5dad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalImg: {fileID: 21300000, guid: d5ae3eceb60bab844ab358d0acea6d51, type: 3}
+  hoverImg: {fileID: 21300000, guid: 420b01db51508dd43a277788296b30e2, type: 3}

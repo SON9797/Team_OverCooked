@@ -12,14 +12,17 @@ public class HoverAnime_BigtoOrigin : MonoBehaviour, IPointerEnterHandler
 
 
     Coroutine current;
+    Vector3 originScale;
     private void Start()
     {
+        originScale = transform.localScale;
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (current!=null)
         {
             StopCoroutine(current);
+            transform.localScale = originScale;
         }
         current=StartCoroutine(BigToOrigin());
     }
@@ -27,7 +30,7 @@ public class HoverAnime_BigtoOrigin : MonoBehaviour, IPointerEnterHandler
     IEnumerator BigToOrigin()
     {
        
-        Vector3 originScale = transform.localScale;
+        originScale = transform.localScale;
         Vector3 targetScale = transform.localScale * bigScale;
         transform.localScale = targetScale;
         float t = 0;

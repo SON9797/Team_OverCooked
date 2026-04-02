@@ -492,6 +492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4368828474753434866}
   - component: {fileID: 6135615611451527607}
+  - component: {fileID: -7744928491982928199}
   m_Layer: 5
   m_Name: popup
   m_TagString: Untagged
@@ -536,3 +537,19 @@ MonoBehaviour:
   title: {fileID: 4760830744576249788}
   content: {fileID: 6315938191437243553}
   buttonRoot: {fileID: 5247801641961229635}
+  buttonPrefab: {fileID: 601072397454117022, guid: fb9c6e64691d8704c98df071302782ea, type: 3}
+--- !u!114 &-7744928491982928199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8875640370537460644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8682f6bff808c474a907be70c3c2749d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originPos: {x: 0, y: 610, z: 0}
+  targetPos: {x: 0, y: 0, z: 0}
+  duration: 0.5

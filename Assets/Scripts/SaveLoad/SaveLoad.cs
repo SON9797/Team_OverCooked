@@ -26,6 +26,8 @@ public class SaveLoad : MonoBehaviour
 {
     public static SaveLoad instance;
 
+    
+
     public SaveData currentData;
 
     public SaveData[] savedatas = new SaveData[3];
