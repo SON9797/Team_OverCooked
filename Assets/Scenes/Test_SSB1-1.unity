@@ -5422,6 +5422,7 @@ GameObject:
   - component: {fileID: 5059}
   - component: {fileID: 5130}
   - component: {fileID: 5129}
+  - component: {fileID: 5131}
   m_Layer: 11
   m_Name: NewCrate
   m_TagString: Untagged
@@ -33313,7 +33314,19 @@ MonoBehaviour:
   _animator: {fileID: 0}
   _rayPoint: {fileID: 1356372277}
   _interactionDistance: 3
-  _playerController: {fileID: 0}
+--- !u!114 &5131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233c5bdce99ff3a4586cface528f9b86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _snapPoint: {fileID: 3450}
 --- !u!95 &5134
 Animator:
   serializedVersion: 5
@@ -33434,7 +33447,6 @@ MonoBehaviour:
   _animator: {fileID: 0}
   _rayPoint: {fileID: 1356372277}
   _interactionDistance: 3
-  _playerController: {fileID: 0}
 --- !u!114 &5147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58411,6 +58423,26 @@ PrefabInstance:
     - target: {fileID: 2216444738868244724, guid: 10b4364f9509c61498290323041cff1d, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3976803190100525783, guid: 10b4364f9509c61498290323041cff1d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3976803190100525783, guid: 10b4364f9509c61498290323041cff1d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3976803190100525783, guid: 10b4364f9509c61498290323041cff1d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3976803190100525783, guid: 10b4364f9509c61498290323041cff1d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3976803190100525783, guid: 10b4364f9509c61498290323041cff1d, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8132839006993589954, guid: 10b4364f9509c61498290323041cff1d, type: 3}
       propertyPath: _snapPoint
