@@ -10,6 +10,7 @@ public class PopupManager : MonoBehaviour
     public static PopupManager instance;
     [SerializeField] PopupWindow popupWindow;
     [SerializeField] Transform canvasTransform;
+    [SerializeField] GameObject saveSlot;
     
 
     private PopupWindow currentPopup;
@@ -22,7 +23,7 @@ public class PopupManager : MonoBehaviour
         }   
         instance = this;
     }
-    void OpenPopup(string titleText,List<PopupButtonData>buttons, string contentText = "", GameObject contentObj = null)
+    void OpenPopup(string titleText,List<PopupButtonData>buttons=null, string contentText = "", List<GameObject> contentObj = null)
     {
         currentPopup = Instantiate(popupWindow, canvasTransform);
         RectTransform rect = currentPopup.GetComponent<RectTransform>();
@@ -32,9 +33,12 @@ public class PopupManager : MonoBehaviour
         //텍스트가 아닌 것들이 있으면 여기서 생성
         if (contentObj != null)
         {
-            GameObject contentOn = Instantiate(contentObj,currentPopup.content.transform);
-            RectTransform rect2 = contentOn.GetComponent<RectTransform>();
-            rect2.anchoredPosition = Vector2.zero;
+            foreach (var co in contentObj)
+            {
+                GameObject contentOn = Instantiate(co, currentPopup.contentRoot);
+                RectTransform rect2 = contentOn.GetComponent<RectTransform>();
+                rect2.anchoredPosition = Vector2.zero;
+            }
         }
 
         //버튼 생성
@@ -51,16 +55,23 @@ public class PopupManager : MonoBehaviour
 
         OpenPopup(titletext, buttonList, contentText);
     }
-    public void OpenSaveLoadPopup()
+
+    //mode가 0이면 새로 시작, 1이면 로드하는거
+    public void OpenSaveLoadPopup(int mode)
     {
         string titletext = "Load";
-        PopupButtonData buttonData = new PopupButtonData();
-        buttonData.text = "OK";
-        buttonData.onclickAction = ClosePopup;
-        List<PopupButtonData> buttonList = new List<PopupButtonData>();
-        buttonList.Add(buttonData);
+        
+        List<GameObject> slotList=new List<GameObject>();
+        SaveData[] saveDatas = SaveLoad.instance.savedatas;
+        for(int i = 0; i < 3; i++)
+        {
+            GameObject slot = Instantiate( saveSlot);
+            SaveSlotButton b=slot.GetComponent<SaveSlotButton>();
+            b.Setting(i, mode==0 ? SaveSlotMode.newgame:SaveSlotMode.load, $"{saveDatas[i].currentChapter}-{saveDatas[i].currentSubChapter}", saveDatas[i].totalStarCount.ToString(), saveDatas[i].currentChapter == 0 ? false : true);
+            slotList.Add(slot);
+        }
 
-      //  OpenPopup(titletext,buttonList,,)
+        OpenPopup(titletext, contentObj: slotList);
 
     }
     public void ClosePopup()

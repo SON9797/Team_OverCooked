@@ -16,6 +16,7 @@ public class SaveData
 {
     public int currentChapter;
     public int currentSubChapter;
+    public int totalStarCount;
     public List<ChapterScore> bestScores = new List<ChapterScore>();
 
 
@@ -43,6 +44,7 @@ public class SaveLoad : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
+        /*
         SaveData testData = new SaveData();
         testData.currentChapter = 1;
         testData.currentSubChapter = 1;
@@ -50,7 +52,7 @@ public class SaveLoad : MonoBehaviour
         testScore = ToChapterScore(1, 1, 10);
         testData.bestScores.Add(testScore);
         Save(testData, 0);
-
+        */
         LoadAllSlot();
         Debug.Log($"{savedatas[0].currentChapter}");
     }
@@ -78,7 +80,7 @@ public class SaveLoad : MonoBehaviour
         string path = Path.Combine(Application.persistentDataPath, $"save{slotNum}.json");
         if (!File.Exists(path))
         {
-            Debug.Log("세이브 파일 없음");
+            Debug.Log($"세이브 파일 없음{slotNum}");
             return new SaveData();
         }
 

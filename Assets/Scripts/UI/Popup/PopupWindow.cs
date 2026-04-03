@@ -16,6 +16,7 @@ public class PopupWindow : MonoBehaviour
     [SerializeField] public TextMeshProUGUI title;
     [SerializeField] public TextMeshProUGUI content;
     [SerializeField] public Transform buttonRoot;
+    [SerializeField] public Transform contentRoot;
     [SerializeField] PopupButton buttonPrefab;
 
     public void Setting(string titleText,string contentText)
@@ -25,6 +26,8 @@ public class PopupWindow : MonoBehaviour
     }
     public void SetupButtons(List<PopupButtonData> buttons)
     {
+        if (buttons == null)
+            return;
         foreach (var data in buttons)
         {
             var btn = Instantiate(buttonPrefab, buttonRoot);
