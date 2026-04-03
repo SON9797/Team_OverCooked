@@ -128,11 +128,6 @@ public class ChopBoard : ItemPlaceAndTake
             return false;
         }
 
-        if (!_currentChoppingPlayer.IsSelectedPlayer())
-        {
-            return false;
-        }
-
         Transform rayPoint = _currentChoppingPlayer.GetRayPoint();
         if (rayPoint == null)
         {
