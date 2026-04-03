@@ -96,8 +96,11 @@ public class ChopBoard : ItemPlaceAndTake
     // 플레이어가 컨트롤 키를 눌렀을 때 호출
     public bool ToggleChop(PlayerItemController player)
     {
+        Debug.Log($"[ChopBoard] ToggleChop 호출 / board:{name} / player:{(player != null ? player.name : "null")}");
+
         if (_onCounterItem == null)
         {
+            Debug.Log("[ChopBoard] _onCounterItem == null");
             StopChopping();
             return false;
         }
@@ -105,12 +108,14 @@ public class ChopBoard : ItemPlaceAndTake
         Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
         if (ingredient == null || !ingredient.CanStatusAdd(CookBehaivior.chop))
         {
+            Debug.Log("[ChopBoard] chop 가능한 Ingredient가 아님");
             StopChopping();
             return false;
         }
 
         if (player == null)
         {
+            Debug.Log("[ChopBoard] player == null");
             PauseChopping();
             return false;
         }
@@ -118,6 +123,7 @@ public class ChopBoard : ItemPlaceAndTake
         // 이미 칼질 중이면 토글 off(일시정지)
         if (_isChopping)
         {
+            Debug.Log("[ChopBoard] 이미 칼질 중이라 Pause");
             PauseChopping();
             return false;
         }
@@ -125,6 +131,11 @@ public class ChopBoard : ItemPlaceAndTake
         // 칼질 시작 / 재개
         _currentChoppingPlayer = player;
         _isChopping = true;
+
+        Debug.Log($"[ChopBoard] 칼질 시작 플레이어 설정 : {_currentChoppingPlayer.name}");
+
+        // 도구 표시 - 칼질 중에는 Cleaver만 보이게
+        ShowPlayerCleaver();
 
         if (_canvasObj != null)
         {
@@ -196,10 +207,49 @@ public class ChopBoard : ItemPlaceAndTake
         }
     }
 
+    // 현재 칼질 플레이어의 도구를 Cleaver만 보이도록 설정
+    private void ShowPlayerCleaver()
+    {
+        if (_currentChoppingPlayer == null)
+        {
+            Debug.Log("[ChopBoard] ShowPlayerCleaver 실패 - _currentChoppingPlayer null");
+            return;
+        }
+
+        PlayerToolVisualController toolVisual = _currentChoppingPlayer.GetComponent<PlayerToolVisualController>();
+
+        if (toolVisual == null)
+        {
+            Debug.LogWarning($"[ChopBoard] PlayerToolVisualController 없음 : {_currentChoppingPlayer.name}", _currentChoppingPlayer);
+            return;
+        }
+
+        Debug.Log($"[ChopBoard] ShowPlayerCleaver 호출 대상 : {_currentChoppingPlayer.name}", _currentChoppingPlayer);
+        toolVisual.ShowCleaverOnly();
+    }
+
+    // 현재 칼질 플레이어의 도구를 전부 숨김
+    private void HidePlayerTools()
+    {
+        if (_currentChoppingPlayer == null)
+        {
+            return;
+        }
+
+        PlayerToolVisualController toolVisual = _currentChoppingPlayer.GetComponent<PlayerToolVisualController>();
+        if (toolVisual != null)
+        {
+            toolVisual.HideAllTools();
+        }
+    }
+
     private void PauseChopping()
     {
         _isChopping = false;
         StopPlayerChopAnimation();
+
+        // 도구 표시 - 일시정지 시 도구 숨김
+        HidePlayerTools();
 
         // 일시정지 상태에서는 게이지를 유지하고 UI도 꺼지지 않음
         if (_canvasObj != null)
@@ -219,6 +269,9 @@ public class ChopBoard : ItemPlaceAndTake
     {
         _isChopping = false;
         StopPlayerChopAnimation();
+
+        // 도구 표시 - 완전 중단 시 도구 숨김
+        HidePlayerTools();
 
         _currentChopProgress = 0f;
         _currentChoppingPlayer = null;
@@ -244,6 +297,9 @@ public class ChopBoard : ItemPlaceAndTake
 
         _isChopping = false;
         StopPlayerChopAnimation();
+
+        // 도구 표시 - 칼질 완료 시 도구 숨김
+        HidePlayerTools();
 
         _currentChopProgress = 0f;
         _currentChoppingPlayer = null;
@@ -271,6 +327,9 @@ public class ChopBoard : ItemPlaceAndTake
 
         _isChopping = false;
         StopPlayerChopAnimation();
+
+        // 도구 표시 - 아이템을 집어가도 도구 숨김
+        HidePlayerTools();
 
         _currentChopProgress = 0f;
         _currentChoppingPlayer = null;
