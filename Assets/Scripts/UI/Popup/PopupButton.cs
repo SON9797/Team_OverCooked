@@ -13,7 +13,7 @@ public class PopupButton : MonoBehaviour
     {
         button=GetComponent<Button>();
     }
-    public void Setting(string text,Action action)
+    public virtual void Setting(string text,Action action)
     {
         btnText.text = text;
         button.onClick.RemoveAllListeners();
