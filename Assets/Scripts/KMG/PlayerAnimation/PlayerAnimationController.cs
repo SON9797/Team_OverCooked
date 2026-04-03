@@ -31,16 +31,28 @@ namespace Overcooked
             Vector3 flatVelocity = _rb.velocity;
             flatVelocity.y = 0f;
 
-            bool isMove = flatVelocity.sqrMagnitude > _moveThreshold;
+            bool isMove = flatVelocity.sqrMagnitude > _moveThreshold * _moveThreshold;
             bool hasItem = _itemController.HasIngredient;
 
             _animator.SetBool(IsMoveHash, isMove);
             _animator.SetBool(HasItemHash, hasItem);
+
+            // 이동 중이거나 아이템을 들고 있으면 칼질 애니메이션 강제 종료
+            if (isMove || hasItem)
+            {
+                _animator.SetBool(IsChoppingHash, false);
+            }
         }
 
         public void SetChopping(bool isChopping)
         {
-            if (isChopping && _itemController.HasIngredient)
+            Vector3 flatVelocity = _rb.velocity;
+            flatVelocity.y = 0f;
+
+            bool isMove = flatVelocity.sqrMagnitude > _moveThreshold * _moveThreshold;
+            bool hasItem = _itemController.HasIngredient;
+
+            if (isChopping && (hasItem || isMove))
             {
                 _animator.SetBool(IsChoppingHash, false);
                 return;

@@ -26,7 +26,10 @@ public class ChopBoard : ItemPlaceAndTake
     {
         base.Start();
 
-        if (_canvasObj != null) _canvasObj.SetActive(false);
+        if (_canvasObj != null)
+        {
+            _canvasObj.SetActive(false);
+        }
 
         if (_progressBar != null)
         {
@@ -43,12 +46,29 @@ public class ChopBoard : ItemPlaceAndTake
             // 매 프레임 아이템이 낙하하지 않도록 물리 설정을 강제 고정
             if (_onCounterItem.TryGetComponent<Rigidbody>(out Rigidbody rb))
             {
-                rb.useGravity = false;   // 중력 끄기
-                rb.isKinematic = true;   // 물리 연산 중단 (고정)
+                rb.useGravity = false;
+                rb.isKinematic = true;
             }
         }
 
-        if (!_isChopping || _onCounterItem == null)
+        if (_onCounterItem == null)
+        {
+            if (_isChopping || _currentChopProgress > 0f)
+            {
+                StopChopping();
+            }
+            return;
+        }
+
+        Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
+
+        if (ingredient == null || !ingredient.CanStatusAdd(CookBehaivior.chop))
+        {
+            StopChopping();
+            return;
+        }
+
+        if (!_isChopping)
         {
             return;
         }
@@ -57,15 +77,6 @@ public class ChopBoard : ItemPlaceAndTake
         if (!CanKeepChopping())
         {
             PauseChopping();
-            return;
-        }
-
-        Ingredient ingredient = _onCounterItem.GetComponent<Ingredient>();
-
-        // (중복 실행 방지)
-        if (ingredient == null || !ingredient.CanStatusAdd(CookBehaivior.chop))
-        {
-            StopChopping();
             return;
         }
 
@@ -115,7 +126,15 @@ public class ChopBoard : ItemPlaceAndTake
         _currentChoppingPlayer = player;
         _isChopping = true;
 
-        if (_canvasObj != null) _canvasObj.SetActive(true);
+        if (_canvasObj != null)
+        {
+            _canvasObj.SetActive(true);
+        }
+
+        if (_progressBar != null && _chopTimeMax > 0f)
+        {
+            _progressBar.value = _currentChopProgress / _chopTimeMax;
+        }
 
         Debug.Log("다지기 시작!");
         return true;
@@ -163,9 +182,35 @@ public class ChopBoard : ItemPlaceAndTake
         return dot >= _pauseCheckDot;
     }
 
+    private void StopPlayerChopAnimation()
+    {
+        if (_currentChoppingPlayer == null)
+        {
+            return;
+        }
+
+        PlayerAnimationController animationController = _currentChoppingPlayer.GetComponent<PlayerAnimationController>();
+        if (animationController != null)
+        {
+            animationController.SetChopping(false);
+        }
+    }
+
     private void PauseChopping()
     {
         _isChopping = false;
+        StopPlayerChopAnimation();
+
+        // 일시정지 상태에서는 게이지를 유지하고 UI도 꺼지지 않음
+        if (_canvasObj != null)
+        {
+            _canvasObj.SetActive(true);
+        }
+
+        if (_progressBar != null && _chopTimeMax > 0f)
+        {
+            _progressBar.value = _currentChopProgress / _chopTimeMax;
+        }
 
         Debug.Log("도마를 바라보지 않아 다지기 일시정지");
     }
@@ -173,6 +218,8 @@ public class ChopBoard : ItemPlaceAndTake
     private void StopChopping()
     {
         _isChopping = false;
+        StopPlayerChopAnimation();
+
         _currentChopProgress = 0f;
         _currentChoppingPlayer = null;
 
@@ -181,7 +228,10 @@ public class ChopBoard : ItemPlaceAndTake
             _progressBar.value = 0f;
         }
 
-        if (_canvasObj != null) _canvasObj.SetActive(false);
+        if (_canvasObj != null)
+        {
+            _canvasObj.SetActive(false);
+        }
     }
 
     private void FinishChop()
@@ -192,8 +242,10 @@ public class ChopBoard : ItemPlaceAndTake
             ingredient.AddStatus(CookBehaivior.chop);
         }
 
-        _currentChopProgress = 0f;
         _isChopping = false;
+        StopPlayerChopAnimation();
+
+        _currentChopProgress = 0f;
         _currentChoppingPlayer = null;
 
         if (_progressBar != null)
@@ -201,20 +253,25 @@ public class ChopBoard : ItemPlaceAndTake
             _progressBar.value = 0f;
         }
 
-        if (_canvasObj != null) _canvasObj.SetActive(false);
+        if (_canvasObj != null)
+        {
+            _canvasObj.SetActive(false);
+        }
     }
 
     // 아이템을 집어가면 다지기 중단 및 게이지 리셋
     public override GameObject TakeItem()
     {
         // 게이지가 5% 이상 찼으면 다시 집을 수 없음
-        if (_chopTimeMax > 0f && (_currentChopProgress / _chopTimeMax) >= 0.08f)
+        if (_chopTimeMax > 0f && (_currentChopProgress / _chopTimeMax) >= 0.05f)
         {
             Debug.Log("칼질이 조금이라도 진행된 재료는 다시 집을 수 없습니다.");
             return null;
         }
 
         _isChopping = false;
+        StopPlayerChopAnimation();
+
         _currentChopProgress = 0f;
         _currentChoppingPlayer = null;
 
