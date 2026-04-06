@@ -737,8 +737,13 @@ namespace Overcooked
                 {
                     if (throwRb != null)
                     {
-                        throwRb.velocity = Vector3.zero;
-                        throwRb.angularVelocity = Vector3.zero;
+                        if (!throwRb.isKinematic)
+                        {
+                            throwRb.velocity = Vector3.zero;
+                            throwRb.angularVelocity = Vector3.zero;
+                        }
+
+                        throwRb.useGravity = false;
                         throwRb.isKinematic = true;
                     }
 

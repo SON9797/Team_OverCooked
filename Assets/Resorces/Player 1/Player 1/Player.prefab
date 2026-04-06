@@ -873,21 +873,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 119
   _dropDistance: 1
-  _throwDistance: 4
-  _throwLayer:
+  _throwForce: 8
+  _throwUpForce: 1.5
+  _throwStartForwardOffset: 0.45
+  _throwStartUpOffset: 0.3
+  _throwAimTurnSpeed: 720
+  _ignorePlayerCollisionTime: 0.12
+  _wallBounceLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  _wallLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  _wallStopOffset: 0.1
-  _throwDuration: 0.25
-  _throwArcHeight: 1.2
-  _catchWindow: 0.35
-  _catchRadius: 1
+    m_Bits: 0
+  _wallBounceDamping: 0.2
+  _maxWallBounceCount: 1
+  _catchWindow: 1
+  _catchRadius: 1.5
   _playerCatchLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -895,8 +893,8 @@ MonoBehaviour:
   _landingInteractionLayer:
     serializedVersion: 2
     m_Bits: 4294967295
-  _landingRayStartHeight: 2
-  _landingRayDistance: 10
+  _throwWatchDuration: 2
+  _landingVelocityThreshold: 0.15
 --- !u!95 &2916704724232003141
 Animator:
   serializedVersion: 5
