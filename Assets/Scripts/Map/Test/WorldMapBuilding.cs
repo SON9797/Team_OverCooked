@@ -9,7 +9,6 @@ public class WorldMapBuilding : MonoBehaviour
 
     private void Awake()
     {
-        // 시작 시 스케일을 0으로 설정
         transform.localScale = Vector3.zero;
         gameObject.SetActive(false);
     }
@@ -29,7 +28,6 @@ public class WorldMapBuilding : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / _appearDuration;
 
-            // AnimationCurve를 사용하면 살짝 커졌다가 줄어드는 '바운스' 효과도 가능합니다.
             float scale = _appearCurve.Evaluate(t);
             transform.localScale = new Vector3(scale, scale, scale);
 

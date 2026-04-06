@@ -59,6 +59,13 @@ public class WorldMapIntro : MonoBehaviour
 
         _stage1_1Open = true;
         _mapCamera.SetTarget(_playerTransform, _introOffset);
-        Debug.Log("인트로 종료: 플레이어 추적 시작");
+
+        BusMove playerBus = _playerTransform.GetComponent<BusMove>();
+        if (playerBus != null)
+        {
+            playerBus.CanMove = true;
+            Debug.Log("버스 이동 활성화!");
+        }
+
     }
 }

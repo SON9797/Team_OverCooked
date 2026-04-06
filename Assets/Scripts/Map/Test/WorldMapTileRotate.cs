@@ -8,7 +8,7 @@ public class WorldMapTileRotate : MonoBehaviour
     [SerializeField] private float _duration = 1.0f; // 뒤집히는 데 걸리는 시간
     [SerializeField] private float _jumpHeight = 1.5f;
     [SerializeField] private Material _nextMaterial; // 바뀔 머테리얼
-    [SerializeField] private WorldMapBuilding _myBuilding;
+    [SerializeField] private List<WorldMapBuilding> _myBuildings = new List<WorldMapBuilding>();
 
     public bool _isFlipping = false;
     private bool _isActivated = false;
@@ -55,9 +55,15 @@ public class WorldMapTileRotate : MonoBehaviour
                 _meshRenderer.material = _nextMaterial;
                 materialChanged = true;
 
-                if (_myBuilding != null)
+                if (_myBuildings != null && _myBuildings.Count > 0)
                 {
-                    _myBuilding.Appear();
+                    foreach (var building in _myBuildings)
+                    {
+                        if (building != null)
+                        {
+                            building.Appear();
+                        }
+                    }
                 }
             }
             yield return null;
