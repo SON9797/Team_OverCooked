@@ -7,10 +7,18 @@ public class BusMove : MonoBehaviour
     [SerializeField] float _moveSpeed = 5f;
     [SerializeField] private float _turnSpeed = 5f;
 
+    private bool _canMove = false;
+
     public static BusMove _instance;
 
     private Transform _camTransform;
     private Rigidbody _rb;
+    public bool CanMove
+    {
+        get => _canMove;
+        set => _canMove = value;
+    }
+
     void Start()
     {
         if (Camera.main != null)
@@ -23,8 +31,11 @@ public class BusMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-
-        MoveAndRotate();
+        if (!_canMove)
+        {
+            return;
+        }
+            MoveAndRotate();
     }
 
     void MoveAndRotate()
