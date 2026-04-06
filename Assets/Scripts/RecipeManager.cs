@@ -10,7 +10,7 @@ public enum IngreDientKind
     lettuce,
     fish,
     carrot,
-    parwn,
+    prawn,
     rice,
     seaweed,
 }

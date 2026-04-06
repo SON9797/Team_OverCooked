@@ -11,7 +11,6 @@ public enum CookBehaivior
     chop = 1 << 0,
     roast = 1 << 1,
     boil = 1 << 2,
-    pot = 1 << 3,
 
 }
 public class Ingredient : MonoBehaviour
