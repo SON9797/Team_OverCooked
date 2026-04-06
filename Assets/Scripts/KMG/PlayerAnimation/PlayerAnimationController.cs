@@ -13,6 +13,9 @@ namespace Overcooked
         private static readonly int HasItemHash = Animator.StringToHash("HasItem");
         private static readonly int IsChoppingHash = Animator.StringToHash("IsChopping");
 
+        // 아이템던지기 - 실제 던지기 트리거만 사용
+        private static readonly int ThrowHash = Animator.StringToHash("Throw");
+
         private Animator _animator;
         private PlayerItemController _itemController;
         private Rigidbody _rb;
@@ -59,6 +62,12 @@ namespace Overcooked
             }
 
             _animator.SetBool(IsChoppingHash, isChopping);
+        }
+
+        // 아이템던지기 - 실제 던지기 트리거
+        public void PlayThrow()
+        {
+            _animator.SetTrigger(ThrowHash);
         }
     }
 }

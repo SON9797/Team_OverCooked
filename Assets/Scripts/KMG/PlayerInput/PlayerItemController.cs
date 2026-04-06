@@ -103,7 +103,6 @@ namespace Overcooked
             _playerCols = GetComponentsInChildren<Collider>();
         }
 
-
         public void TryInteractionIngredient()
         {
             if (_inputInjector != null && !_inputInjector.IsSelected)
@@ -130,7 +129,6 @@ namespace Overcooked
                     return;
                 }
 
-
                 PlateReSpawn respawn = target.GetComponentInParent<PlateReSpawn>();
                 if (respawn != null && respawn.HasItem)
                 {
@@ -145,6 +143,14 @@ namespace Overcooked
                     // 상자 위에 아이템이 있다면 무조건 '카운터에서 집기' 로직 실행
                     TryPickUpFromCounter(counter);
                     return;
+                }
+
+                // 아이템박스테스트 - 빈손 상태에서 상자 열기
+                StuffBoxOpen stuffBox = target.GetComponentInParent<StuffBoxOpen>();
+                if (stuffBox != null)
+                {
+                    // 열기만 하고 여기서 return 하지 않음
+                    stuffBox.TryOpenByPlayer(this);
                 }
 
                 // 아이템박스테스트 - 박스에서 아이템 꺼내기
@@ -183,7 +189,7 @@ namespace Overcooked
                             return;
                         }
 
-                        //추가
+                        // 추가
                         Debug.Log("조리대가 꽉 찼거나 상호작용 불가 상태입니다.");
                         return;
                     }
@@ -229,7 +235,7 @@ namespace Overcooked
             ChopBoard chopBoard = target.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
-                //사운드 - 칼질
+                // 사운드 - 칼질
                 bool isNowChopping = chopBoard.ToggleChop(this);
                 _animationController?.SetChopping(isNowChopping);
                 return;
@@ -292,6 +298,7 @@ namespace Overcooked
             }
 
             _isThrowAiming = false;
+            _animationController?.PlayThrow();
             TryThrowHeldObject();
         }
 
@@ -360,7 +367,7 @@ namespace Overcooked
 
             EnsureThrownRelay(throwObject);
 
-            //사운드 던지기
+            // 사운드 던지기
             if (throwRb != null)
             {
                 throwRb.velocity = Vector3.zero;
@@ -389,7 +396,6 @@ namespace Overcooked
 
             transform.forward = dir.normalized;
         }
-
 
         public void FaceThrowTarget(Vector3 targetPosition)
         {
@@ -462,7 +468,6 @@ namespace Overcooked
             _currentWallBounceCount++;
         }
 
-
         private Transform FindClosestInteractTarget()
         {
             Collider[] hits = Physics.OverlapSphere(_rayPoint.position, _interactionDistance, _interactionLayer);
@@ -494,18 +499,22 @@ namespace Overcooked
 
                 Transform t = col.transform;
 
+                // 집을 수 있는 직접 대상(재료/접시)
                 bool isPickable = t.GetComponentInParent<Ingredient>() != null ||
                                   t.GetComponentInParent<Dish>() != null;
 
-                // 만약 아이템이 아니라 상자라면 기존 로직대로 진행
+                // 아이템박스테스트 - 상자/재료박스/박스오픈 오브젝트도 상호작용 후보에 포함
                 bool isBox = t.GetComponentInParent<ItemPlaceAndTake>() != null ||
-                             t.GetComponentInParent<IngredientSource>() != null;
+                             t.GetComponentInParent<IngredientSource>() != null ||
+                             t.GetComponentInParent<StuffBoxOpen>() != null;
 
                 if (!isPickable && !isBox) continue;
 
+                // 실제 상호작용 가능한 오브젝트인지 최종 확인
                 bool isInteractable =
                     t.GetComponentInParent<IngredientSource>() != null ||
                     t.GetComponentInParent<ItemPlaceAndTake>() != null ||
+                    t.GetComponentInParent<StuffBoxOpen>() != null ||
                     t.GetComponentInParent<PlateReSpawn>() != null ||
                     t.GetComponentInParent<ChopBoard>() != null ||
                     t.GetComponentInParent<Ingredient>() != null ||
@@ -671,7 +680,6 @@ namespace Overcooked
             }
         }
 
-
         private PlayerItemController FindCatchPlayer(Vector3 throwPos)
         {
             Collider[] hits = Physics.OverlapSphere(throwPos, _catchRadius, _playerCatchLayer);
@@ -700,7 +708,6 @@ namespace Overcooked
 
             return null;
         }
-
 
         private void ResolveLandingInteraction(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 landingPos)
         {
@@ -841,10 +848,9 @@ namespace Overcooked
                 return;
             }
 
-            //사운드 - 아이템 들기
+            // 사운드 - 아이템 들기
             SetCurrentHeldObject(newObject);
         }
-
 
         private void TryPickUpFromCounter(ItemPlaceAndTake counter)
         {
@@ -855,7 +861,7 @@ namespace Overcooked
                 return;
             }
 
-            //사운드 - 아이템 들기
+            // 사운드 - 아이템 들기
             SetCurrentHeldObject(takeObject);
             Debug.Log($"{takeObject.name}을(를) 상자에서 다시 집었습니다.");
         }
@@ -868,7 +874,7 @@ namespace Overcooked
                 return;
             }
 
-            //사운드 - 아이템 들기
+            // 사운드 - 아이템 들기
             SetCurrentHeldObject(directObject);
         }
 
@@ -894,7 +900,6 @@ namespace Overcooked
             return null;
         }
 
-
         private void TryPlaceHeldObject(ItemPlaceAndTake counter)
         {
             if (_currentHeldObject == null)
@@ -909,7 +914,7 @@ namespace Overcooked
             // 상자에게 아이템을 놓으라고 명령.
             if (counter.PlaceItem(_currentHeldObject))
             {
-                //사운드 - 아이템 놓기
+                // 사운드 - 아이템 놓기
 
                 // 성공시 플레이어 변수 초기화
                 ClearCurrentHeldObject();
@@ -945,7 +950,7 @@ namespace Overcooked
 
             SetHeldColliderEnabled(true);
 
-            //사운드 - 아이템 놓기
+            // 사운드 - 아이템 놓기
             ClearCurrentHeldObject();
         }
 
@@ -1095,11 +1100,9 @@ namespace Overcooked
                 Gizmos.DrawWireSphere(throwStart, 0.15f);
             }
 
-
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(transform.position, _catchRadius);
         }
-
 
         public GameObject GetCurrentHeldObject() => _currentHeldObject;
 
@@ -1108,7 +1111,7 @@ namespace Overcooked
             return _inputInjector != null && _inputInjector.IsSelected;
         }
 
-        // 2. 상자가 플레이어의 레이 시작 지점을 알 수 있게 전달
+        // 상자가 플레이어의 레이 시작 지점을 알 수 있게 전달
         public Transform GetRayPoint()
         {
             return _rayPoint;
