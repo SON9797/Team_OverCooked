@@ -49,7 +49,7 @@ namespace Overcooked
             foreach (var icon in data.Ingredients)
             {
                 Image newIcon = Instantiate(_ingredientPrefab, _ingredientParent);
-
+                
                 newIcon.sprite = icon.icon;
 
                 newIcon.enabled = true;
