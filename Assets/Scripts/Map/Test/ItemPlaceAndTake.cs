@@ -79,24 +79,21 @@ public class ItemPlaceAndTake : MonoBehaviour
     // 중복되는 트랜스폼 설정을 별도 함수로 분리
     private void SetupItemTransform(GameObject item)
     {
-        if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
-        {
-            rb.isKinematic = true;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
         item.transform.SetParent(_snapPoint);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
 
-        // 레이어 설정
-        this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        item.gameObject.layer = LayerMask.NameToLayer("Default");
-
-        foreach (var col in item.GetComponentsInChildren<Collider>())
+        Rigidbody rb = item.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            col.enabled = true;
+            if (!rb.isKinematic)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+
+            rb.useGravity = false;
+            rb.isKinematic = true;
         }
     }
 
