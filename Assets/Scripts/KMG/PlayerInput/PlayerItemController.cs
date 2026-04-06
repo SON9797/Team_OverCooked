@@ -26,26 +26,32 @@ namespace Overcooked
         [Header("내려놓기 거리")]
         [SerializeField] private float _dropDistance = 1f;
 
-        [Header("던지기 거리")]
-        [SerializeField] private float _throwDistance = 4f;
+        [Header("던지기 힘")]
+        [SerializeField] private float _throwForce = 8f;
 
-        [Header("던지기 판정 레이어")]
-        [SerializeField] private LayerMask _throwLayer = ~0;
+        [Header("던지기 위쪽 힘")]
+        [SerializeField] private float _throwUpForce = 1.2f;
 
-        [Header("바닥 판정 레이어")]
-        [SerializeField] private LayerMask _groundLayer = ~0;
+        [Header("던지기 시작 전방 보정")]
+        [SerializeField] private float _throwStartForwardOffset = 0.45f;
 
-        [Header("벽 판정 레이어")]
-        [SerializeField] private LayerMask _wallLayer = 0;
+        [Header("던지기 시작 높이 보정")]
+        [SerializeField] private float _throwStartUpOffset = 0.1f;
 
-        [Header("벽 앞 여유 거리")]
-        [SerializeField] private float _wallStopOffset = 0.1f;
+        [Header("조준 회전 속도")]
+        [SerializeField] private float _throwAimTurnSpeed = 720f;
 
-        [Header("던지기 연출 시간")]
-        [SerializeField] private float _throwDuration = 0.25f;
+        [Header("플레이어 충돌 무시 시간")]
+        [SerializeField] private float _ignorePlayerCollisionTime = 0.12f;
 
-        [Header("던지기 포물선 높이")]
-        [SerializeField] private float _throwArcHeight = 1.2f;
+        [Header("벽 반사 레이어")]
+        [SerializeField] private LayerMask _wallBounceLayer = 0;
+
+        [Header("벽 반사 세기")]
+        [SerializeField, Range(0f, 1f)] private float _wallBounceDamping = 0.2f;
+
+        [Header("최대 벽 반사 횟수")]
+        [SerializeField] private int _maxWallBounceCount = 1;
 
         [Header("플레이어 받기 판정 시간")]
         [SerializeField] private float _catchWindow = 0.35f;
@@ -62,11 +68,11 @@ namespace Overcooked
         [Header("착지 상호작용 레이어")]
         [SerializeField] private LayerMask _landingInteractionLayer = ~0;
 
-        [Header("착지 보정 시작 높이")]
-        [SerializeField] private float _landingRayStartHeight = 2f;
+        [Header("던지기 감시 시간")]
+        [SerializeField] private float _throwWatchDuration = 2f;
 
-        [Header("착지 보정 레이 길이")]
-        [SerializeField] private float _landingRayDistance = 10f;
+        [Header("착지로 볼 속도 기준")]
+        [SerializeField] private float _landingVelocityThreshold = 0.15f;
 
         private GameObject _currentHeldObject;
         private Ingredient _currentIngredient;
@@ -75,15 +81,26 @@ namespace Overcooked
         private InGameInputInjector _inputInjector;
         private PlayerAnimationController _animationController;
 
+        private Collider[] _playerCols;
+
         private bool _isThrowing = false;
+        private bool _isThrowAiming = false;
+
+        // 현재 던져진 아이템 추적용
+        private GameObject _activeThrownObject;
+        private Rigidbody _activeThrownRb;
+        private Collider[] _activeThrownCols;
+        private int _currentWallBounceCount = 0;
 
         public bool HasIngredient => _currentHeldObject != null;
         public bool CanThrowHeldObject => _currentHeldObject != null && _currentHeldObject.GetComponent<Ingredient>() != null;
+        public bool IsThrowAiming => _isThrowAiming;
 
         private void Awake()
         {
             _inputInjector = GetComponent<InGameInputInjector>();
             _animationController = GetComponent<PlayerAnimationController>();
+            _playerCols = GetComponentsInChildren<Collider>();
         }
 
 
@@ -94,7 +111,7 @@ namespace Overcooked
                 return;
             }
 
-            if (_isThrowing)
+            if (_isThrowing || _isThrowAiming)
             {
                 return;
             }
@@ -183,7 +200,7 @@ namespace Overcooked
                 return;
             }
 
-            if (_isThrowing)
+            if (_isThrowing || _isThrowAiming)
             {
                 return;
             }
@@ -221,6 +238,63 @@ namespace Overcooked
             _animationController?.SetChopping(false);
         }
 
+        // 아이템던지기 - 컨트롤을 누르는 순간 조준 시작
+        public void StartThrowAim()
+        {
+            if (_inputInjector != null && !_inputInjector.IsSelected)
+            {
+                return;
+            }
+
+            if (_isThrowing)
+            {
+                return;
+            }
+
+            // 아이템던지기 - Ingredient 스크립트가 붙은 것만 던질 수 있음
+            if (!CanThrowCurrentHeldObject())
+            {
+                return;
+            }
+
+            _isThrowAiming = true;
+        }
+
+        // 아이템던지기 - 조준 중에는 이동 대신 바라보는 방향만 갱신
+        public void UpdateThrowAim(Vector2 lookInput)
+        {
+            if (!_isThrowAiming)
+            {
+                return;
+            }
+
+            if (lookInput.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            Vector3 lookDir = new Vector3(lookInput.x, 0f, lookInput.y);
+            if (lookDir.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            Quaternion targetRot = Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, _throwAimTurnSpeed * Time.deltaTime);
+        }
+
+        // 아이템던지기 - 컨트롤을 떼는 순간 실제 물리 투척
+        public void ReleaseThrowAimAndThrow()
+        {
+            if (!_isThrowAiming)
+            {
+                return;
+            }
+
+            _isThrowAiming = false;
+            TryThrowHeldObject();
+        }
+
         public void TryThrowHeldObject()
         {
             if (_inputInjector != null && !_inputInjector.IsSelected)
@@ -253,18 +327,54 @@ namespace Overcooked
             Rigidbody throwRb = _currentHeldRb;
             Collider[] throwCols = _currentHeldCols;
 
+            _isThrowing = true;
+            _isThrowAiming = false;
+            _currentWallBounceCount = 0;
+
             throwObject.transform.SetParent(null);
             ClearCurrentHeldObject();
 
-            //사운드 던지기
+            Vector3 forward = transform.forward;
+            forward.y = 0f;
 
-            // 아이템던지기 - 던질 때 미리 목표를 확정하지 않고 실제 비행 후 처리
-            StartCoroutine(CoThrowObject(throwObject, throwRb, throwCols));
+            if (forward.sqrMagnitude <= 0.0001f)
+            {
+                forward = Vector3.forward;
+            }
+
+            forward.Normalize();
+
+            // 아이템던지기 - 손 위치에서 바로 겹치지 않게 약간 앞/위에서 시작
+            Vector3 startPos = _holdPoint.position
+                + forward * _throwStartForwardOffset
+                + Vector3.up * _throwStartUpOffset;
+
+            throwObject.transform.position = startPos;
+            throwObject.transform.rotation = Quaternion.identity;
+
+            PrepareThrownObject(throwRb, throwCols);
+
+            _activeThrownObject = throwObject;
+            _activeThrownRb = throwRb;
+            _activeThrownCols = throwCols;
+
+            EnsureThrownRelay(throwObject);
+
+            //사운드 던지기
+            if (throwRb != null)
+            {
+                throwRb.velocity = Vector3.zero;
+                throwRb.angularVelocity = Vector3.zero;
+                throwRb.AddForce(forward * _throwForce + Vector3.up * _throwUpForce, ForceMode.VelocityChange);
+            }
+
+            StartCoroutine(CoIgnorePlayerCollisionTemporarily(throwCols));
+            StartCoroutine(CoWatchThrownObject(throwObject, throwRb, throwCols));
         }
 
         public bool CanReceiveThrownItem()
         {
-            return !HasIngredient && !_isThrowing;
+            return !HasIngredient && !_isThrowing && !_isThrowAiming;
         }
 
         public void FaceThrowOrigin(Vector3 throwOrigin)
@@ -292,6 +402,64 @@ namespace Overcooked
             }
 
             transform.forward = dir.normalized;
+        }
+
+        // 아이템던지기 - 던져진 아이템이 충돌했을 때 릴레이가 이 함수 호출
+        public void NotifyThrownObjectCollision(GameObject hitObject, Collision collision)
+        {
+            if (!_isThrowing)
+            {
+                return;
+            }
+
+            if (hitObject == null || collision == null)
+            {
+                return;
+            }
+
+            if (_activeThrownObject != hitObject || _activeThrownRb == null)
+            {
+                return;
+            }
+
+            // 아이템던지기 - Walls 레이어에 닿았을 때만 살짝 튕김
+            int otherLayerMask = 1 << collision.gameObject.layer;
+            if ((_wallBounceLayer.value & otherLayerMask) == 0)
+            {
+                return;
+            }
+
+            if (_currentWallBounceCount >= _maxWallBounceCount)
+            {
+                return;
+            }
+
+            Vector3 currentVelocity = _activeThrownRb.velocity;
+            Vector3 flatVelocity = currentVelocity;
+            flatVelocity.y = 0f;
+
+            if (flatVelocity.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            ContactPoint contact = collision.GetContact(0);
+            Vector3 normal = contact.normal;
+            normal.y = 0f;
+
+            if (normal.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            normal.Normalize();
+
+            Vector3 reflectedFlatVelocity = Vector3.Reflect(flatVelocity, normal) * _wallBounceDamping;
+            Vector3 finalVelocity = reflectedFlatVelocity;
+            finalVelocity.y = Mathf.Max(0f, currentVelocity.y);
+
+            _activeThrownRb.velocity = finalVelocity;
+            _currentWallBounceCount++;
         }
 
 
@@ -376,69 +544,105 @@ namespace Overcooked
             return bestTarget;
         }
 
-
-        private IEnumerator CoThrowObject(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols)
+        // 아이템던지기 - 던진 직후 플레이어 자신의 콜라이더와 잠깐 충돌 무시
+        private IEnumerator CoIgnorePlayerCollisionTemporarily(Collider[] throwCols)
         {
-            if (throwObject == null || _holdPoint == null)
-            {
-                yield break;
-            }
+            SetIgnorePlayerCollisions(throwCols, true);
+            yield return new WaitForSeconds(_ignorePlayerCollisionTime);
+            SetIgnorePlayerCollisions(throwCols, false);
+        }
 
-            _isThrowing = true;
-
-            PrepareThrownObject(throwRb, throwCols);
-
-            Vector3 startPos = _holdPoint.position;
-            Vector3 forward = transform.forward;
-            forward.y = 0f;
-
-            if (forward.sqrMagnitude <= 0.0001f)
-            {
-                forward = Vector3.forward;
-            }
-
-            forward.Normalize();
-
-            Vector3 endPos = GetThrowFloorPosition(startPos, forward);
-
-            float duration = Mathf.Max(0.01f, _throwDuration);
+        // 아이템던지기 - 던져진 뒤 받기/착지/조리대 상호작용 감시
+        private IEnumerator CoWatchThrownObject(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols)
+        {
             float elapsed = 0f;
+            bool landingResolved = false;
 
-            while (elapsed < duration)
+            while (elapsed < _throwWatchDuration)
             {
                 elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
 
-                Vector3 pos = Vector3.Lerp(startPos, endPos, t);
-                pos.y += Mathf.Sin(t * Mathf.PI) * _throwArcHeight;
-
-                throwObject.transform.position = pos;
+                if (throwObject == null)
+                {
+                    ClearActiveThrownObject();
+                    _isThrowing = false;
+                    yield break;
+                }
 
                 // 던져진 아이템을 바라보는 조건은
                 // 손에 들고있는 아이템이 없고, 던져지고있는 아이템이 일정 거리내로 들어올때
                 if (elapsed <= _catchWindow)
                 {
-                    TryNotifyPlayersToFaceThrow(pos);
+                    TryNotifyPlayersToFaceThrow(throwObject.transform.position);
 
-                    PlayerItemController catchPlayer = FindCatchPlayer(pos);
+                    PlayerItemController catchPlayer = FindCatchPlayer(throwObject.transform.position);
                     if (catchPlayer != null)
                     {
+                        if (throwRb != null)
+                        {
+                            throwRb.velocity = Vector3.zero;
+                            throwRb.angularVelocity = Vector3.zero;
+                            throwRb.isKinematic = true;
+                        }
+
+                        SetColliderEnabled(throwCols, false);
                         catchPlayer.SetCurrentHeldObject(throwObject);
+
+                        ClearActiveThrownObject();
                         _isThrowing = false;
                         yield break;
+                    }
+                }
+
+                if (throwRb != null && elapsed > 0.1f)
+                {
+                    Vector3 flatVelocity = throwRb.velocity;
+                    flatVelocity.y = 0f;
+
+                    if (flatVelocity.sqrMagnitude <= _landingVelocityThreshold * _landingVelocityThreshold)
+                    {
+                        ResolveLandingInteraction(throwObject, throwRb, throwCols, throwObject.transform.position);
+                        landingResolved = true;
+                        break;
                     }
                 }
 
                 yield return null;
             }
 
-            throwObject.transform.position = endPos;
+            if (!landingResolved && throwObject != null && throwRb != null)
+            {
+                ResolveLandingInteraction(throwObject, throwRb, throwCols, throwObject.transform.position);
+            }
 
-            ResolveLandingInteraction(throwObject, throwRb, throwCols, endPos);
-
+            ClearActiveThrownObject();
             _isThrowing = false;
         }
 
+        private void ClearActiveThrownObject()
+        {
+            _activeThrownObject = null;
+            _activeThrownRb = null;
+            _activeThrownCols = null;
+            _currentWallBounceCount = 0;
+        }
+
+        // 아이템던지기 - 충돌 릴레이 스크립트 자동 부착
+        private void EnsureThrownRelay(GameObject throwObject)
+        {
+            if (throwObject == null)
+            {
+                return;
+            }
+
+            ThrownItemCollisionRelay relay = throwObject.GetComponent<ThrownItemCollisionRelay>();
+            if (relay == null)
+            {
+                relay = throwObject.AddComponent<ThrownItemCollisionRelay>();
+            }
+
+            relay.Initialize(this);
+        }
 
         private void TryNotifyPlayersToFaceThrow(Vector3 throwPos)
         {
@@ -547,30 +751,6 @@ namespace Overcooked
             ReleaseObjectToFloor(throwObject, throwRb, throwCols, landingPos);
         }
 
-        private Vector3 GetThrowFloorPosition(Vector3 origin, Vector3 forward)
-        {
-            float finalDistance = _throwDistance;
-
-            // 던지는 방향 앞에 벽이 있으면 벽 바로 앞까지만 던짐
-            Ray wallRay = new Ray(origin, forward);
-            if (Physics.Raycast(wallRay, out RaycastHit wallHit, _throwDistance, _wallLayer))
-            {
-                finalDistance = Mathf.Max(0f, wallHit.distance - _wallStopOffset);
-            }
-
-            Vector3 target = origin + forward * finalDistance;
-
-            // 바닥은 _groundLayer만 맞게 해서 테이블 상판을 바닥으로 잘못 잡지 않게 함
-            Ray ray = new Ray(target + Vector3.up * _landingRayStartHeight, Vector3.down);
-            if (Physics.Raycast(ray, out RaycastHit hit, _landingRayDistance, _groundLayer))
-            {
-                return hit.point;
-            }
-
-            target.y = transform.position.y;
-            return target;
-        }
-
         private ItemPlaceAndTake FindBestLandingCounter(Vector3 landingPos)
         {
             Collider[] hits = Physics.OverlapSphere(landingPos, _landingCheckRadius, _landingInteractionLayer);
@@ -618,10 +798,11 @@ namespace Overcooked
         {
             if (throwRb != null)
             {
-                throwRb.isKinematic = true;
+                throwRb.isKinematic = false;
+                throwRb.useGravity = true;
             }
 
-            SetColliderEnabled(throwCols, false);
+            SetColliderEnabled(throwCols, true);
         }
 
         private void ReleaseObjectToFloor(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 targetPos)
@@ -632,11 +813,14 @@ namespace Overcooked
             }
 
             throwObject.transform.SetParent(null);
+
+            targetPos.y += 0.05f;
             throwObject.transform.position = targetPos;
 
             if (throwRb != null)
             {
                 throwRb.isKinematic = false;
+                throwRb.useGravity = true;
                 throwRb.velocity = Vector3.zero;
                 throwRb.angularVelocity = Vector3.zero;
             }
@@ -749,6 +933,7 @@ namespace Overcooked
             if (_currentHeldRb != null)
             {
                 _currentHeldRb.isKinematic = false;
+                _currentHeldRb.useGravity = true;
                 _currentHeldRb.velocity = Vector3.zero;
                 _currentHeldRb.angularVelocity = Vector3.zero;
             }
@@ -773,6 +958,13 @@ namespace Overcooked
 
             if (_currentHeldRb != null)
             {
+                if (!_currentHeldRb.isKinematic)
+                {
+                    _currentHeldRb.velocity = Vector3.zero;
+                    _currentHeldRb.angularVelocity = Vector3.zero;
+                }
+
+                _currentHeldRb.useGravity = false;
                 _currentHeldRb.isKinematic = true;
             }
 
@@ -825,6 +1017,32 @@ namespace Overcooked
             }
         }
 
+        private void SetIgnorePlayerCollisions(Collider[] cols, bool ignore)
+        {
+            if (cols == null || _playerCols == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (cols[i] == null)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < _playerCols.Length; j++)
+                {
+                    if (_playerCols[j] == null)
+                    {
+                        continue;
+                    }
+
+                    Physics.IgnoreCollision(cols[i], _playerCols[j], ignore);
+                }
+            }
+        }
+
         private void ClearCurrentHeldObject()
         {
             _currentHeldObject = null;
@@ -866,8 +1084,10 @@ namespace Overcooked
             if (_holdPoint != null)
             {
                 Gizmos.color = Color.cyan;
-                Gizmos.DrawLine(_holdPoint.position, _holdPoint.position + forward * _throwDistance);
-                Gizmos.DrawWireSphere(_holdPoint.position + forward * _throwDistance, 0.15f);
+                Vector3 throwStart = _holdPoint.position + forward * _throwStartForwardOffset + Vector3.up * _throwStartUpOffset;
+                Gizmos.DrawLine(_holdPoint.position, throwStart);
+                Gizmos.DrawRay(throwStart, forward * 1.2f);
+                Gizmos.DrawWireSphere(throwStart, 0.15f);
             }
 
 

@@ -18,9 +18,11 @@ namespace Overcooked
         bool SwitchingInput { get; }
 
         bool InteractionIngredientInput { get; }
-        bool InteractionCookInput { get; }
+
+        bool InteractionCookPressed { get; }
+        bool InteractionCookHeld { get; }
+        bool InteractionCookReleased { get; }
 
         bool PauseInput { get; }
-
     }
 }
