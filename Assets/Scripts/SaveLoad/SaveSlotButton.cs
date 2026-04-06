@@ -42,6 +42,7 @@ public class SaveSlotButton : MonoBehaviour
 
     public void Onclick()
     {
-        
+        SaveLoad.instance.CurrentDataSet(index);
+        SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
     }
 }

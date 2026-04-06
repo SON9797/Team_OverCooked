@@ -87,9 +87,10 @@ public class SaveLoad : MonoBehaviour
         string json = File.ReadAllText(path);
         SaveData data = JsonConvert.DeserializeObject<SaveData>(json);
 
-        currentData = data;
         return data;
     }
+
+    //chapeterscore에 필요한 값 넣어줘서 타입대로 만들어주는 함수
     public ChapterScore ToChapterScore(int mainchapter, int subchapter, int bestscore)
     {
         ChapterScore score = new ChapterScore();
@@ -97,5 +98,9 @@ public class SaveLoad : MonoBehaviour
         score.sub = subchapter;
         score.score = bestscore;
         return score;
+    }
+    public void CurrentDataSet(int index)
+    {
+        currentData=savedatas[index];
     }
 }
