@@ -9,10 +9,12 @@ namespace Overcooked
 {
     public class RecipeUI : MonoBehaviour
     {
-        [Header("UI")]
+        [Header("Top UI")]
         [SerializeField] private Image _dishImage;              // 완성 이미지
-        [SerializeField] private Transform _ingredientParent;   // 아이콘이 들어갈 부모
-        [SerializeField] private Image _ingredientPrefab;  // 재료 아이콘
+
+        [Header("Bottom UI")]
+        [SerializeField] private Transform _bottomGroupParent;
+        [SerializeField] private GameObject _recipeBottomPrefab;
 
         [Header("UI Move Setting")]
         [SerializeField] private float _moveDuration = 0.3f;
@@ -38,27 +40,113 @@ namespace Overcooked
         {
             CurrentRecipeData = data;
 
-            // 메인 요리 이미지 설정
-            _dishImage.sprite = data.FinishedDishImage;
+            if (_dishImage != null && data.FinishedDishImage != null)
+            {
+                _dishImage.sprite = data.FinishedDishImage;
+            }
 
-            foreach (Transform child in _ingredientParent)
+            foreach (Transform child in _bottomGroupParent)
             {
                 Destroy(child.gameObject);
             }
 
-            foreach (var icon in data.Ingredients)
+            foreach (var ingredient in data.Ingredients)
             {
-                Image newIcon = Instantiate(_ingredientPrefab, _ingredientParent);
-                
-                newIcon.sprite = icon.icon;
+                GameObject bottomObj = Instantiate(_recipeBottomPrefab, _bottomGroupParent);
 
-                newIcon.enabled = true;
+                Transform iconTransform = bottomObj.transform.Find("Bottom_Image");
+                if (iconTransform != null)
+                {
+                    Image iconImage = iconTransform.GetComponent<Image>();
+                    if (iconImage != null)
+                    {
+                        iconImage.sprite = ingredient.icon;
+                        iconImage.enabled = true;
+                    }
+                }
+
+                Transform techTransform = bottomObj.transform.Find("Technique_Image");
+                if (techTransform != null)
+                {
+                    if (ingredient.icon_techniques != null)
+                    {
+                        Image techImage = techTransform.GetComponent<Image>();
+                        if (techImage != null)
+                        {
+                            techImage.sprite = ingredient.icon_techniques;
+                            techImage.enabled = true;
+                            techTransform.gameObject.SetActive(true);
+                        }
+                    }
+                    else
+                    {
+                        techTransform.gameObject.SetActive(false);
+                    }
+                }
             }
+
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
 
             StartCoroutine(LinearSlideIn());
 
             StartCoroutine(TimerRoutine(timeLimit));
         }
+
+        //public void Setup(RecipeData data, float timeLimit)
+        //{
+        //    CurrentRecipeData = data;
+        //
+        //    if (_dishImage != null)
+        //    {
+        //        _dishImage.sprite = data.FinishedDishImage;
+        //    }
+        //
+        //    foreach (Transform child in _bottomGroupParent)
+        //    {
+        //        Destroy(child.gameObject);
+        //    }
+        //
+        //    foreach (var ingredient in data.Ingredients)
+        //    {
+        //        GameObject bottomObj = Instantiate(_recipeBottomPrefab, _bottomGroupParent);
+        //
+        //        Transform iconTransform = bottomObj.transform.Find("Bottom_Image");
+        //
+        //        if (iconTransform != null)
+        //        {
+        //            Image iconImage = iconTransform.GetComponent<Image>();
+        //            iconImage.sprite = ingredient.icon;
+        //            iconImage.enabled = true;
+        //        }
+        //
+        //        Transform techTransform = bottomObj.transform.Find("Techniques_Image");
+        //        
+        //        if (techTransform != null)
+        //        {
+        //            if (ingredient.icon_techniques != null) 
+        //            {
+        //                Image techImage = techTransform.GetComponent<Image>();
+        //                techImage.sprite = ingredient.icon_techniques;
+        //                techImage.enabled = true;
+        //
+        //                techTransform.gameObject.SetActive(true);
+        //            }
+        //        }
+        //        
+        //        else
+        //        {
+        //            techTransform.gameObject.SetActive(false);
+        //        }
+        //    }
+        //
+        //    Canvas.ForceUpdateCanvases();
+        //    LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
+        //
+        //    StartCoroutine(LinearSlideIn());
+        //
+        //    StartCoroutine(TimerRoutine(timeLimit));
+        //}
 
         private IEnumerator TimerRoutine(float timeLimit)
         {
