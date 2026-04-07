@@ -501,7 +501,8 @@ namespace Overcooked
 
                 // 집을 수 있는 직접 대상(재료/접시)
                 bool isPickable = t.GetComponentInParent<Ingredient>() != null ||
-                                  t.GetComponentInParent<Dish>() != null;
+                                  t.GetComponentInParent<Dish>() != null ||
+                                  t.GetComponentInParent<Cookware>() != null;
 
                 // 아이템박스테스트 - 상자/재료박스/박스오픈 오브젝트도 상호작용 후보에 포함
                 bool isBox = t.GetComponentInParent<ItemPlaceAndTake>() != null ||
@@ -518,7 +519,8 @@ namespace Overcooked
                     t.GetComponentInParent<PlateReSpawn>() != null ||
                     t.GetComponentInParent<ChopBoard>() != null ||
                     t.GetComponentInParent<Ingredient>() != null ||
-                    t.GetComponentInParent<Dish>() != null;
+                    t.GetComponentInParent<Dish>() != null ||
+                    t.GetComponentInParent<Cookware>() != null;
 
                 if (!isInteractable)
                 {
@@ -895,6 +897,12 @@ namespace Overcooked
             if (ingredient != null)
             {
                 return ingredient.gameObject;
+            }
+
+            Cookware cookware = target.GetComponentInParent<Cookware>();
+            if (cookware != null)
+            {
+                return cookware.gameObject;
             }
 
             return null;

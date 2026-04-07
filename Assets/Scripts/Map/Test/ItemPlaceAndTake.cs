@@ -64,6 +64,18 @@ public class ItemPlaceAndTake : MonoBehaviour
                 }
             }
 
+            else if (_onCounterItem.TryGetComponent<Cookware>(out Cookware cookwareOnCounter))
+            {
+                if (item.TryGetComponent<Ingredient>(out Ingredient incomingIng))
+                {
+                    if (cookwareOnCounter.TryAddIngredient(incomingIng))
+                    {
+                        return true;
+                    }
+                }
+
+            }
+
             // 합치기가 불가능하면(둘 다 접시거나, 레시피가 아니거나 등) 놓기 실패
             return false;
         }
@@ -147,11 +159,16 @@ public class ItemPlaceAndTake : MonoBehaviour
             }
             Dish dish = col.GetComponentInParent<Dish>();
             Ingredient ing = col.GetComponentInParent<Ingredient>();
+            Cookware cookware = col.GetComponentInParent<Cookware>();
 
             // 물리 및 부모 설정 강제 동기화
-            if (dish != null || ing != null)
+            if (dish != null || ing != null || cookware != null)
             {
-                GameObject target = dish != null ? dish.gameObject : ing.gameObject;
+                //GameObject target = dish != null ? dish.gameObject : ing.gameObject;
+
+                GameObject target = dish != null ? dish.gameObject :
+                                    ing != null ? ing.gameObject :
+                                    cookware.gameObject;
 
                 // 이미 다른 곳의 자식이라면 무시하거나 새로 설정
                 PlaceItem(target);

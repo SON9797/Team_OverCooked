@@ -8,8 +8,14 @@ public abstract class Cookware : MonoBehaviour
     [SerializeField] protected float maxCookTime = 5f;
 
     protected List<Ingredient> currentIngredients = new List<Ingredient>();
-    protected float currnetCookTime = 0f;
+    protected float currentCookTime = 0f;
     protected bool _isOnStove = false;
+
+    public bool HasIngredients => currentIngredients.Count > 0;
+
+    public float CurrentCookTime => currentCookTime;
+    public float MaxCookTime => maxCookTime;
+    public bool IsCooked => currentCookTime >= maxCookTime;
 
     public void SetOnStove(bool state)
     {
@@ -23,10 +29,11 @@ public abstract class Cookware : MonoBehaviour
             return;
         }
 
-        currnetCookTime += deltaTime;
+        currentCookTime += deltaTime;
 
-        if (currnetCookTime >= maxCookTime)
+        if (currentCookTime >= maxCookTime)
         {
+            currentCookTime = maxCookTime;
             FinishCooking();
         }
     }
