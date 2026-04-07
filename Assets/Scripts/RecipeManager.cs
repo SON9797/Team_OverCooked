@@ -20,6 +20,7 @@ public struct IngreDientData
     public IngreDientKind kind;
     public CookBehaivior stat;
     public Sprite icon;
+    public Sprite icon_techniques;
     public override bool Equals(object obj)
     {
         if (obj is IngreDientData other)
