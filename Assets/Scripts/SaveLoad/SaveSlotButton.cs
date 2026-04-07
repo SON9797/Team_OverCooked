@@ -42,7 +42,23 @@ public class SaveSlotButton : MonoBehaviour
 
     public void Onclick()
     {
-        SaveLoad.instance.CurrentDataSet(index);
+        if (mode == SaveSlotMode.load)
+        {
+
+            if (!SaveLoad.instance.CurrentDataSet(index))
+            {
+                print("no");
+                return;
+            }
+            
+        }
+        if (mode == SaveSlotMode.newgame)
+        {
+            
+        }
+        SaveLoad.instance.autoSaveIndex = index;
         SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
+
+
     }
 }

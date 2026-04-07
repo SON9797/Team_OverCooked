@@ -14,21 +14,25 @@ public class MenuManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        DontDestroyOnLoad(gameObject);
         instance = this;
     }
-    public void ClickMenu(IMenu menu)
+    public void AddMenuStack(IMenu menu)
     {
         menueStack.Push(menu);
-        menu.ClickMenu();
+    }
+    public void MinusMenuStack()
+    {
+        menueStack.Pop();
     }
     public void Back()
     {
         if (menueStack.Count <= 0)
         {
-            //°ÔÀÓÁ¾·áÆË¾÷ ¶ç¿ö¾ß ÇÔ
+            PopupManager.instance.GameExitPopup();
             return;
         }
-
-        menueStack.Pop().CloseMenue();
+        print(menueStack.Count);
+        menueStack.Peek().CloseWindow();
     }
 }

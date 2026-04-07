@@ -30,6 +30,7 @@ public class SaveLoad : MonoBehaviour
     
 
     public SaveData currentData;
+    public int autoSaveIndex=0;
 
     public SaveData[] savedatas = new SaveData[3];
 
@@ -99,8 +100,14 @@ public class SaveLoad : MonoBehaviour
         score.score = bestscore;
         return score;
     }
-    public void CurrentDataSet(int index)
+    public bool CurrentDataSet(int index)
     {
+        print(index);
+        if (savedatas[index].currentChapter==0)
+        {
+            return false;
+        }
         currentData=savedatas[index];
+        return true;
     }
 }
