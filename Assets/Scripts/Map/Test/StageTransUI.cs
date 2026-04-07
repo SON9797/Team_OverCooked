@@ -21,7 +21,7 @@ public class StageTransUI : MonoBehaviour
     }
     void Update()
     {
-        if(_isWaitingForInput && Input.GetKeyUp(KeyCode.LeftAlt))
+        if(_isWaitingForInput && Input.GetKeyDown(KeyCode.Space))
         {
             SceneManager.LoadScene(_currentSceneTarget);
         }

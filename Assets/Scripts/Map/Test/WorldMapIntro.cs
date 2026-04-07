@@ -9,13 +9,10 @@ public class WorldMapIntro : MonoBehaviour
     [SerializeField] private Transform _firstStageTransform; // 첫 스테이지 타일 위치
     [SerializeField] private Transform _playerTransform;     // 플레이어(버스)
 
-    [SerializeField] private Vector3 _introOffset = new Vector3(0, 8, -4); // 연출용 근접 오프셋
-    [SerializeField] private float _cameraMoveDuration = 2.0f; // 카메라 이동 소요 시간
+    [SerializeField] private Vector3 _introOffset = new Vector3(0, 8, -4);
+    [SerializeField] private float _cameraMoveDuration = 2.0f; // 카메라 이동 시간
 
     public bool _stage1_1Open = false;
-    public bool _stage1_2Open = false;
-    public bool _stage1_3Open = false;
-    public bool _stage1_4Open = false;
     private void Start()
     {
         StartCoroutine(IntroSequence());
@@ -64,7 +61,6 @@ public class WorldMapIntro : MonoBehaviour
         if (playerBus != null)
         {
             playerBus.CanMove = true;
-            Debug.Log("버스 이동 활성화!");
         }
 
     }
