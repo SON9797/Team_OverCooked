@@ -14,7 +14,6 @@ namespace Overcooked
 
         private bool _isSelected;
         private bool _isThrowAiming;
-        private bool _isHiddenByThrow;
 
         private void Awake()
         {
@@ -25,11 +24,10 @@ namespace Overcooked
         {
             _isSelected = isSelected;
 
-            // 선택 해제되면 투척 관련 상태도 같이 초기화
+            // 선택 해제되면 조준 상태도 같이 초기화
             if (!_isSelected)
             {
                 _isThrowAiming = false;
-                _isHiddenByThrow = false;
             }
 
             RefreshVisible();
@@ -41,24 +39,13 @@ namespace Overcooked
             RefreshVisible();
         }
 
-        public void HideByThrow()
-        {
-            _isHiddenByThrow = true;
-            _isThrowAiming = false;
-            RefreshVisible();
-        }
-
-        public void ShowAfterThrow()
-        {
-            _isHiddenByThrow = false;
-            _isThrowAiming = false;
-            RefreshVisible();
-        }
-
         private void RefreshVisible()
         {
-            bool showNormal = _isSelected && !_isThrowAiming && !_isHiddenByThrow;
-            bool showThrowAim = _isSelected && _isThrowAiming && !_isHiddenByThrow;
+            // 선택되어 있고 조준 중이 아니면 일반 원 표시
+            bool showNormal = _isSelected && !_isThrowAiming;
+
+            // 선택되어 있고 조준 중이면 방향 원 표시
+            bool showThrowAim = _isSelected && _isThrowAiming;
 
             if (_normalRing != null)
             {

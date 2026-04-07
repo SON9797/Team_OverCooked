@@ -33334,7 +33334,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 0}
-  _rayPoint: {fileID: 1356372277}
   _interactionDistance: 3
 --- !u!114 &5131
 MonoBehaviour:
@@ -33467,7 +33466,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 0}
-  _rayPoint: {fileID: 1356372277}
   _interactionDistance: 3
 --- !u!114 &5147
 MonoBehaviour:
@@ -51863,11 +51861,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snapPoint: {fileID: 3029}
---- !u!4 &1356372277 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7351626446997621775, guid: 349047e1a11092f4986fb1d84c68b4be, type: 3}
-  m_PrefabInstance: {fileID: 1820206432}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1358356567 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7078992284501183067, guid: 349047e1a11092f4986fb1d84c68b4be, type: 3}
