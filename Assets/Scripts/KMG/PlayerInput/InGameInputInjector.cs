@@ -5,7 +5,6 @@ using UnityEngine;
 using VContainer;
 using Overcooked.Interfaces;
 
-
 namespace Overcooked
 {
     [RequireComponent(typeof(ApplyInGamePlayerMove))]
@@ -17,9 +16,7 @@ namespace Overcooked
         private PlayerItemController _holdIngredient;
 
         private SceneFlowManager _sceneFlowManager;
-
         private InGameUIManager _inGameUIManager;
-
         private IInGameSoundManager _inGameSoundManager;
 
         private bool _isPaused = false;
@@ -32,11 +29,12 @@ namespace Overcooked
             SceneFlowManager sceneFlowManager,
             InGameUIManager inGameUIManager,
             IInGameSoundManager inGameSoundManager
-            )
+        )
         {
             _input = input;
             _sceneFlowManager = sceneFlowManager;
             _inGameUIManager = inGameUIManager;
+            _inGameSoundManager = inGameSoundManager;
         }
 
         private void Awake()
@@ -47,7 +45,6 @@ namespace Overcooked
 
         private void Update()
         {
-
             if (_move == null || _input == null || _holdIngredient == null || _inGameUIManager == null)
             {
                 return;
@@ -70,11 +67,20 @@ namespace Overcooked
                 return;
             }
 
-            _move.SetMoveInput(_input.Move);
-
-            if (_input.DashInput)
+            // 아이템던지기 - 조준 중에는 이동 막고 방향만 전환
+            if (_holdIngredient.IsThrowAiming)
             {
-                _move.TryDash();                
+                _move.SetMoveInput(Vector2.zero);
+                _holdIngredient.UpdateThrowAim(_input.Move);
+            }
+            else
+            {
+                _move.SetMoveInput(_input.Move);
+
+                if (_input.DashInput)
+                {
+                    _move.TryDash();
+                }
             }
 
             if (_input.InteractionIngredientInput)
@@ -82,18 +88,26 @@ namespace Overcooked
                 _holdIngredient.TryInteractionIngredient();
             }
 
-            if (_input.InteractionCookInput)
+            if (_input.InteractionCookPressed)
             {
                 if (_holdIngredient.HasIngredient)
                 {
                     if (_holdIngredient.CanThrowHeldObject)
                     {
-                        _holdIngredient.TryThrowHeldObject();
+                        _holdIngredient.StartThrowAim();
                     }
                 }
                 else
                 {
                     _holdIngredient.TryInteractionCook();
+                }
+            }
+
+            if (_input.InteractionCookReleased)
+            {
+                if (_holdIngredient.IsThrowAiming)
+                {
+                    _holdIngredient.ReleaseThrowAimAndThrow();
                 }
             }
         }
@@ -109,4 +123,3 @@ namespace Overcooked
         }
     }
 }
-

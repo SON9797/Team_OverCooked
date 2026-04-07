@@ -4,42 +4,26 @@ using UnityEngine;
 
 public class WorldMapManager : MonoBehaviour
 {
-    public float waveSpeed = 5.0f; // 파동이 퍼지는 속도 (낮을수록 천천히 퍼짐)
-
+    public float _waveSpeed = 5.0f;
     private List<WorldMapTileRotate> allTiles = new List<WorldMapTileRotate>();
 
     void Start()
     {
-        // 맵에 배치된 모든 타일을 리스트에 담습니다.
-        // 타일들이 특정 부모 오브젝트 아래에 있다면 그 부모를 참조해서 가져오는 것이 효율적입니다.
         allTiles.AddRange(FindObjectsOfType<WorldMapTileRotate>());
     }
 
-    void Update()
-    {
-        // 마우스 클릭 시 해당 지점의 타일을 중심으로 뒤집기 시작 (테스트용)
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (RaycastHit(ray, out RaycastHit hit))
-            {
-                StartWave(hit.point);
-            }
-        }
-    }
-
-    // 특정 위치(center)에서 시작하는 파동 실행
-    public void StartWave(Vector3 centerPoint)
+    public void StartConditionalWave(Vector3 centerPoint, float maxRadius)
     {
         foreach (var tile in allTiles)
         {
-            // 중심점에서 타일까지의 거리 계산
             float distance = Vector3.Distance(centerPoint, tile.transform.position);
 
-            // 거리에 비례한 지연 시간 계산 (지연 시간 = 거리 / 속도)
-            float delay = distance / waveSpeed;
-
-            StartCoroutine(DelayedFlip(tile, delay));
+            // 설정한 반경 이내에 있는 타일만 실행
+            if (distance <= maxRadius)
+            {
+                float delay = distance / _waveSpeed;
+                StartCoroutine(DelayedFlip(tile, delay));
+            }
         }
     }
 
@@ -47,10 +31,5 @@ public class WorldMapManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         tile.Flip();
-    }
-
-    private bool RaycastHit(Ray ray, out RaycastHit hit)
-    {
-        return Physics.Raycast(ray, out hit);
     }
 }

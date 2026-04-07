@@ -5,55 +5,72 @@ using UnityEngine;
 public class WorldMapTileRotate : MonoBehaviour
 {
     [Header("Settings")]
-    public float duration = 1.0f; // 뒤집히는 데 걸리는 시간
-    public Material nextMaterial; // 바뀔 머테리얼
+    [SerializeField] private float _duration = 1.0f; // 뒤집히는 데 걸리는 시간
+    [SerializeField] private float _jumpHeight = 1.5f;
+    [SerializeField] private Material _nextMaterial; // 바뀔 머테리얼
+    [SerializeField] private List<WorldMapBuilding> _myBuildings = new List<WorldMapBuilding>();
 
-    private bool isFlipping = false;
-    private MeshRenderer meshRenderer;
-
+    public bool _isFlipping = false;
+    private bool _isActivated = false;
+    private MeshRenderer _meshRenderer;
+    private Vector3 _initialPosition;
     void Awake()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
+        _meshRenderer = GetComponent<MeshRenderer>();
+        _initialPosition = transform.position;
     }
-
     public void Flip()
     {
-        if (!isFlipping)
+        if (_isFlipping || _isActivated)
         {
-            StartCoroutine(FlipRoutine());
+            return;
         }
+        StartCoroutine(FlipRoutine());
     }
 
     private IEnumerator FlipRoutine()
     {
-        isFlipping = true;
+        _isFlipping = true;
+        _isActivated = true;
 
         Quaternion startRotation = transform.rotation;
-        // 현재 회전값에서 Y축(혹은 설계에 따라 X축)으로 180도 회전한 목표값
         Quaternion endRotation = startRotation * Quaternion.Euler(0, 0, 180f);
 
         float elapsed = 0f;
         bool materialChanged = false;
 
-        while (elapsed < duration)
+        while (elapsed < _duration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / duration;
+            float t = elapsed / _duration;
 
-            // 부드러운 가속/감속을 위해 Lerp 대신 Slerp나 AnimationCurve 사용 가능
+
             transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
 
-            // 90도 정도 회전했을 때(절반 지점) 머테리얼을 교체하여 자연스럽게 보이게 함
+            float yOffset = Mathf.Sin(t * Mathf.PI) * _jumpHeight;
+            transform.position = _initialPosition + new Vector3(0, yOffset, 0);
+
             if (!materialChanged && t >= 0.5f)
             {
-                meshRenderer.material = nextMaterial;
+                _meshRenderer.material = _nextMaterial;
                 materialChanged = true;
-            }
 
+                if (_myBuildings != null && _myBuildings.Count > 0)
+                {
+                    foreach (var building in _myBuildings)
+                    {
+                        if (building != null)
+                        {
+                            building.Appear();
+                        }
+                    }
+                }
+            }
             yield return null;
         }
 
         transform.rotation = endRotation;
-        isFlipping = false;
+        transform.position = _initialPosition;
+        _isFlipping = false;
     }
 }

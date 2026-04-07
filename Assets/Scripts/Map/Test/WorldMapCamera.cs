@@ -9,22 +9,23 @@ public class WorldMapCamera : MonoBehaviour
     [SerializeField] private Vector3 _offset;
     [SerializeField] private float _smoothSpeed = 5f;
 
-    private void Start()
-    {
-        if (_offset == Vector3.zero && _target != null)
-        {
-            _offset = transform.position - _target.position;
-        }
-    }
 
     private void FixedUpdate()
     {
-        if (_target == null) return;
+        if (_target == null)
+        {
+            return;
+        }
 
         Vector3 targetPosition = _target.position + _offset;
 
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
+    }
 
-        transform.position = smoothedPosition;
+    public void SetTarget(Transform newTarget, Vector3 customOffset)
+    {
+        _target = newTarget;
+        _offset = customOffset;
+        this.enabled = true;
     }
 }

@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 2684342763875717472}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0004, y: 0.0003, z: 0.0143}
+  m_LocalPosition: {x: -0.0004, y: 0.006, z: 0.006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -752,7 +752,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -547724750668800520, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2916704724232003141}
+    - targetCorrespondingSourceObject: {fileID: -547724750668800520, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4396878011913623457}
+    - targetCorrespondingSourceObject: {fileID: -547724750668800520, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4308451804996769045}
   m_SourcePrefab: {fileID: 100100000, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
+--- !u!1 &3696784520247068712 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -6262770778720985205, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
+  m_PrefabInstance: {fileID: 1899312636984481699}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6797441176624210343 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4319257175939451388, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
@@ -802,7 +813,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c58466b24cae0d4ea45dd1bc32fe2c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 5
+  _moveSpeed: 5.5
   _turnSpeed: 720
   _dashPower: 10
   _dashDuration: 0.3
@@ -862,21 +873,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 119
   _dropDistance: 1
-  _throwDistance: 4
-  _throwLayer:
+  _throwForce: 8
+  _throwUpForce: 1.5
+  _throwStartForwardOffset: 0.45
+  _throwStartUpOffset: 0.3
+  _throwAimTurnSpeed: 720
+  _ignorePlayerCollisionTime: 0.12
+  _wallBounceLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  _wallLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  _wallStopOffset: 0.1
-  _throwDuration: 0.25
-  _throwArcHeight: 1.2
-  _catchWindow: 0.35
-  _catchRadius: 1
+    m_Bits: 0
+  _wallBounceDamping: 0.2
+  _maxWallBounceCount: 1
+  _catchWindow: 1
+  _catchRadius: 1.5
   _playerCatchLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -884,8 +893,8 @@ MonoBehaviour:
   _landingInteractionLayer:
     serializedVersion: 2
     m_Bits: 4294967295
-  _landingRayStartHeight: 2
-  _landingRayDistance: 10
+  _throwWatchDuration: 2
+  _landingVelocityThreshold: 0.15
 --- !u!95 &2916704724232003141
 Animator:
   serializedVersion: 5
@@ -907,3 +916,41 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4396878011913623457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7078992284501183067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b438414e504c75948b7ba35f0db0ec01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _moveThreshold: 0.01
+--- !u!114 &4308451804996769045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7078992284501183067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 652ce52898dd6fc4e9d6c047851a5cde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cleaver: {fileID: 7233553397310440952}
+  _knife: {fileID: 8703987048857109932}
+  _props: {fileID: 3696784520247068712}
+--- !u!1 &7233553397310440952 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9095310520132342363, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
+  m_PrefabInstance: {fileID: 1899312636984481699}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8703987048857109932 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7102582182709056015, guid: 12697b2cfcac3c44d961e0d126cdc05b, type: 3}
+  m_PrefabInstance: {fileID: 1899312636984481699}
+  m_PrefabAsset: {fileID: 0}

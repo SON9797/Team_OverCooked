@@ -34,7 +34,9 @@ namespace Overcooked
         // 스페이스 : 재료 상호작용
         public bool InteractionIngredientInput => Input.GetKeyDown(KeyCode.Space);
 
-        // 레프트컨트롤 : 손에 아이템 있으면 던지기, 없으면 조리 상호작용
-        public bool InteractionCookInput => Input.GetKeyDown(KeyCode.LeftControl);
+        // 레프트컨트롤 : 손에 아이템 있으면 홀드 조준 / 떼면 던지기, 없으면 조리 상호작용
+        public bool InteractionCookPressed => Input.GetKeyDown(KeyCode.LeftControl);
+        public bool InteractionCookHeld => Input.GetKey(KeyCode.LeftControl);
+        public bool InteractionCookReleased => Input.GetKeyUp(KeyCode.LeftControl);
     }
 }

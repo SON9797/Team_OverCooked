@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 698360743251631322}
   - component: {fileID: 5798786755011911609}
   - component: {fileID: 1518448033346577284}
-  - component: {fileID: 7992753251714624633}
+  - component: {fileID: 7065313837760036107}
+  - component: {fileID: -2630546300110709095}
   m_Layer: 0
   m_Name: rice_boiled
   m_TagString: Untagged
@@ -84,25 +85,47 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7992753251714624633
-MeshCollider:
+--- !u!54 &7065313837760036107
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2888019033232514062}
-  m_Material: {fileID: 0}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &-2630546300110709095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2888019033232514062}
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 1c1ec4b303999054faca418662d48c6e, type: 2}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7156eac5436e9db4a989011e3f16e6bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  statusModelinfos:
+  - status: 0
+    obj: {fileID: 8622081334946919546, guid: 7b650845feab27044ba55ba4a6057611, type: 3}
+  kind: 4
+  cookDuration: 5
