@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5282701655542523330}
   - component: {fileID: 5066099138194489827}
   - component: {fileID: 2228823780797283713}
-  - component: {fileID: 7540000985457362975}
   m_Layer: 5
   m_Name: Recipe_top
   m_TagString: Untagged
@@ -28,17 +27,17 @@ RectTransform:
   m_GameObject: {fileID: 1314100947778150808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 8.655625, y: 4.9578013, z: 1}
+  m_LocalScale: {x: 8.5, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1698539372250397960}
   - {fileID: 9134093431820327608}
   m_Father: {fileID: 167448990622192413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 48.5, y: -11}
-  m_SizeDelta: {x: 247, y: 249}
+  m_SizeDelta: {x: 237, y: 249}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5066099138194489827
 CanvasRenderer:
@@ -78,32 +77,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7540000985457362975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314100947778150808}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 1
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!1 &2342747437172263727
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,7 +107,7 @@ RectTransform:
   m_GameObject: {fileID: 2342747437172263727}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.09526097, y: 0.13039094, z: 1}
+  m_LocalScale: {x: 0.095, y: 0.13, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 727153397713208394}

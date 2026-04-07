@@ -86,68 +86,20 @@ namespace Overcooked
             }
 
             Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+
+            RectTransform bottomRect = _bottomGroupParent.GetComponent<RectTransform>();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(bottomRect);
+
+            float newWidth = bottomRect.rect.width;
+            _rectTransform.sizeDelta = new Vector2(newWidth, _rectTransform.sizeDelta.y);
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
 
             StartCoroutine(LinearSlideIn());
-
             StartCoroutine(TimerRoutine(timeLimit));
         }
 
-        //public void Setup(RecipeData data, float timeLimit)
-        //{
-        //    CurrentRecipeData = data;
-        //
-        //    if (_dishImage != null)
-        //    {
-        //        _dishImage.sprite = data.FinishedDishImage;
-        //    }
-        //
-        //    foreach (Transform child in _bottomGroupParent)
-        //    {
-        //        Destroy(child.gameObject);
-        //    }
-        //
-        //    foreach (var ingredient in data.Ingredients)
-        //    {
-        //        GameObject bottomObj = Instantiate(_recipeBottomPrefab, _bottomGroupParent);
-        //
-        //        Transform iconTransform = bottomObj.transform.Find("Bottom_Image");
-        //
-        //        if (iconTransform != null)
-        //        {
-        //            Image iconImage = iconTransform.GetComponent<Image>();
-        //            iconImage.sprite = ingredient.icon;
-        //            iconImage.enabled = true;
-        //        }
-        //
-        //        Transform techTransform = bottomObj.transform.Find("Techniques_Image");
-        //        
-        //        if (techTransform != null)
-        //        {
-        //            if (ingredient.icon_techniques != null) 
-        //            {
-        //                Image techImage = techTransform.GetComponent<Image>();
-        //                techImage.sprite = ingredient.icon_techniques;
-        //                techImage.enabled = true;
-        //
-        //                techTransform.gameObject.SetActive(true);
-        //            }
-        //        }
-        //        
-        //        else
-        //        {
-        //            techTransform.gameObject.SetActive(false);
-        //        }
-        //    }
-        //
-        //    Canvas.ForceUpdateCanvases();
-        //    LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
-        //
-        //    StartCoroutine(LinearSlideIn());
-        //
-        //    StartCoroutine(TimerRoutine(timeLimit));
-        //}
-
+        
         private IEnumerator TimerRoutine(float timeLimit)
         {
             float currentTime = timeLimit;

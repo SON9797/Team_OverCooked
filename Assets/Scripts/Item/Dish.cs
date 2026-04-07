@@ -28,7 +28,7 @@ public class Dish : MonoBehaviour
 
 
         //레시피 불러와보기. (없으면 null 반환)
-        GameObject recipyModel = _recipeManager.GetRecipyModel(nextMix);
+        GameObject recipyModel = _recipeManager.GetRecipeModel(nextMix);
 
         if (recipyModel==null)
         {

@@ -41,14 +41,14 @@ namespace Overcooked
     public class RecipeManager : IRecipeService
     {
         // 1. 레시피 데이터들을 담아둘 리스트 (인스펙터 연동용 혹은 데이터 로드용)
-        private readonly List<RecipeData> _allRecipes;
-        private readonly List<RecipeData> _currentOrders = new List<RecipeData>();
+        private readonly List<RecipeData> _orderRecipes;
+        private readonly List<RecipeData> _combinalbeRecipes;
 
+        private readonly List<RecipeData> _currentOrders = new List<RecipeData>();
         private readonly LevelData _levelData;
         private bool _isGeneration = false;
 
         public IReadOnlyList<RecipeData> CurrentOrders => _currentOrders;
-
         public Action<RecipeData> OnOrderAdded { get; set; }
         public Action<int> OnOrderCompleted { get; set; }
 
@@ -56,7 +56,13 @@ namespace Overcooked
         public RecipeManager(LevelData levelData)
         {
             _levelData = levelData;
-            _allRecipes = levelData.Recipes;
+            _orderRecipes = levelData.Recipes;
+            _combinalbeRecipes = levelData.CombinableRecipes;
+
+            if (_combinalbeRecipes == null || _combinalbeRecipes.Count == 0)
+            {
+                _combinalbeRecipes = _orderRecipes;
+            }
         }
 
         public void StartGeneration(MonoBehaviour runner)
@@ -104,7 +110,7 @@ namespace Overcooked
 
         public void AddRandomOrder()
         {
-            if (_allRecipes == null || _allRecipes.Count == 0)
+            if (_orderRecipes == null || _orderRecipes.Count == 0)
             {
                 return;
             }
@@ -115,7 +121,7 @@ namespace Overcooked
             }
 
             // 2. 랜덤하게 하나 뽑기
-            var randomRecipe = _allRecipes[UnityEngine.Random.Range(0, _allRecipes.Count)];
+            var randomRecipe = _orderRecipes[UnityEngine.Random.Range(0, _orderRecipes.Count)];
             _currentOrders.Add(randomRecipe);
 
             OnOrderAdded?.Invoke(randomRecipe);
@@ -147,7 +153,7 @@ namespace Overcooked
 
                 Debug.Log($"{a.kind}, {a.stat}");
             }
-            foreach (RecipeData r in _allRecipes)
+            foreach (RecipeData r in _orderRecipes)
             {
 
                 Debug.Log("recipy-------");
@@ -165,9 +171,21 @@ namespace Overcooked
             return null;
         }
 
+        public GameObject GetRecipeModel(HashSet<IngreDientData> mix)
+        {
+            foreach (RecipeData r in _combinalbeRecipes)
+            {
+                if (mix.SetEquals(r.Ingredients) && mix.Count == r.Ingredients.Count)
+                {
+                    return r.model;
+                }
+            }
+            return null;
+        }
+
         public string GetDishNameByIngredients(HashSet<IngreDientData> submittedIngredients)
         {
-            foreach (RecipeData recipe in _allRecipes)
+            foreach (RecipeData recipe in _combinalbeRecipes)
             {
                 if (recipe.Ingredients.Count != submittedIngredients.Count)
                 {
