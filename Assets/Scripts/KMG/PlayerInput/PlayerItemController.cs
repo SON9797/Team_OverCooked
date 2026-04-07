@@ -317,7 +317,7 @@ namespace Overcooked
 
             _isThrowAiming = false;
 
-            // 방향 표시 원 끄기
+            // 손을 떼는 순간 바로 일반 인디케이터로 복귀
             _playerIndicators?.SetThrowAiming(false);
 
             // 던지기 애니메이션 재생
@@ -375,9 +375,6 @@ namespace Overcooked
             _isThrowing = true;
             _isThrowAiming = false;
             _currentWallBounceCount = 0;
-
-            // 실제 투척이 시작되면 발밑 표시를 잠깐 숨김
-            _playerIndicators?.HideByThrow();
 
             // 손에서 분리
             throwObject.transform.SetParent(null);
@@ -629,9 +626,6 @@ namespace Overcooked
                 {
                     ClearActiveThrownObject();
                     _isThrowing = false;
-
-                    // 던지기 끝났으니 다시 일반 원 표시
-                    _playerIndicators?.ShowAfterThrow();
                     yield break;
                 }
 
@@ -655,9 +649,6 @@ namespace Overcooked
 
                         ClearActiveThrownObject();
                         _isThrowing = false;
-
-                        // 던지기 끝났으니 다시 일반 원 표시
-                        _playerIndicators?.ShowAfterThrow();
                         yield break;
                     }
                 }
@@ -687,9 +678,6 @@ namespace Overcooked
 
             ClearActiveThrownObject();
             _isThrowing = false;
-
-            // 던지기 끝났으니 다시 일반 원 표시
-            _playerIndicators?.ShowAfterThrow();
         }
 
         private void ClearActiveThrownObject()
