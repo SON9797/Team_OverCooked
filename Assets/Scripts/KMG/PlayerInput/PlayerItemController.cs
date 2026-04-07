@@ -74,15 +74,21 @@ namespace Overcooked
         [Header("착지로 볼 속도 기준")]
         [SerializeField] private float _landingVelocityThreshold = 0.15f;
 
+        // 현재 손에 들고 있는 오브젝트 관련
         private GameObject _currentHeldObject;
         private Ingredient _currentIngredient;
         private Rigidbody _currentHeldRb;
         private Collider[] _currentHeldCols;
+
+        // 같은 플레이어에 붙어있는 다른 컴포넌트들
         private InGameInputInjector _inputInjector;
         private PlayerAnimationController _animationController;
+        private InGamePlayerIndicators _playerIndicators;
 
+        // 자기 자신 플레이어의 콜라이더들
         private Collider[] _playerCols;
 
+        // 던지기 상태
         private bool _isThrowing = false;
         private bool _isThrowAiming = false;
 
@@ -93,23 +99,29 @@ namespace Overcooked
         private int _currentWallBounceCount = 0;
 
         public bool HasIngredient => _currentHeldObject != null;
+
+        // 현재 들고 있는 아이템이 Ingredient일 때만 던질 수 있게 제한
         public bool CanThrowHeldObject => _currentHeldObject != null && _currentHeldObject.GetComponent<Ingredient>() != null;
+
         public bool IsThrowAiming => _isThrowAiming;
 
         private void Awake()
         {
             _inputInjector = GetComponent<InGameInputInjector>();
             _animationController = GetComponent<PlayerAnimationController>();
+            _playerIndicators = GetComponent<InGamePlayerIndicators>();
             _playerCols = GetComponentsInChildren<Collider>();
         }
 
         public void TryInteractionIngredient()
         {
+            // 현재 선택된 플레이어만 상호작용 가능
             if (_inputInjector != null && !_inputInjector.IsSelected)
             {
                 return;
             }
 
+            // 던지는 중 / 조준 중에는 일반 상호작용 막기
             if (_isThrowing || _isThrowAiming)
             {
                 return;
@@ -122,6 +134,7 @@ namespace Overcooked
 
             Transform target = FindClosestInteractTarget();
 
+            // 빈손 상태
             if (_currentHeldObject == null)
             {
                 if (target == null)
@@ -129,31 +142,30 @@ namespace Overcooked
                     return;
                 }
 
+                // 접시 리스폰 상자에서 집기
                 PlateReSpawn respawn = target.GetComponentInParent<PlateReSpawn>();
                 if (respawn != null && respawn.HasItem)
                 {
-                    TryPickUpFromCounter(respawn); // 여기서 TakeItem()이 실행됨
+                    TryPickUpFromCounter(respawn);
                     return;
                 }
 
-                // 아이템박스테스트 - 조리대 위 아이템 집기
+                // 조리대 위 아이템 집기
                 ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
                 if (counter != null && counter.HasItem)
                 {
-                    // 상자 위에 아이템이 있다면 무조건 '카운터에서 집기' 로직 실행
                     TryPickUpFromCounter(counter);
                     return;
                 }
 
-                // 아이템박스테스트 - 빈손 상태에서 상자 열기
+                // 박스 열기
                 StuffBoxOpen stuffBox = target.GetComponentInParent<StuffBoxOpen>();
                 if (stuffBox != null)
                 {
-                    // 열기만 하고 여기서 return 하지 않음
                     stuffBox.TryOpenByPlayer(this);
                 }
 
-                // 아이템박스테스트 - 박스에서 아이템 꺼내기
+                // 재료 박스에서 생성
                 IngredientSource source = target.GetComponentInParent<IngredientSource>();
                 if (source != null)
                 {
@@ -161,9 +173,10 @@ namespace Overcooked
                     return;
                 }
 
-                // 바닥이나 월드에 놓인 재료/접시 직접 줍기
+                // 바닥에 있는 재료/접시 직접 줍기
                 TryPickUpDirectObject(target);
             }
+            // 손에 뭔가 들고 있는 상태
             else
             {
                 if (target != null)
@@ -171,7 +184,7 @@ namespace Overcooked
                     ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
                     if (counter != null)
                     {
-                        // 아이템박스테스트 - 조리대 위 접시에 재료 담기
+                        // 조리대 위 접시에 재료 담기
                         if (counter.HasDish(out Dish dishOnCounter))
                         {
                             if (_currentIngredient != null && dishOnCounter.AddIngredient(_currentIngredient))
@@ -182,30 +195,32 @@ namespace Overcooked
                             }
                         }
 
-                        // 아이템박스테스트 - 조리대 빈칸에 들고 있는 아이템 올려놓기
+                        // 빈 조리대에 아이템 올려놓기
                         if (counter.CanPlaceItem())
                         {
                             TryPlaceHeldObject(counter);
                             return;
                         }
 
-                        // 추가
                         Debug.Log("조리대가 꽉 찼거나 상호작용 불가 상태입니다.");
                         return;
                     }
                 }
 
+                // 둘 곳이 없으면 바닥에 내려놓기
                 TryDropHeldObject();
             }
         }
 
         public void TryInteractionCook()
         {
+            // 현재 선택된 플레이어만 상호작용 가능
             if (_inputInjector != null && !_inputInjector.IsSelected)
             {
                 return;
             }
 
+            // 던지는 중 / 조준 중에는 칼질 막기
             if (_isThrowing || _isThrowAiming)
             {
                 return;
@@ -231,11 +246,9 @@ namespace Overcooked
                 return;
             }
 
-            // 아이템박스테스트 - 도마에 칼질 상호작용 전달
             ChopBoard chopBoard = target.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
-                // 사운드 - 칼질
                 bool isNowChopping = chopBoard.ToggleChop(this);
                 _animationController?.SetChopping(isNowChopping);
                 return;
@@ -244,29 +257,34 @@ namespace Overcooked
             _animationController?.SetChopping(false);
         }
 
-        // 아이템던지기 - 컨트롤을 누르는 순간 조준 시작
+        // 던지기 버튼을 누르는 순간 호출
         public void StartThrowAim()
         {
+            // 현재 선택된 플레이어만 가능
             if (_inputInjector != null && !_inputInjector.IsSelected)
             {
                 return;
             }
 
+            // 이미 던지는 중이면 조준 시작 불가
             if (_isThrowing)
             {
                 return;
             }
 
-            // 아이템던지기 - Ingredient 스크립트가 붙은 것만 던질 수 있음
+            // 던질 수 있는 아이템이 손에 없으면 조준 시작 안 함
             if (!CanThrowCurrentHeldObject())
             {
                 return;
             }
 
             _isThrowAiming = true;
+
+            // 일반 원 -> 방향 표시 원으로 전환
+            _playerIndicators?.SetThrowAiming(true);
         }
 
-        // 아이템던지기 - 조준 중에는 이동 대신 바라보는 방향만 갱신
+        // 조준 중에는 입력 방향을 바라보게 함
         public void UpdateThrowAim(Vector2 lookInput)
         {
             if (!_isThrowAiming)
@@ -289,7 +307,7 @@ namespace Overcooked
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, _throwAimTurnSpeed * Time.deltaTime);
         }
 
-        // 아이템던지기 - 컨트롤을 떼는 순간 실제 물리 투척
+        // 던지기 버튼을 떼는 순간 호출
         public void ReleaseThrowAimAndThrow()
         {
             if (!_isThrowAiming)
@@ -298,12 +316,32 @@ namespace Overcooked
             }
 
             _isThrowAiming = false;
+
+            // 방향 표시 원 끄기
+            _playerIndicators?.SetThrowAiming(false);
+
+            // 던지기 애니메이션 재생
             _animationController?.PlayThrow();
+
+            // 실제 투척 실행
             TryThrowHeldObject();
+        }
+
+        // 외부 상황으로 조준을 취소해야 할 때 호출
+        public void CancelThrowAim()
+        {
+            if (!_isThrowAiming)
+            {
+                return;
+            }
+
+            _isThrowAiming = false;
+            _playerIndicators?.SetThrowAiming(false);
         }
 
         public void TryThrowHeldObject()
         {
+            // 현재 선택된 플레이어만 가능
             if (_inputInjector != null && !_inputInjector.IsSelected)
             {
                 return;
@@ -319,7 +357,7 @@ namespace Overcooked
                 return;
             }
 
-            // 아이템던지기 - Ingredient 스크립트가 붙은 것만 던질 수 있음
+            // Ingredient만 던지게 제한
             if (!CanThrowCurrentHeldObject())
             {
                 return;
@@ -338,9 +376,14 @@ namespace Overcooked
             _isThrowAiming = false;
             _currentWallBounceCount = 0;
 
+            // 실제 투척이 시작되면 발밑 표시를 잠깐 숨김
+            _playerIndicators?.HideByThrow();
+
+            // 손에서 분리
             throwObject.transform.SetParent(null);
             ClearCurrentHeldObject();
 
+            // 플레이어가 바라보는 수평 방향
             Vector3 forward = transform.forward;
             forward.y = 0f;
 
@@ -351,7 +394,7 @@ namespace Overcooked
 
             forward.Normalize();
 
-            // 아이템던지기 - 손 위치에서 바로 겹치지 않게 약간 앞/위에서 시작
+            // 손에서 바로 겹치지 않게 약간 앞/위에서 시작
             Vector3 startPos = _holdPoint.position
                 + forward * _throwStartForwardOffset
                 + Vector3.up * _throwStartUpOffset;
@@ -359,15 +402,17 @@ namespace Overcooked
             throwObject.transform.position = startPos;
             throwObject.transform.rotation = Quaternion.identity;
 
+            // 던져질 수 있는 물리 상태로 전환
             PrepareThrownObject(throwRb, throwCols);
 
             _activeThrownObject = throwObject;
             _activeThrownRb = throwRb;
             _activeThrownCols = throwCols;
 
+            // 충돌 릴레이 자동 부착
             EnsureThrownRelay(throwObject);
 
-            // 사운드 던지기
+            // 실제 투척 힘 적용
             if (throwRb != null)
             {
                 throwRb.velocity = Vector3.zero;
@@ -375,7 +420,10 @@ namespace Overcooked
                 throwRb.AddForce(forward * _throwForce + Vector3.up * _throwUpForce, ForceMode.VelocityChange);
             }
 
+            // 자기 자신과 잠깐 충돌 무시
             StartCoroutine(CoIgnorePlayerCollisionTemporarily(throwCols));
+
+            // 던져진 뒤 받기/착지 처리 감시
             StartCoroutine(CoWatchThrownObject(throwObject, throwRb, throwCols));
         }
 
@@ -410,7 +458,7 @@ namespace Overcooked
             transform.forward = dir.normalized;
         }
 
-        // 아이템던지기 - 던져진 아이템이 충돌했을 때 릴레이가 이 함수 호출
+        // 던져진 아이템이 충돌했을 때 릴레이가 호출
         public void NotifyThrownObjectCollision(GameObject hitObject, Collision collision)
         {
             if (!_isThrowing)
@@ -428,7 +476,7 @@ namespace Overcooked
                 return;
             }
 
-            // 아이템던지기 - Walls 레이어에 닿았을 때만 살짝 튕김
+            // 벽 레이어에 닿았을 때만 반사
             int otherLayerMask = 1 << collision.gameObject.layer;
             if ((_wallBounceLayer.value & otherLayerMask) == 0)
             {
@@ -499,19 +547,22 @@ namespace Overcooked
 
                 Transform t = col.transform;
 
-                // 집을 수 있는 직접 대상(재료/접시)
+                // 직접 집을 수 있는 재료/접시
                 bool isPickable = t.GetComponentInParent<Ingredient>() != null ||
                                   t.GetComponentInParent<Dish>() != null ||
                                   t.GetComponentInParent<Cookware>() != null;
 
-                // 아이템박스테스트 - 상자/재료박스/박스오픈 오브젝트도 상호작용 후보에 포함
+                // 상자/카운터류
                 bool isBox = t.GetComponentInParent<ItemPlaceAndTake>() != null ||
                              t.GetComponentInParent<IngredientSource>() != null ||
                              t.GetComponentInParent<StuffBoxOpen>() != null;
 
-                if (!isPickable && !isBox) continue;
+                if (!isPickable && !isBox)
+                {
+                    continue;
+                }
 
-                // 실제 상호작용 가능한 오브젝트인지 최종 확인
+                // 실제 상호작용 가능한 대상인지 최종 체크
                 bool isInteractable =
                     t.GetComponentInParent<IngredientSource>() != null ||
                     t.GetComponentInParent<ItemPlaceAndTake>() != null ||
@@ -555,7 +606,7 @@ namespace Overcooked
             return bestTarget;
         }
 
-        // 아이템던지기 - 던진 직후 플레이어 자신의 콜라이더와 잠깐 충돌 무시
+        // 던진 직후 자기 자신의 콜라이더와 잠깐 충돌 무시
         private IEnumerator CoIgnorePlayerCollisionTemporarily(Collider[] throwCols)
         {
             SetIgnorePlayerCollisions(throwCols, true);
@@ -563,7 +614,7 @@ namespace Overcooked
             SetIgnorePlayerCollisions(throwCols, false);
         }
 
-        // 아이템던지기 - 던져진 뒤 받기/착지/조리대 상호작용 감시
+        // 던져진 뒤 받기/착지/카운터 상호작용 감시
         private IEnumerator CoWatchThrownObject(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols)
         {
             float elapsed = 0f;
@@ -573,15 +624,18 @@ namespace Overcooked
             {
                 elapsed += Time.deltaTime;
 
+                // 던져진 오브젝트가 사라졌으면 종료
                 if (throwObject == null)
                 {
                     ClearActiveThrownObject();
                     _isThrowing = false;
+
+                    // 던지기 끝났으니 다시 일반 원 표시
+                    _playerIndicators?.ShowAfterThrow();
                     yield break;
                 }
 
-                // 던져진 아이템을 바라보는 조건은
-                // 손에 들고있는 아이템이 없고, 던져지고있는 아이템이 일정 거리내로 들어올때
+                // 일정 시간 안에는 다른 플레이어가 받을 수 있음
                 if (elapsed <= _catchWindow)
                 {
                     TryNotifyPlayersToFaceThrow(throwObject.transform.position);
@@ -601,10 +655,14 @@ namespace Overcooked
 
                         ClearActiveThrownObject();
                         _isThrowing = false;
+
+                        // 던지기 끝났으니 다시 일반 원 표시
+                        _playerIndicators?.ShowAfterThrow();
                         yield break;
                     }
                 }
 
+                // 충분히 느려졌으면 착지 처리
                 if (throwRb != null && elapsed > 0.1f)
                 {
                     Vector3 flatVelocity = throwRb.velocity;
@@ -621,6 +679,7 @@ namespace Overcooked
                 yield return null;
             }
 
+            // 감시 시간이 끝났는데 아직 처리 안 되었으면 마지막 착지 처리
             if (!landingResolved && throwObject != null && throwRb != null)
             {
                 ResolveLandingInteraction(throwObject, throwRb, throwCols, throwObject.transform.position);
@@ -628,6 +687,9 @@ namespace Overcooked
 
             ClearActiveThrownObject();
             _isThrowing = false;
+
+            // 던지기 끝났으니 다시 일반 원 표시
+            _playerIndicators?.ShowAfterThrow();
         }
 
         private void ClearActiveThrownObject()
@@ -638,7 +700,7 @@ namespace Overcooked
             _currentWallBounceCount = 0;
         }
 
-        // 아이템던지기 - 충돌 릴레이 스크립트 자동 부착
+        // 던져진 아이템에 충돌 감지 릴레이 자동 부착
         private void EnsureThrownRelay(GameObject throwObject)
         {
             if (throwObject == null)
@@ -655,6 +717,7 @@ namespace Overcooked
             relay.Initialize(this);
         }
 
+        // 받기 반경 안 플레이어들이 날아오는 아이템을 바라보게 함
         private void TryNotifyPlayersToFaceThrow(Vector3 throwPos)
         {
             Collider[] hits = Physics.OverlapSphere(throwPos, _catchRadius, _playerCatchLayer);
@@ -672,7 +735,6 @@ namespace Overcooked
                     continue;
                 }
 
-                // 손에 들고있는 아이템이 없고, 던져지고있는 아이템이 일정 거리내로 들어올때
                 if (otherPlayer.HasIngredient)
                 {
                     continue;
@@ -682,6 +744,7 @@ namespace Overcooked
             }
         }
 
+        // 받을 수 있는 플레이어가 있는지 탐색
         private PlayerItemController FindCatchPlayer(Vector3 throwPos)
         {
             Collider[] hits = Physics.OverlapSphere(throwPos, _catchRadius, _playerCatchLayer);
@@ -711,11 +774,12 @@ namespace Overcooked
             return null;
         }
 
+        // 착지했을 때 쓰레기통/카운터/바닥 중 어디로 처리할지 결정
         private void ResolveLandingInteraction(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 landingPos)
         {
             Collider[] hits = Physics.OverlapSphere(landingPos, _landingCheckRadius, _landingInteractionLayer);
 
-            // 쓰레기통에 던지게되면 그럼 버려짐.
+            // 쓰레기통 우선 처리
             for (int i = 0; i < hits.Length; i++)
             {
                 if (hits[i] == null)
@@ -731,17 +795,15 @@ namespace Overcooked
                 }
             }
 
-            // 던져져서 재료가 멈춘위치가 테이블 위면 테이블과 상호작용.
+            // 카운터 위에 올라갈 수 있는지 확인
             ItemPlaceAndTake counter = FindBestLandingCounter(landingPos);
             if (counter != null)
             {
-                // 쓰레기통은 위에서 먼저 처리했으므로 제외
                 if (counter is TrashCan)
                 {
                     return;
                 }
 
-                // 만약 테이블에 이미 다른 재료가 올라가있다면 그냥 얹혀있음.
                 if (counter.CanPlaceItem())
                 {
                     if (throwRb != null)
@@ -762,6 +824,7 @@ namespace Overcooked
                 }
             }
 
+            // 어디에도 못 놓으면 바닥으로
             ReleaseObjectToFloor(throwObject, throwRb, throwCols, landingPos);
         }
 
@@ -808,6 +871,7 @@ namespace Overcooked
             return _currentHeldObject.GetComponent<Ingredient>() != null;
         }
 
+        // 던지기 직전 물리 상태로 전환
         private void PrepareThrownObject(Rigidbody throwRb, Collider[] throwCols)
         {
             if (throwRb != null)
@@ -819,6 +883,7 @@ namespace Overcooked
             SetColliderEnabled(throwCols, true);
         }
 
+        // 바닥에 떨굴 때 처리
         private void ReleaseObjectToFloor(GameObject throwObject, Rigidbody throwRb, Collider[] throwCols, Vector3 targetPos)
         {
             if (throwObject == null)
@@ -850,20 +915,18 @@ namespace Overcooked
                 return;
             }
 
-            // 사운드 - 아이템 들기
+            // 생성된 재료를 손에 들기
             SetCurrentHeldObject(newObject);
         }
 
         private void TryPickUpFromCounter(ItemPlaceAndTake counter)
         {
-            // 아이템박스테스트 - 조리대에서 아이템 가져오기
             GameObject takeObject = counter.TakeItem();
             if (takeObject == null)
             {
                 return;
             }
 
-            // 사운드 - 아이템 들기
             SetCurrentHeldObject(takeObject);
             Debug.Log($"{takeObject.name}을(를) 상자에서 다시 집었습니다.");
         }
@@ -876,7 +939,6 @@ namespace Overcooked
                 return;
             }
 
-            // 사운드 - 아이템 들기
             SetCurrentHeldObject(directObject);
         }
 
@@ -919,18 +981,14 @@ namespace Overcooked
 
             itemToPlace.transform.SetParent(null);
 
-            // 상자에게 아이템을 놓으라고 명령.
             if (counter.PlaceItem(_currentHeldObject))
             {
-                // 사운드 - 아이템 놓기
-
-                // 성공시 플레이어 변수 초기화
                 ClearCurrentHeldObject();
                 Debug.Log($"{counter.name}에 아이템 자식 설정 성공");
             }
             else
             {
-                // 실패시 다시 집어듬
+                // 실패했으면 다시 손에 복귀
                 SetCurrentHeldObject(itemToPlace);
             }
         }
@@ -957,11 +1015,10 @@ namespace Overcooked
             }
 
             SetHeldColliderEnabled(true);
-
-            // 사운드 - 아이템 놓기
             ClearCurrentHeldObject();
         }
 
+        // 손에 아이템 들기
         private void SetCurrentHeldObject(GameObject heldObject)
         {
             if (heldObject == null)
@@ -986,9 +1043,9 @@ namespace Overcooked
                 _currentHeldRb.isKinematic = true;
             }
 
+            // 손에 들고 있을 때는 콜라이더 끔
             SetHeldColliderEnabled(false);
 
-            // 아이템박스테스트 - 집은 아이템을 손 위치로 붙이기
             _currentHeldObject.transform.SetParent(_holdPoint);
             _currentHeldObject.transform.localPosition = Vector3.zero;
             _currentHeldObject.transform.localRotation = Quaternion.identity;
@@ -1035,6 +1092,7 @@ namespace Overcooked
             }
         }
 
+        // 던진 직후 자기 자신과의 충돌 잠깐 무시
         private void SetIgnorePlayerCollisions(Collider[] cols, bool ignore)
         {
             if (cols == null || _playerCols == null)
@@ -1119,7 +1177,7 @@ namespace Overcooked
             return _inputInjector != null && _inputInjector.IsSelected;
         }
 
-        // 상자가 플레이어의 레이 시작 지점을 알 수 있게 전달
+        // 상자가 플레이어 레이 시작 위치를 참조할 때 사용
         public Transform GetRayPoint()
         {
             return _rayPoint;
