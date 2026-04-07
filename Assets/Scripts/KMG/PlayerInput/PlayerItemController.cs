@@ -327,7 +327,8 @@ namespace Overcooked
                 Transform t = col.transform;
 
                 bool isPickable = t.GetComponentInParent<Ingredient>() != null ||
-                                  t.GetComponentInParent<Dish>() != null;
+                                  t.GetComponentInParent<Dish>() != null ||
+                                  t.GetComponentInParent<Cookware>() != null;
 
                 // 만약 아이템이 아니라 상자라면 기존 로직대로 진행
                 bool isBox = t.GetComponentInParent<ItemPlaceAndTake>() != null ||
@@ -341,7 +342,8 @@ namespace Overcooked
                     t.GetComponentInParent<PlateReSpawn>() != null ||
                     t.GetComponentInParent<ChopBoard>() != null ||
                     t.GetComponentInParent<Ingredient>() != null ||
-                    t.GetComponentInParent<Dish>() != null;
+                    t.GetComponentInParent<Dish>() != null ||
+                    t.GetComponentInParent<Cookware>() != null;
 
                 if (!isInteractable)
                 {
@@ -700,6 +702,12 @@ namespace Overcooked
             if (ingredient != null)
             {
                 return ingredient.gameObject;
+            }
+
+            Cookware cookware = target.GetComponentInParent<Cookware>();
+            if (cookware != null)
+            {
+                return cookware.gameObject;
             }
 
             return null;
