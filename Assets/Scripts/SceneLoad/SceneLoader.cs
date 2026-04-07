@@ -5,8 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    public static SceneLoader Instance;
+    [SerializeField] LoadingScreen loadingscreenPrefab;
     private void Start()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
         DontDestroyOnLoad(gameObject);
     }
     public void LoadSceneAsync(string sceneName)
@@ -17,20 +25,32 @@ public class SceneLoader : MonoBehaviour
     IEnumerator LoadRoutine(string sceneName)
     {
         //페이드 연출 코드 추가 가능
-
+        float mintime = 1;
+        float timer = 0;
+        LoadingScreen loadingscreen=Instantiate(loadingscreenPrefab);
         AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
         op.allowSceneActivation = false;
 
-        while (op.progress < 0.9f)
+        float displayed = 0f;
+        while (op.progress< 0.9f|| timer<mintime)
         {
-            Debug.Log(op.progress); // 로딩 진행도
+            
+            float target = op.progress / 0.9f;
+            displayed = Mathf.Lerp(displayed, target, Time.deltaTime * 5f);
+            loadingscreen.ProgressAdapt(displayed);
+            timer += Time.deltaTime;
             yield return null;
         }
+
+        loadingscreen.ProgressAdapt(1);
         // 로딩 종료 후 씬 전환
         op.allowSceneActivation = true;
 
         // 씬 완전히 바뀔 때까지 대기
-        yield return null;
+        while (!op.isDone)
+        {
+            yield return null;
+        }
 
         //페이드 연출
 
@@ -44,7 +64,7 @@ public class SceneLoader : MonoBehaviour
 
         StartCoroutine(Wrap(dataLoad, () => dataDone = true));
 
-        while (op.progress < 0.9f && dataDone == false)
+        while (!op.isDone || dataDone == false)
         {
             Debug.Log(op.progress); // 로딩 진행도
             yield return null;

@@ -13,6 +13,7 @@ public enum IngreDientKind
     prawn,
     rice,
     seaweed,
+    cucumber
 }
 [Serializable]
 public struct IngreDientData
