@@ -6,6 +6,7 @@ public class MenuManager : MonoBehaviour
 {
     public static MenuManager instance;
     Stack<IMenu>menueStack=new Stack<IMenu>();
+    SceneMenu worldMap;
 
     private void Awake()
     {
@@ -16,6 +17,10 @@ public class MenuManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         instance = this;
+    }
+    private void Start()
+    {
+        worldMap.sceneName = "WorldMapScene";
     }
     public void AddMenuStack(IMenu menu)
     {
@@ -34,5 +39,9 @@ public class MenuManager : MonoBehaviour
         }
         print(menueStack.Count);
         menueStack.Peek().CloseWindow();
+    }
+    public string GetPrevSceneName()
+    {
+        return menueStack.Peek().currentScenename;
     }
 }

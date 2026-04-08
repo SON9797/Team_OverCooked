@@ -76,6 +76,11 @@ public class SaveLoad : MonoBehaviour
 
         Debug.Log("저장 완료: " + path);
     }
+    public void AutoSave()
+    {
+        string path = Path.Combine(Application.persistentDataPath, $"save{autoSaveIndex}.json");
+        string json = JsonConvert.SerializeObject(currentData, Formatting.Indented);
+    }
     public SaveData Load(int slotNum)
     {
         string path = Path.Combine(Application.persistentDataPath, $"save{slotNum}.json");

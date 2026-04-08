@@ -19,12 +19,14 @@ public class PopupWindow : MonoBehaviour,IMenu
     [SerializeField] public Transform buttonRoot;
     [SerializeField] public Transform contentRoot;
     [SerializeField] PopupButton buttonPrefab;
-    public string scenename { get; set; }
+    public string prevScenename { get; set; }
+    public string currentScenename { get; set; }
     public void Setting(string titleText,string contentText)
     {
         title.text=titleText; 
         content.text=contentText;
-        scenename=SceneManager.GetActiveScene().name;
+        prevScenename = MenuManager.instance.GetPrevSceneName();
+        currentScenename = SceneManager.GetActiveScene().name;
         MenuManager.instance.AddMenuStack(this);
         
     }
