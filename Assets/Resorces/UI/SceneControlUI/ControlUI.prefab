@@ -192,6 +192,7 @@ GameObject:
   - component: {fileID: 4379126214339241162}
   - component: {fileID: 3630720937184739414}
   - component: {fileID: 3021812403306639197}
+  - component: {fileID: 3709415709208125939}
   m_Layer: 5
   m_Name: backbtn
   m_TagString: Untagged
@@ -328,9 +329,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: Back
+      - m_Target: {fileID: 3709415709208125939}
+        m_TargetAssemblyTypeName: BackButton, Assembly-CSharp
+        m_MethodName: onclick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -340,3 +341,15 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3709415709208125939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5751314648298553941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9d9685e969d96b47b5d9e907f7176aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

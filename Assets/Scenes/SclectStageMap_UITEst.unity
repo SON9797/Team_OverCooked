@@ -1372,6 +1372,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 251595026}
   m_CullTransparentMesh: 1
+--- !u!114 &259527248 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3709415709208125939, guid: 147aef8f793ac5f4bb2654f2e8beec30, type: 3}
+  m_PrefabInstance: {fileID: 166871716017596930}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9d9685e969d96b47b5d9e907f7176aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &270633744
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11342,7 +11353,11 @@ PrefabInstance:
     - target: {fileID: 3021812403306639197, guid: 147aef8f793ac5f4bb2654f2e8beec30, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 459698033}
+      objectReference: {fileID: 259527248}
+    - target: {fileID: 3021812403306639197, guid: 147aef8f793ac5f4bb2654f2e8beec30, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: onclick
+      objectReference: {fileID: 0}
     - target: {fileID: 5911541790494747209, guid: 147aef8f793ac5f4bb2654f2e8beec30, type: 3}
       propertyPath: m_Pivot.x
       value: 0
