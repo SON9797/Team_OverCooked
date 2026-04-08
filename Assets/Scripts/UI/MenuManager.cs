@@ -21,7 +21,7 @@ public class MenuManager : MonoBehaviour
     }
     private void Start()
     {
-        worldMap.sceneName = "WorldMapScene";
+        worldMap.sceneName = "WorldMapScene_UITest";
         lobbyMap.sceneName = "SclectStageMap_UITEst";
         lobbyMap.currentScenename = lobbyMap.sceneName;
         menueStack.Push(lobbyMap);
@@ -34,11 +34,11 @@ public class MenuManager : MonoBehaviour
         print($"{menueStack.Count}");
 
     }
-    public void MinusMenuStack()
+    public IMenu MinusMenuStack()
     {
         print($"clickm{menueStack.Count}->");
-        menueStack.Pop();
         print($"{menueStack.Count}");
+        return menueStack.Pop();
     }
     public void Back()
     {

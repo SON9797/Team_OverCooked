@@ -82,6 +82,7 @@ public class ScoreManager : MonoBehaviour, IScoreService
 
     public void SaveBestScore(LevelData levelData)
     {
+        SaveLoad saveload = SaveLoad.instance;
         if (levelData == null)
         {
             return;
@@ -116,7 +117,9 @@ public class ScoreManager : MonoBehaviour, IScoreService
             PlayerPrefs.SetInt(starKey, starCount);
 
             PlayerPrefs.Save();
-
+            saveload.CurrentDataUpdate(levelData.Chapter, levelData.Stage, CurrentScore, starCount);
+            saveload.AutoSave();
+            
             Debug.Log($"저장 완료: {levelIdentifier} 스테이지 / 점수: {CurrentScore} / 별: {starCount}");
         }
     }

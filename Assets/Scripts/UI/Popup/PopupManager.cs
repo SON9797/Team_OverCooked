@@ -61,7 +61,7 @@ public class PopupManager : MonoBehaviour
         buttonlist.Add(btnok);
         OpenPopup("Game Exit", buttonlist, "Do you want exit Game?");
     }
-    public void GotoPrevScenePopup()
+    public void GotoScenePopup(string sceneName)
     {
         List<PopupButtonData> buttonlist = new List<PopupButtonData>();
         PopupButtonData btnCancel = new PopupButtonData();
@@ -70,7 +70,7 @@ public class PopupManager : MonoBehaviour
         PopupButtonData btnok = new PopupButtonData();
         btnok.text = "OK";
         btnok.onclickAction = ClosePopup;
-        btnok.onclickAction += MenuManager.instance.Back;
+        btnok.onclickAction += ()=>SceneLoader.Instance.LoadSceneAsync(sceneName);
         buttonlist.Add(btnCancel);
         buttonlist.Add(btnok);
         OpenPopup("Previous", buttonlist, "Do you want move prev screen?");
