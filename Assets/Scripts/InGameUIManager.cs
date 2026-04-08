@@ -150,17 +150,17 @@ namespace OverCooked
 
             if (_loadingLevelText != null)
             {
-                _loadingLevelText.text = levelData.LevelName;
+                _loadingLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
             }
 
             if (_endingLevelText != null)
             {
-                _endingLevelText.text = levelData.LevelName;
+                _endingLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
             }
 
             if (_pauseLevelText != null)
             {
-                _pauseLevelText.text = levelData.LevelName;
+                _pauseLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
             }
 
             if (_loadingImage != null)

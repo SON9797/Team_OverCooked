@@ -87,8 +87,9 @@ public class ScoreManager : MonoBehaviour, IScoreService
             return;
         }
 
-        string scoreKey = $"BestScore_{levelData.LevelName}";
-        string starKey = $"BestStar_{levelData.LevelName}";
+        string levelIdentifier = $"{levelData.Chapter}-{levelData.Stage}";
+        string scoreKey = $"BestScore_{levelIdentifier}";
+        string starKey = $"BestStar_{levelIdentifier}";
 
         int previousBest = PlayerPrefs.GetInt(scoreKey, 0);
 
@@ -113,7 +114,10 @@ public class ScoreManager : MonoBehaviour, IScoreService
             }
 
             PlayerPrefs.SetInt(starKey, starCount);
+
             PlayerPrefs.Save();
+
+            Debug.Log($"저장 완료: {levelIdentifier} 스테이지 / 점수: {CurrentScore} / 별: {starCount}");
         }
     }
 }
