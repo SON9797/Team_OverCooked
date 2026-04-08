@@ -2,6 +2,7 @@ using Overcooked;
 using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 
@@ -83,6 +84,29 @@ public class Dish : MonoBehaviour
             Destroy(child.gameObject);
         }
 
+    }
+
+    public bool AddCookedRecipe(List<IngreDientData> cookedIngredients)
+    {
+        foreach (var data in cookedIngredients)
+        {
+            Debug.Log($"넘어온 재료: {data.kind}, 상태 : {data.stat}");
+        }
+
+        HashSet<IngreDientData> nextMix = new HashSet<IngreDientData>(cookedIngredients);
+
+        RecipeManager _recipeManager = (RecipeManager)recipeService;
+        GameObject recipeModel = _recipeManager.GetRecipeModel(nextMix);
+
+        if (recipeModel == null)
+        {
+            return false;
+        }
+
+        mix = nextMix;
+
+        VisualModel(recipeModel);
+        return true;
     }
    
 }

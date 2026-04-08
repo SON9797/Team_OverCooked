@@ -47,19 +47,17 @@ public class ItemPlaceAndTake : MonoBehaviour
                         return true;
                     }
                 }
-            }
-            // 조리대에 재료(Ingredient)가 있고, 플레이어가 접시(Dish)를 들고 올 때
-            else if (_onCounterItem.TryGetComponent<Ingredient>(out Ingredient ingOnCounter))
-            {
-                if (item.TryGetComponent<Dish>(out Dish incomingDish))
+
+                else if (item.TryGetComponent<Cookware>(out Cookware incomingCookware))
                 {
-                    if (incomingDish.AddIngredient(ingOnCounter))
+                    if (incomingCookware.IsCooked)
                     {
-                        // 합치기 성공: 조리대에 있던 재료를 접시에 담음
-                        // 조리대 아이템 정보를 새로 들어온 접시로 교체
-                        _onCounterItem = item;
-                        SetupItemTransform(item); // 위치 고정 로직
-                        return true;
+                        incomingCookware.GiveFoodToPlate(dishOnCounter);
+
+                        if (!incomingCookware.HasIngredients)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -74,7 +72,35 @@ public class ItemPlaceAndTake : MonoBehaviour
                     }
                 }
 
+                else if (item.TryGetComponent<Dish>(out Dish incomingDish))
+                {
+                    if (cookwareOnCounter.IsCooked)
+                    {
+                        cookwareOnCounter.GiveFoodToPlate(incomingDish);
+
+                        if (!cookwareOnCounter.HasIngredients)
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
+
+            // 조리대에 재료(Ingredient)가 있고, 플레이어가 접시(Dish)를 들고 올 때
+            else if (_onCounterItem.TryGetComponent<Ingredient>(out Ingredient ingOnCounter))
+            {
+                if (item.TryGetComponent<Dish>(out Dish incomingDish))
+                {
+                    if (incomingDish.AddIngredient(ingOnCounter))
+                    {
+                        // 합치기 성공: 조리대에 있던 재료를 접시에 담음
+                        // 조리대 아이템 정보를 새로 들어온 접시로 교체
+                        _onCounterItem = item;
+                        SetupItemTransform(item); // 위치 고정 로직
+                        return true;
+                    }
+                }
+            }           
 
             // 합치기가 불가능하면(둘 다 접시거나, 레시피가 아니거나 등) 놓기 실패
             return false;
@@ -87,7 +113,7 @@ public class ItemPlaceAndTake : MonoBehaviour
         SetupItemTransform(item);
         return true;
     }
-
+    
     // 중복되는 트랜스폼 설정을 별도 함수로 분리
     private void SetupItemTransform(GameObject item)
     {
@@ -139,8 +165,6 @@ public class ItemPlaceAndTake : MonoBehaviour
 
         return item;
     }
-
-
 
     private void CheckExistingItem()
     {

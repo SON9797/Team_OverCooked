@@ -182,8 +182,37 @@ namespace Overcooked
                 if (target != null)
                 {
                     ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
+
                     if (counter != null)
                     {
+                        if (_currentHeldObject.TryGetComponent<Cookware>(out Cookware heldCookware))
+                        {
+                            if (counter.HasDish(out Dish dishOnCounter2))
+                            {
+                                if (heldCookware.IsCooked && dishOnCounter2.AddCookedRecipe(heldCookware.GetIngredientDataList()))
+                                {
+                                    heldCookware.GiveFoodToPlate(dishOnCounter2);
+
+                                    return;
+                                }
+                            }                            
+                        }
+
+                        else if (_currentHeldObject.TryGetComponent<Dish>(out Dish heldDish)) 
+                        {
+                            Cookware counterCookware = target.GetComponentInParent<Cookware>();
+
+                            if (counterCookware != null)
+                            {
+                                if (counterCookware.IsCooked && heldDish.AddCookedRecipe(counterCookware.GetIngredientDataList()))
+                                {
+                                    counterCookware.GiveFoodToPlate(heldDish);
+                                    return;
+                                }
+                            }
+                        }
+
+
                         // 조리대 위 접시에 재료 담기
                         if (counter.HasDish(out Dish dishOnCounter))
                         {

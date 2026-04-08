@@ -1,7 +1,10 @@
+using Overcooked;
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 public class StoveStation : ItemPlaceAndTake
 {
@@ -22,6 +25,9 @@ public class StoveStation : ItemPlaceAndTake
 
     private float _overcookTimer = 0f;
     private float _blinkTimer = 0f;
+
+    [Inject]
+    private IRecipeService _recipeService;
 
     protected override void Start()
     {
@@ -62,12 +68,17 @@ public class StoveStation : ItemPlaceAndTake
     protected override void Update()
     {
         base.Update();
+
+        if (_currentCookware == null)
+        {
+            return;
+        }
         
         if (_currentCookware != null)
         {
             if (_currentCookware.HasIngredients && !_currentCookware.IsCooked)
             {
-                _currentCookware.CookTick(Time.deltaTime);
+                _currentCookware.CookTick(Time.deltaTime, (RecipeManager)_recipeService);
 
                 if (_stoveParticle != null && !_stoveParticle.activeSelf)
                 {

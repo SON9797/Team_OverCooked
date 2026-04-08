@@ -1,3 +1,4 @@
+using Overcooked;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,6 @@ using UnityEngine;
 public class CookingPot : Cookware
 {
     [Header("ºñÁê¾ó ¼³Á¤")]
-    [SerializeField] private GameObject _contentObject;
     [SerializeField] private ParticleSystem _cookingParticle;
 
     private void Start()
@@ -24,6 +24,11 @@ public class CookingPot : Cookware
 
     public override bool TryAddIngredient(Ingredient newIngredient)
     {
+        if (IsCooked)
+        {
+            return false;
+        }
+
         IngreDientData data = newIngredient.GetIngredientData();
 
         if (data.kind != IngreDientKind.rice)
@@ -37,6 +42,8 @@ public class CookingPot : Cookware
         }
 
         currentIngredients.Add(newIngredient);
+        newIngredient.gameObject.SetActive(false);
+        newIngredient.transform.SetParent(this.transform);
 
         if (_contentObject != null)
         {
@@ -48,8 +55,24 @@ public class CookingPot : Cookware
             _cookingParticle.Play();
         }
 
-        Destroy(newIngredient.gameObject);
-
         return true;
+    }
+
+    protected override void FinishCooking(RecipeManager recipeManager)
+    {
+        foreach (var ing in currentIngredients)
+        {
+            if (ing != null)
+            {
+                ing.AddStatus(CookBehaivior.boil);
+            }
+        }
+
+        base.FinishCooking(recipeManager);
+
+        if (_cookingParticle != null)
+        {
+            _cookingParticle.Stop();
+        }
     }
 }
