@@ -57,8 +57,9 @@ public class SaveSlotButton : MonoBehaviour
             
         }
         SaveLoad.instance.autoSaveIndex = index;
-        //MenuManager.instance.worldMap.OpenWindow();
-        SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
+        MenuManager.instance.MinusMenuStack();
+        MenuManager.instance.worldMap.OpenWindow();
+        //SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
 
 
     }

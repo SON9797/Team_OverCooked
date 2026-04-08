@@ -21,6 +21,7 @@ public class PopupManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }   
+       
         instance = this;
     }
     void OpenPopup(string titleText,List<PopupButtonData>buttons=null, string contentText = "", List<GameObject> contentObj = null)
@@ -101,7 +102,6 @@ public class PopupManager : MonoBehaviour
 
             slotList.Add(slot);
         }
-
         OpenPopup(titletext, contentObj: slotList);
 
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class SceneMenu : IMenu
@@ -18,10 +19,11 @@ public class SceneMenu : IMenu
         currentScenename = sceneName;
         SceneLoader.Instance.LoadSceneAsync(currentScenename);
         menuManager.AddMenuStack(this);
+        Debug.Log($"current:{currentScenename},prev:{prevScenename}");
     }
     public void CloseWindow()
     {
-        SceneLoader.Instance.LoadSceneAsync(menuManager.GetPrevSceneName());
+        SceneLoader.Instance.LoadSceneAsync(prevScenename);
         menuManager.MinusMenuStack();
     }
 }

@@ -23,16 +23,22 @@ public class MenuManager : MonoBehaviour
     {
         worldMap.sceneName = "WorldMapScene";
         lobbyMap.sceneName = "SclectStageMap_UITEst";
+        lobbyMap.currentScenename = lobbyMap.sceneName;
         menueStack.Push(lobbyMap);
 
     }
     public void AddMenuStack(IMenu menu)
     {
+        print($"click{menueStack.Count}->");
         menueStack.Push(menu);
+        print($"{menueStack.Count}");
+
     }
     public void MinusMenuStack()
     {
+        print($"clickm{menueStack.Count}->");
         menueStack.Pop();
+        print($"{menueStack.Count}");
     }
     public void Back()
     {
