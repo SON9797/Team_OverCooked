@@ -17,7 +17,7 @@ public class PlateReSpawn : ItemPlaceAndTake
     // 현재 쌓여있는 아이템들을 관리할 리스트
     public List<GameObject> _spawnedPlate = new List<GameObject>();
 
-    private List<GameObject> _checkedOutPlates = new List<GameObject>();
+    public List<GameObject> _checkedOutPlates = new List<GameObject>();
 
     private bool _isRespawning = false;
 

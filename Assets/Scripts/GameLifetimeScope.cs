@@ -18,6 +18,7 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private InGameInputInjector _player1Injector;
     [SerializeField] private InGameInputInjector _player2Injector;
     [SerializeField] private GameObject _platePrefab;
+    [SerializeField] private GameObject _DirtyPlatePrefab;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -80,9 +81,13 @@ public class GameLifetimeScope : LifetimeScope
 
 
         builder.RegisterComponentInHierarchy<PlateReSpawn>();
+        builder.RegisterComponentInHierarchy<DirtyPlateSpawn>();
 
         builder.Register<PlateFactory>(Lifetime.Singleton)
        .WithParameter<GameObject>(_platePrefab);
+
+        builder.Register<DirtyPlateFactory>(Lifetime.Singleton)
+       .WithParameter<GameObject>(_DirtyPlatePrefab);
 
         // Pause Menu 버튼 관련
         builder.RegisterComponentInHierarchy<PauseMenuContorller>();
