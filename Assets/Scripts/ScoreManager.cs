@@ -78,5 +78,17 @@ public class ScoreManager : MonoBehaviour, IScoreService
 
         UpdateScoreUI();
     }
+
+    public void SaveBastScore(string levelName)
+    {
+        string saveKey = "BestScore_" + levelName;
+        int previousBest = PlayerPrefs.GetInt(saveKey, 0);
+
+        if (CurrentScore > previousBest)
+        {
+            PlayerPrefs.SetInt(saveKey, CurrentScore);
+            PlayerPrefs.Save();
+        }
+    }
 }
 

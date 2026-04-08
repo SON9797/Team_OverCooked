@@ -12,8 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9285f6f860eef144a21fee704aa87a9, type: 3}
   m_Name: Recipe_Rice&SashimiFish
   m_EditorClassIdentifier: 
-  DishName: 
+  DishName: RIce&SashimiFish
   FinishedDishImage: {fileID: 0}
-  Ingredients: []
-  BaseScore: 0
-  model: {fileID: 0}
+  Ingredients:
+  - kind: 4
+    stat: 4
+    icon: {fileID: 0}
+    icon_techniques: {fileID: 0}
+  - kind: 1
+    stat: 1
+    icon: {fileID: 0}
+    icon_techniques: {fileID: 0}
+  BaseScore: 40
+  model: {fileID: 317735996071445771, guid: b06c6b5f2977462469ccc224dbcd19ac, type: 3}

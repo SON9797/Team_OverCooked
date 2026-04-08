@@ -392,6 +392,8 @@ namespace OverCooked
             }
             yield return new WaitForSeconds(0.5f);
 
+            scoreManager.SaveBastScore(_loadingLevelText.text);
+
             _inGameSoundManager.PlaySFX(SFXType.UI_ResultEnding);
 
             if (_endingStarsContorller != null)

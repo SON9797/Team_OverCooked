@@ -9,6 +9,7 @@ public class WorldMapTileRotate : MonoBehaviour
     [SerializeField] private float _jumpHeight = 1.5f;
     [SerializeField] private Material _nextMaterial; // 바뀔 머테리얼
     [SerializeField] private List<WorldMapBuilding> _myBuildings = new List<WorldMapBuilding>();
+    [SerializeField] private int _parentStageIndex;
 
     public bool _isFlipping = false;
     private bool _isActivated = false;
@@ -18,6 +19,8 @@ public class WorldMapTileRotate : MonoBehaviour
     {
         _meshRenderer = GetComponent<MeshRenderer>();
         _initialPosition = transform.position;
+
+        CheckIfAlreadyFlipped();
     }
     public void Flip()
     {
@@ -72,5 +75,40 @@ public class WorldMapTileRotate : MonoBehaviour
         transform.rotation = endRotation;
         transform.position = _initialPosition;
         _isFlipping = false;
+    }
+
+    private void CheckIfAlreadyFlipped()
+    {
+        string saveKey = "Stage_Clear_" + _parentStageIndex;
+
+        if (PlayerPrefs.GetInt(saveKey, 0) == 1)
+        {
+            SetTargetStateImmediate();
+        }
+    }
+
+    private void SetTargetStateImmediate()
+    {
+        _isActivated = true;
+        _isFlipping = false;
+
+        transform.rotation = Quaternion.Euler(0, 0, 180f);
+
+        if (_nextMaterial != null)
+        {
+            _meshRenderer.material = _nextMaterial;
+        }
+
+        if (_myBuildings != null)
+        {
+            foreach (var building in _myBuildings)
+            {
+                if (building != null)
+                {
+                    building.gameObject.SetActive(true);
+                    building.transform.localScale = Vector3.one;
+                }
+            }
+        }
     }
 }

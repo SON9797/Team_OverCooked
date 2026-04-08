@@ -56,8 +56,19 @@ namespace Overcooked
         {
             for (int i = 0; i < _players.Count; i++)
             {
-                if (_players[i] == null) continue;
-                _players[i].SetSelected(i == index);
+                if (_players[i] == null)
+                {
+                    continue;
+                }
+
+                bool isSelected = (i == index);
+                _players[i].SetSelected(isSelected);
+
+                InGamePlayerIndicators marker = _players[i].GetComponent<InGamePlayerIndicators>();
+                if (marker != null)
+                {
+                    marker.SetSelected(isSelected);
+                }
             }
         }
     }

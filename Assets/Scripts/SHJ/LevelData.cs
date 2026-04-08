@@ -35,7 +35,10 @@ namespace Overcooked
         [Header("레시피 대기 시간")]
         public int recipeTimer = 120;
 
-        [Header("레시피 설정")]
+        [Header("주문용 레시피 (정답 판정, UI 출력")]
         public List<RecipeData> Recipes;
+
+        [Header("조합 가능한 레시피")]
+        public List<RecipeData> CombinableRecipes;
     }
 }
