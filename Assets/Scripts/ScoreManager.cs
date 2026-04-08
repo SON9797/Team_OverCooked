@@ -1,3 +1,4 @@
+using Overcooked;
 using Overcooked.Interfaces;
 using OverCooked;
 using System;
@@ -79,14 +80,39 @@ public class ScoreManager : MonoBehaviour, IScoreService
         UpdateScoreUI();
     }
 
-    public void SaveBastScore(string levelName)
+    public void SaveBestScore(LevelData levelData)
     {
-        string saveKey = "BestScore_" + levelName;
-        int previousBest = PlayerPrefs.GetInt(saveKey, 0);
+        if (levelData == null)
+        {
+            return;
+        }
+
+        string scoreKey = $"BestScore_{levelData.LevelName}";
+        string starKey = $"BestStar_{levelData.LevelName}";
+
+        int previousBest = PlayerPrefs.GetInt(scoreKey, 0);
 
         if (CurrentScore > previousBest)
         {
-            PlayerPrefs.SetInt(saveKey, CurrentScore);
+            PlayerPrefs.SetInt(scoreKey, CurrentScore);
+
+            int starCount = 0;
+            if (CurrentScore >= levelData.ThreeStar)
+            {
+                starCount = 3;
+            }
+
+            else if (CurrentScore >= levelData.TwoStar)
+            {
+                starCount = 2;
+            }
+
+            else if (CurrentScore >= levelData.OneStar)
+            {
+                starCount = 1;
+            }
+
+            PlayerPrefs.SetInt(starKey, starCount);
             PlayerPrefs.Save();
         }
     }
