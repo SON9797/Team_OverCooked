@@ -79,6 +79,7 @@ namespace OverCooked
 
         private float _beepTimer = 1f;
         private IInGameSoundManager _inGameSoundManager;
+        private LevelData _currentLevelData;
 
         public GameObject PausePanel => _pausePanel;
         public GameObject LoadingPanel => _loadingPanel;
@@ -144,6 +145,8 @@ namespace OverCooked
             {
                 return;
             }
+
+            _currentLevelData = levelData;
 
             if (_loadingLevelText != null)
             {
@@ -392,7 +395,10 @@ namespace OverCooked
             }
             yield return new WaitForSeconds(0.5f);
 
-            scoreManager.SaveBastScore(_loadingLevelText.text);
+            if (_currentLevelData != null)
+            {
+                scoreManager.SaveBestScore(_currentLevelData);
+            }
 
             _inGameSoundManager.PlaySFX(SFXType.UI_ResultEnding);
 
