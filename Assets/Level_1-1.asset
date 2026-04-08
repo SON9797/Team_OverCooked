@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7626f63714449146a20f1d848b76770, type: 3}
   m_Name: Level_1-1
   m_EditorClassIdentifier: 
-  LevelName: 1-1
+  Chapter: 1
+  Stage: 1
   GamePlayTime: 150
   NewRecipe: SASHIMI
   LevelBGM: {fileID: 8300000, guid: 3483cfa46a6c6da4b9d1f20451161318, type: 3}
@@ -27,3 +28,4 @@ MonoBehaviour:
   Recipes:
   - {fileID: 11400000, guid: 5dd70249e42de32419495f9c1afc831a, type: 2}
   - {fileID: 11400000, guid: 0247a067360b53841955036a092f8917, type: 2}
+  CombinableRecipes: []
