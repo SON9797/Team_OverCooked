@@ -77,7 +77,8 @@ public class SaveLoad : MonoBehaviour
         testData.currentChapter = 1;
         testData.currentSubChapter = 1;
         ChapterScore testScore = new ChapterScore();
-        testScore = ToChapterScore(1, 1, 10);
+        testScore = ToChapterScore(200, 2);
+        testData.totalStarCount = 2;
         testData.bestScores["1-1"]=testScore;
         Save(testData, 0);
         
@@ -167,10 +168,11 @@ public class SaveLoad : MonoBehaviour
     }
 
     //chapeterscore에 필요한 값 넣어줘서 타입대로 만들어주는 함수
-    private ChapterScore ToChapterScore(int mainchapter, int subchapter, int bestscore)
+    private ChapterScore ToChapterScore(int bestscore,int starcount)
     {
         ChapterScore score = new ChapterScore();
         score.score = bestscore;
+        score.starCount = starcount;
         return score;
     }
     public bool CurrentDataSet(int index)
