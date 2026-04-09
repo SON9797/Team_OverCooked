@@ -12,6 +12,7 @@ public class ScoreManager : MonoBehaviour, IScoreService
 {
     private OrderManager _orderManager;
     private IUIManager _uiManager;
+    private IInGameSoundManager _inGameSoundManager;
 
     public int DeliveryOrderCount {  get; private set; }
     public int DeliveryOrderScore {  get; private set; }
@@ -24,10 +25,11 @@ public class ScoreManager : MonoBehaviour, IScoreService
     public Action<int> OnScoreChanged { get; set; }
 
     [Inject]
-    public void Construct(OrderManager orderManager, IUIManager uIManager)
+    public void Construct(OrderManager orderManager, IUIManager uIManager, IInGameSoundManager inGameSoundManager)
     {
         _orderManager = orderManager;
         _uiManager = uIManager;
+        _inGameSoundManager = inGameSoundManager;
     }
 
     public void OnPlaySubmitItem(SubmittedDish item)
@@ -42,6 +44,7 @@ public class ScoreManager : MonoBehaviour, IScoreService
 
             if (tip > 0)
             {
+                _inGameSoundManager.PlaySFX(SFXType.SuccessDelivery);
                 _uiManager.ShowTipEffect(tip);
             }
         }

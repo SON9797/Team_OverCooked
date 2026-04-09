@@ -102,25 +102,31 @@ public class Dish : MonoBehaviour
 
     public bool AddCookedRecipe(List<IngreDientData> cookedIngredients)
     {
-        foreach (var data in cookedIngredients)
+        HashSet<IngreDientData> nextMix = new HashSet<IngreDientData>(mix);
+        foreach (var cookedData in cookedIngredients)
         {
-            Debug.Log($"넘어온 재료: {data.kind}, 상태 : {data.stat}");
+            if (!nextMix.Contains(cookedData))
+            {
+                nextMix.Add(cookedData);
+            }
         }
-
-        HashSet<IngreDientData> nextMix = new HashSet<IngreDientData>(cookedIngredients);
 
         RecipeManager _recipeManager = (RecipeManager)recipeService;
         GameObject recipeModel = _recipeManager.GetRecipeModel(nextMix);
 
         if (recipeModel == null)
         {
+            Debug.Log("존재하지 않는 조합입니다.");
             return false;
         }
 
         mix = nextMix;
 
         VisualModel(recipeModel);
+
+        // 요리완성 사운드?
+
         return true;
     }
-   
+
 }

@@ -14,6 +14,8 @@ namespace OverCooked
         Dash,
         Throw,
         SuccessDelivery,
+        Washing,
+        FinishWashing,        
         UI_Ready,
         UI_TimerBeep,
         UI_TimesUp,
