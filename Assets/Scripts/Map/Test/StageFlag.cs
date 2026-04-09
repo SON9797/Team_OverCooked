@@ -22,6 +22,7 @@ public class StageFlag : MonoBehaviour
         }
     }
 
+
     private void OnTriggerExit(Collider other)
     {
         if (other.GetComponentInParent<BusMove>() != null)
