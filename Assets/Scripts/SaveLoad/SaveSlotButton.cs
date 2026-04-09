@@ -54,7 +54,8 @@ public class SaveSlotButton : MonoBehaviour
         }
         if (mode == SaveSlotMode.newgame)
         {
-            
+            SaveLoad.instance.CurrentDataUpdate(0, 0, 0, 0);
+            SaveLoad.instance.AutoSave();
         }
         SaveLoad.instance.autoSaveIndex = index;
         MenuManager.instance.MinusMenuStack();
