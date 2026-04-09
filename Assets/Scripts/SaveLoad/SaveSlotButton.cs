@@ -52,12 +52,13 @@ public class SaveSlotButton : MonoBehaviour
             }
             
         }
+        SaveLoad.instance.autoSaveIndex = index;
         if (mode == SaveSlotMode.newgame)
         {
             SaveLoad.instance.CurrentDataUpdate(0, 0, 0, 0);
             SaveLoad.instance.AutoSave();
         }
-        SaveLoad.instance.autoSaveIndex = index;
+        
         MenuManager.instance.MinusMenuStack();
         MenuManager.instance.worldMap.OpenWindow();
         //SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
