@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VContainer;
 
@@ -76,6 +77,7 @@ namespace OverCooked
         private bool _isHourglassShaking = false;
         private float _shakeSpeed = 20f;
         private float _shakeAmount = 15f;
+        private bool _isEndingSequenceFinished = false;
 
         private float _beepTimer = 1f;
         private IInGameSoundManager _inGameSoundManager;
@@ -100,6 +102,16 @@ namespace OverCooked
 
         private void Update()
         {
+            HandleHourglassUpdate();
+
+            if (_isEndingSequenceFinished && Input.GetKeyDown(KeyCode.Space))
+            {
+                GoToWorldMap();
+            }
+        }
+
+        private void HandleHourglassUpdate()
+        {
             if (_isHourglassShaking && _hourglassIcon != null)
             {
                 float angle = Mathf.Sin(Time.time * _shakeSpeed) * _shakeAmount;
@@ -112,7 +124,7 @@ namespace OverCooked
                     _inGameSoundManager.PlaySFX(SFXType.UI_TimerBeep);
                     _beepTimer = 0f;
                 }
-            
+
             }
             else
             {
@@ -123,7 +135,6 @@ namespace OverCooked
 
                 _beepTimer = 1f;
             }
-
         }
 
         public void SetPanelActive(GameObject panel, bool isActive)
@@ -406,6 +417,10 @@ namespace OverCooked
             {
                 _endingStarsContorller.ShowEndingStarEffect(scoreManager.CurrentScore);
             }
+
+            yield return new WaitForSeconds(1.5f);
+
+            _isEndingSequenceFinished = true;
         }
 
         private void SetEndingTextsEnabled(bool isEnabled)
@@ -504,5 +519,11 @@ namespace OverCooked
             Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
         }
 
+        private void GoToWorldMap()
+        {
+            Time.timeScale = 1f;
+
+            SceneManager.LoadScene("WorldMapScene");
+        }
     }
 }

@@ -13,7 +13,6 @@ public class ChopBoard : ItemPlaceAndTake
     [Header("칼질 유지 판정")]
     [SerializeField] private float _pauseCheckDistance = 2.5f;
     [SerializeField, Range(-1f, 1f)] private float _pauseCheckDot = 0.5f;
-
     private float _currentChopProgress = 0f;
 
     // 현재 다지기가 진행 중인지 나타내는 변수

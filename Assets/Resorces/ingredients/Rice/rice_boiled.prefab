@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5798786755011911609}
   - component: {fileID: 1518448033346577284}
   - component: {fileID: 7065313837760036107}
-  - component: {fileID: -2630546300110709095}
   m_Layer: 0
   m_Name: rice_boiled
   m_TagString: Untagged
@@ -112,20 +111,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-2630546300110709095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2888019033232514062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7156eac5436e9db4a989011e3f16e6bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  statusModelinfos:
-  - status: 0
-    obj: {fileID: 8622081334946919546, guid: 7b650845feab27044ba55ba4a6057611, type: 3}
-  kind: 4
-  cookDuration: 5
