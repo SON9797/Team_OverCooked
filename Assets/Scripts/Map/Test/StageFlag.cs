@@ -11,20 +11,14 @@ public class StageFlag : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"{other.name}이(가) 들어옴");
 
         BusMove bus = other.GetComponentInParent<BusMove>();
         if (bus != null)
         {
             if (_transUI != null)
             {
-                Debug.Log("BusMove 컴포넌트 찾음!");
                 _transUI.ShowUI(_stageKey);
             }
-        }
-        else
-        {
-            Debug.Log("BusMove를 찾지 못했습니다.");
         }
     }
 
