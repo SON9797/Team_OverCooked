@@ -8,7 +8,12 @@ public class StageController : MonoBehaviour
     public WorldMapManager _tileManager;
     public Transform[] _stageFlagTransform; // 현재 스테이지 깃발 위치
 
+    public BusMove _busMove;
+
     public WorldMapCamera _mapCamera;
+
+    private Coroutine _waitRoutine;
+    private int _testStageIndex = 1;
     private void Start()
     {
         PlayerPrefs.DeleteAll();
@@ -17,11 +22,31 @@ public class StageController : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            MarkStageAsCleared(1);
+            TestUnlockNextStage();
         }
     }
+
+    private void TestUnlockNextStage()
+    {
+        // 배열 범위를 넘지 않는지 체크
+        if (_testStageIndex < _stageFlagTransform.Length)
+        {
+            Debug.Log($"{_testStageIndex} 스테이지 연출 테스트 시작!");
+
+            // 즉시 연출 호출
+            OnStageUnlockAnimation(_testStageIndex);
+
+            // 다음번엔 그다음 스테이지가 열리도록 인덱스 증가
+            _testStageIndex++;
+        }
+        else
+        {
+            Debug.Log("모든 스테이지 연출을 확인했습니다.");
+        }
+    }
+
     private void CheckNewStageUnlock()
     {
         for (int i = 1; i < _stageFlagTransform.Length; i++)
@@ -32,7 +57,6 @@ public class StageController : MonoBehaviour
             {
                 OnStageUnlockAnimation(i);
 
-                // 연출을 봤으니 다시는 안 나오게 0으로 변경
                 PlayerPrefs.SetInt(key, 0);
                 PlayerPrefs.Save();
                 break;
@@ -41,6 +65,12 @@ public class StageController : MonoBehaviour
     }
     public void OnStageUnlockAnimation(int stageIndex)
     {
+        if (_waitRoutine != null)
+        {
+            StopCoroutine(_waitRoutine);
+            _waitRoutine = null;
+        }
+
         Debug.Log($"{stageIndex} 스테이지 길 열기 연출 시작!");
 
         Transform target = _stageFlagTransform[stageIndex];
@@ -48,35 +78,37 @@ public class StageController : MonoBehaviour
         _mapCamera.FocusTarget(target, () =>
         {
             _tileManager.StartConditionalWave(target.position, 5.0f);
-
-            StartCoroutine(WaitAndReturn());
+            if (_waitRoutine != null)
+            {
+                StopCoroutine(_waitRoutine);
+            }
+            _waitRoutine = StartCoroutine(WaitAndReturn());
         });
-
-        _tileManager.StartConditionalWave(_stageFlagTransform[stageIndex].position, 5.0f);
     }
 
     private IEnumerator WaitAndReturn()
     {
-        yield return new WaitForSeconds(3.0f); // 타일이 뒤집히는 애니메이션 시간 확보
-        _mapCamera.ReturnToPlayer(BusMove._instance.transform);
+        yield return new WaitForSecondsRealtime(3.5f);
+
+        _mapCamera.ReturnToPlayer(_busMove.transform);
+
+        _waitRoutine = null;
     }
 
     // 게임 클리어시 호출
     public void MarkStageAsCleared(int clearedStageIndex)
     {
-        PlayerPrefs.SetInt("Stage_Clear_" + clearedStageIndex, 1);
-
         int nextStage = clearedStageIndex + 1;
+
         if (nextStage < _stageFlagTransform.Length)
         {
-            if (PlayerPrefs.GetInt("Stage_" + nextStage + "_UnlockAnimation", 0) == 0)
-            {
-                PlayerPrefs.SetInt("Stage_" + nextStage + "_UnlockAnimation", 1);
-            }
+            OnStageUnlockAnimation(nextStage);
         }
-
-        PlayerPrefs.Save();
+        else
+        {
+            Debug.Log("마지막 스테이지입니다! 더 이상 열 길 이 없습니다.");
+        }
     }
 
-    
+
 }
