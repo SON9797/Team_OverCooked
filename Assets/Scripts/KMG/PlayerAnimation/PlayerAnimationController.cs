@@ -45,6 +45,13 @@ namespace Overcooked
             {
                 _animator.SetBool(IsChoppingHash, false);
             }
+
+            bool currentChopping = _animator.GetBool(IsChoppingHash);
+
+            if (!currentChopping)
+            {
+                _itemController.StopChopSound();
+            }
         }
 
         public void SetChopping(bool isChopping)

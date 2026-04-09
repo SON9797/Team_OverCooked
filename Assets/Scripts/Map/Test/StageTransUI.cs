@@ -50,13 +50,8 @@ public class StageTransUI : MonoBehaviour
 
     public void ShowUI(string stageKey)
     {
-        Debug.Log($"[ShowUI 호출] 입력된 키: '{stageKey}'");
-        Debug.Log($"[딕셔너리 상태] 현재 등록된 데이터 개수: {_stageDictionary.Count}");
-
         if (_stageDictionary.TryGetValue(stageKey, out StageData stageData))
         {
-            Debug.Log($"[성공] {stageKey} 데이터를 찾았습니다. 씬 이름: {stageData.sceneName}");
-
             _currentSceneTarget = stageData.sceneName;
 
             if (_stageImageDisplay != null)
@@ -67,16 +62,6 @@ public class StageTransUI : MonoBehaviour
 
             _panel.SetActive(true);
             _isWaitingForInput = true;
-        }
-        else
-        {
-            Debug.LogError($"[실패] '{stageKey}'라는 키를 딕셔너리에서 찾을 수 없습니다! 대소문자나 공백을 확인하세요.");
-
-            // 어떤 키들이 들어있는지 다 찍어보기
-            foreach (var key in _stageDictionary.Keys)
-            {
-                Debug.Log($"현재 딕셔너리에 있는 키: '{key}'");
-            }
         }
     }
 
