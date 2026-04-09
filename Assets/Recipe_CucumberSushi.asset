@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9285f6f860eef144a21fee704aa87a9, type: 3}
+  m_Name: Recipe_CucumberSushi
+  m_EditorClassIdentifier: 
+  DishName: CucumberSushi
+  FinishedDishImage: {fileID: 21300000, guid: 225c29e27440a964d81b9cd30efe108f, type: 3}
+  Ingredients:
+  - kind: 5
+    stat: 0
+    icon: {fileID: 21300000, guid: ddda48e47f36e8b4a9f4d9e371bb5e1f, type: 3}
+    icon_techniques: {fileID: 0}
+  - kind: 4
+    stat: 4
+    icon: {fileID: 21300000, guid: 6aa824c82e46990439ffa6aecfbc2937, type: 3}
+    icon_techniques: {fileID: 21300000, guid: 53781814d09bde74f863a1f9a50aaa25, type: 3}
+  - kind: 6
+    stat: 1
+    icon: {fileID: 21300000, guid: ef5db8d34c8f99f4cb57e81fffdd5067, type: 3}
+    icon_techniques: {fileID: 0}
+  BaseScore: 60
+  model: {fileID: 3947750002730333140, guid: 9f4db2765a7d0a149ab8b965aee0e2b4, type: 3}
