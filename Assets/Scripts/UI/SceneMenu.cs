@@ -23,7 +23,7 @@ public class SceneMenu : IMenu
     }
     public void CloseWindow()
     {
-        PopupManager.instance.GotoScenePopup(prevScenename);
+        PopupManager.instance.GotoprevScenePopup(prevScenename);
         /*
         SceneLoader.Instance.LoadSceneAsync(prevScenename);
         menuManager.MinusMenuStack();
