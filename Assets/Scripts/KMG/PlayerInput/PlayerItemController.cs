@@ -108,6 +108,7 @@ namespace Overcooked
         public bool IsThrowAiming => _isThrowAiming;
 
         private IInGameSoundManager _inGameSoundManager;
+        private Coroutine _chopSoundCoroutine;
 
         [Inject]
         public void Construct(IInGameSoundManager inGameSoundManager)
@@ -290,10 +291,39 @@ namespace Overcooked
             {
                 bool isNowChopping = chopBoard.ToggleChop(this);
                 _animationController?.SetChopping(isNowChopping);
+
+                if (isNowChopping)
+                {
+                    if (_chopSoundCoroutine == null)
+                    {
+                        _chopSoundCoroutine = StartCoroutine(PlayChopSoundLoop());
+                    }
+                }
                 return;
             }
 
             _animationController?.SetChopping(false);
+        }
+
+        public void StopChopSound()
+        {
+            if (_chopSoundCoroutine != null)
+            {
+                StopCoroutine(_chopSoundCoroutine);
+                _chopSoundCoroutine = null;
+                Debug.Log("칼질 사운드 멈춤");
+            }
+        }
+       
+        private IEnumerator PlayChopSoundLoop()
+        {
+            float chopInterval = 0.2f;
+
+            while (true)
+            {
+                _inGameSoundManager.PlaySFX(SFXType.Chop);
+                yield return new WaitForSeconds(chopInterval);
+            }
         }
 
         // 던지기 버튼을 누르는 순간 호출
