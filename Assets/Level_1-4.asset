@@ -14,16 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Chapter: 1
   Stage: 4
-  GamePlayTime: 150
+  GamePlayTime: 210
   NewRecipe: DASH
-  LevelBGM: {fileID: 0}
-  LoadingImage: {fileID: 0}
-  TutorialImage: {fileID: 0}
+  LevelBGM: {fileID: 8300000, guid: 3483cfa46a6c6da4b9d1f20451161318, type: 3}
+  LoadingImage: {fileID: 21300000, guid: 731f0cb5a6f875f40b597bf70823da83, type: 3}
+  TutorialImage: {fileID: 21300000, guid: bd03010c3ecdabc41bb4a85e39ec77c1, type: 3}
   BaseTipAmount: 8
   MaxOrderCount: 2
-  OneStar: 0
-  TwoStar: 0
-  ThreeStar: 0
+  OneStar: 120
+  TwoStar: 260
+  ThreeStar: 400
   recipeTimer: 120
-  Recipes: []
-  CombinableRecipes: []
+  Recipes:
+  - {fileID: 11400000, guid: ed3fa18b52e7ba64bafeb1b993fcc555, type: 2}
+  - {fileID: 11400000, guid: 996eac7ea63c19c4584afbc0289e2459, type: 2}
+  CombinableRecipes:
+  - {fileID: 11400000, guid: 4e3ecafbb37d9134bae11aa71e1ff9f7, type: 2}
+  - {fileID: 11400000, guid: 2aa2c3568dc5c3845acc82c952903d9a, type: 2}
+  - {fileID: 11400000, guid: 201a6fbbba2a0f34283de0c919879eb4, type: 2}
+  - {fileID: 11400000, guid: 79c64c239a4fc1842bd4a29b0c5debc7, type: 2}
+  - {fileID: 11400000, guid: ed3fa18b52e7ba64bafeb1b993fcc555, type: 2}
+  - {fileID: 11400000, guid: 97164ca7872913f4c85116fd7430233d, type: 2}
+  - {fileID: 11400000, guid: 5dd70249e42de32419495f9c1afc831a, type: 2}
+  - {fileID: 11400000, guid: 84d9ed7d7b01de34a8e9c4c884475f50, type: 2}
+  - {fileID: 11400000, guid: ed3fa18b52e7ba64bafeb1b993fcc555, type: 2}
+  - {fileID: 11400000, guid: 996eac7ea63c19c4584afbc0289e2459, type: 2}
