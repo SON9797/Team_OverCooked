@@ -7858,9 +7858,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57e2930a7893184ca44917f07bf7349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stageNumberText: 1-1
-  _targetSceneName: Stage1_1
-  _stagePreviewImage: {fileID: 21300000, guid: b6c89082dcdfd4641876d205ddffd3a4, type: 3}
+  _stageKey: 1-1
   _transUI: {fileID: 1978256533}
 --- !u!1001 &441544382
 PrefabInstance:
@@ -8434,9 +8432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57e2930a7893184ca44917f07bf7349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stageNumberText: 1-1
-  _targetSceneName: Stage1_4
-  _stagePreviewImage: {fileID: 0}
+  _stageKey: Stage1-1
   _transUI: {fileID: 1978256533}
 --- !u!1001 &463221437
 PrefabInstance:
@@ -20171,9 +20167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57e2930a7893184ca44917f07bf7349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stageNumberText: 1-1
-  _targetSceneName: Stage1_3
-  _stagePreviewImage: {fileID: 0}
+  _stageKey: Stage_1_1
   _transUI: {fileID: 1978256533}
 --- !u!1001 &1111659599
 PrefabInstance:
@@ -34930,6 +34924,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _panel: {fileID: 418687442}
   _stageImageDisplay: {fileID: 189282097}
+  _stageEntries:
+  - stageKey: 1-1
+    data:
+      stageIndex: 0
+      stageName: Stage1_1
+      sceneName: Stage1_1
+      isUnlocked: 0
+      stageSprite: {fileID: 21300000, guid: eba089c21ae1e8146bc51272155c6ea5, type: 3}
+  - stageKey: 1-2
+    data:
+      stageIndex: 1
+      stageName: Stage1_2
+      sceneName: Stage1_2
+      isUnlocked: 0
+      stageSprite: {fileID: 21300000, guid: c4f86d7a5b03b2b4196e5058ebf29ea2, type: 3}
 --- !u!4 &1978256534
 Transform:
   m_ObjectHideFlags: 0
@@ -35609,9 +35618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57e2930a7893184ca44917f07bf7349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stageNumberText: 1-1
-  _targetSceneName: Stage1_2
-  _stagePreviewImage: {fileID: 21300000, guid: c4f86d7a5b03b2b4196e5058ebf29ea2, type: 3}
+  _stageKey: 1-2
   _transUI: {fileID: 1978256533}
 --- !u!1001 &2025946205
 PrefabInstance:

@@ -4,13 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class StageTransUI : MonoBehaviour
 {
     [SerializeField] private GameObject _panel;
     [SerializeField] private Image _stageImageDisplay;
 
+    [SerializeField] private List<StageEntry> _stageEntries;
+
+    private Dictionary<string, StageData> _stageDictionary = new Dictionary<string, StageData>();
+
     private string _currentSceneTarget;
     private bool _isWaitingForInput = false;
+
+    [System.Serializable]
+    public struct StageEntry
+    {
+        public string stageKey;
+        public StageData data;
+    }
 
     private void Awake()
     {
@@ -18,6 +30,15 @@ public class StageTransUI : MonoBehaviour
         {
             _panel.SetActive(false);
         }
+
+        foreach (var entry in _stageEntries)
+        {
+            if (!_stageDictionary.ContainsKey(entry.stageKey))
+            {
+                _stageDictionary.Add(entry.stageKey, entry.data);
+            }
+        }
+
     }
     void Update()
     {
@@ -27,21 +48,36 @@ public class StageTransUI : MonoBehaviour
         }
     }
 
-    public void ShowUI(string stageTitle, string sceneName, Sprite stageSprite)
+    public void ShowUI(string stageKey)
     {
-        _currentSceneTarget = sceneName;
-        if (_stageImageDisplay != null && stageSprite != null)
-        {
-            _stageImageDisplay.sprite = stageSprite;
-            _stageImageDisplay.gameObject.SetActive(true); // 이미지가 있을 때만 켬
-        }
-        else if (_stageImageDisplay != null)
-        {
-            _stageImageDisplay.gameObject.SetActive(false); // 이미지가 없으면 끔
-        }
+        Debug.Log($"[ShowUI 호출] 입력된 키: '{stageKey}'");
+        Debug.Log($"[딕셔너리 상태] 현재 등록된 데이터 개수: {_stageDictionary.Count}");
 
-        _panel.SetActive(true);
-        _isWaitingForInput = true;
+        if (_stageDictionary.TryGetValue(stageKey, out StageData stageData))
+        {
+            Debug.Log($"[성공] {stageKey} 데이터를 찾았습니다. 씬 이름: {stageData.sceneName}");
+
+            _currentSceneTarget = stageData.sceneName;
+
+            if (_stageImageDisplay != null)
+            {
+                _stageImageDisplay.sprite = stageData.stageSprite;
+                _stageImageDisplay.gameObject.SetActive(stageData.stageSprite != null);
+            }
+
+            _panel.SetActive(true);
+            _isWaitingForInput = true;
+        }
+        else
+        {
+            Debug.LogError($"[실패] '{stageKey}'라는 키를 딕셔너리에서 찾을 수 없습니다! 대소문자나 공백을 확인하세요.");
+
+            // 어떤 키들이 들어있는지 다 찍어보기
+            foreach (var key in _stageDictionary.Keys)
+            {
+                Debug.Log($"현재 딕셔너리에 있는 키: '{key}'");
+            }
+        }
     }
 
     public void HideUI()

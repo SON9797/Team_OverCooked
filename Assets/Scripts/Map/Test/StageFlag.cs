@@ -4,21 +4,27 @@ using UnityEngine;
 
 public class StageFlag : MonoBehaviour
 {
-    [SerializeField] private string _stageNumberText = "1-1"; 
-    [SerializeField] private string _targetSceneName;      // 이동할 씬 이름
-    [SerializeField] private Sprite _stagePreviewImage;
+    [SerializeField] private string _stageKey = "Stage_1_1";
+
 
     [SerializeField] private StageTransUI _transUI;
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"{other.name}이(가) 들어옴");
+
         BusMove bus = other.GetComponentInParent<BusMove>();
         if (bus != null)
         {
             if (_transUI != null)
             {
-                _transUI.ShowUI(_stageNumberText, _targetSceneName, _stagePreviewImage);
+                Debug.Log("BusMove 컴포넌트 찾음!");
+                _transUI.ShowUI(_stageKey);
             }
+        }
+        else
+        {
+            Debug.Log("BusMove를 찾지 못했습니다.");
         }
     }
 
