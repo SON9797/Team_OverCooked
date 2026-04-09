@@ -21,7 +21,7 @@ public class MenuManager : MonoBehaviour
     }
     private void Start()
     {
-        worldMap.sceneName = "WorldMapScene_UITest";
+        worldMap.sceneName = "WorldMapScene";
         lobbyMap.sceneName = "SclectStageMap_UITEst";
         lobbyMap.currentScenename = lobbyMap.sceneName;
         menueStack.Push(lobbyMap);
