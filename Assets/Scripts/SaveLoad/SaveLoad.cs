@@ -56,7 +56,7 @@ public class SaveLoad : MonoBehaviour
 
     
 
-    public SaveData currentData;
+    public SaveData currentData=new SaveData();
     public int autoSaveIndex=0;
 
     public SaveData[] savedatas = new SaveData[3];
