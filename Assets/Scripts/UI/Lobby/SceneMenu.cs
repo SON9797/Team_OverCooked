@@ -1,16 +1,1 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class SceneMenu : MonoBehaviour
-{
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
-}

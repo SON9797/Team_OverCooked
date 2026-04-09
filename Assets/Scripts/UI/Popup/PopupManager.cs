@@ -21,6 +21,7 @@ public class PopupManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }   
+       
         instance = this;
     }
     void OpenPopup(string titleText,List<PopupButtonData>buttons=null, string contentText = "", List<GameObject> contentObj = null)
@@ -60,6 +61,20 @@ public class PopupManager : MonoBehaviour
         buttonlist.Add(btnok);
         OpenPopup("Game Exit", buttonlist, "Do you want exit Game?");
     }
+    public void GotoScenePopup(string sceneName)
+    {
+        List<PopupButtonData> buttonlist = new List<PopupButtonData>();
+        PopupButtonData btnCancel = new PopupButtonData();
+        btnCancel.text = "Cancel";
+        btnCancel.onclickAction = ClosePopup;
+        PopupButtonData btnok = new PopupButtonData();
+        btnok.text = "OK";
+        btnok.onclickAction = ClosePopup;
+        btnok.onclickAction += ()=>SceneLoader.Instance.LoadSceneAsync(sceneName);
+        buttonlist.Add(btnCancel);
+        buttonlist.Add(btnok);
+        OpenPopup("Previous", buttonlist, "Do you want move prev screen?");
+    }
     public void OpenInformationPopup(string contentText)
     {
         string titletext = "Info";
@@ -87,7 +102,6 @@ public class PopupManager : MonoBehaviour
 
             slotList.Add(slot);
         }
-
         OpenPopup(titletext, contentObj: slotList);
 
     }
