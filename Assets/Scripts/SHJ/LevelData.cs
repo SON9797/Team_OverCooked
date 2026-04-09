@@ -10,7 +10,8 @@ namespace Overcooked
     public class LevelData : ScriptableObject
     {
         [Header("스테이지 설정")]
-        public string LevelName;
+        public int Chapter;
+        public int Stage;
         public float GamePlayTime;
         public string NewRecipe;
 

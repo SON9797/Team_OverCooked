@@ -36,6 +36,23 @@ public class TrashCan : ItemPlaceAndTake
             }
         }
 
+        Cookware cookware = item.GetComponent<Cookware>();
+
+        if (cookware != null)
+        {
+            if (cookware.HasIngredients)
+            {
+                cookware.ClearCookware();
+
+                return false;
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
         item.transform.SetParent(null);
 
         if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))

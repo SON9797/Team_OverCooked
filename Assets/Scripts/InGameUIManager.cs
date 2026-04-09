@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VContainer;
 
@@ -76,9 +77,11 @@ namespace OverCooked
         private bool _isHourglassShaking = false;
         private float _shakeSpeed = 20f;
         private float _shakeAmount = 15f;
+        private bool _isEndingSequenceFinished = false;
 
         private float _beepTimer = 1f;
         private IInGameSoundManager _inGameSoundManager;
+        private LevelData _currentLevelData;
 
         public GameObject PausePanel => _pausePanel;
         public GameObject LoadingPanel => _loadingPanel;
@@ -99,6 +102,16 @@ namespace OverCooked
 
         private void Update()
         {
+            HandleHourglassUpdate();
+
+            if (_isEndingSequenceFinished && Input.GetKeyDown(KeyCode.Space))
+            {
+                GoToWorldMap();
+            }
+        }
+
+        private void HandleHourglassUpdate()
+        {
             if (_isHourglassShaking && _hourglassIcon != null)
             {
                 float angle = Mathf.Sin(Time.time * _shakeSpeed) * _shakeAmount;
@@ -111,7 +124,7 @@ namespace OverCooked
                     _inGameSoundManager.PlaySFX(SFXType.UI_TimerBeep);
                     _beepTimer = 0f;
                 }
-            
+
             }
             else
             {
@@ -122,7 +135,6 @@ namespace OverCooked
 
                 _beepTimer = 1f;
             }
-
         }
 
         public void SetPanelActive(GameObject panel, bool isActive)
@@ -145,19 +157,21 @@ namespace OverCooked
                 return;
             }
 
+            _currentLevelData = levelData;
+
             if (_loadingLevelText != null)
             {
-                _loadingLevelText.text = levelData.LevelName;
+                _loadingLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
             }
 
             if (_endingLevelText != null)
             {
-                _endingLevelText.text = levelData.LevelName;
+                _endingLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
             }
 
             if (_pauseLevelText != null)
             {
-                _pauseLevelText.text = levelData.LevelName;
+                _pauseLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
             }
 
             if (_loadingImage != null)
@@ -392,12 +406,21 @@ namespace OverCooked
             }
             yield return new WaitForSeconds(0.5f);
 
+            if (_currentLevelData != null)
+            {
+                scoreManager.SaveBestScore(_currentLevelData);
+            }
+
             _inGameSoundManager.PlaySFX(SFXType.UI_ResultEnding);
 
             if (_endingStarsContorller != null)
             {
                 _endingStarsContorller.ShowEndingStarEffect(scoreManager.CurrentScore);
             }
+
+            yield return new WaitForSeconds(1.5f);
+
+            _isEndingSequenceFinished = true;
         }
 
         private void SetEndingTextsEnabled(bool isEnabled)
@@ -496,5 +519,11 @@ namespace OverCooked
             Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
         }
 
+        private void GoToWorldMap()
+        {
+            Time.timeScale = 1f;
+
+            SceneManager.LoadScene("WorldMapScene");
+        }
     }
 }

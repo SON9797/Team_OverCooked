@@ -38,6 +38,8 @@ namespace Overcooked
         private Vector3 _moveDir;
         private bool _canDash = true;
         private bool _isDashing;
+
+        private Vector3 _conveyorVelocity;
         #endregion
 
         [Inject]
@@ -88,6 +90,7 @@ namespace Overcooked
             while (elapsed < _dashDuration)
             {
                 RotateToward(dashDir);
+
                 _rb.velocity = new Vector3(dashDir.x * _dashPower, _rb.velocity.y, dashDir.z * _dashPower);
 
                 elapsed += Time.fixedDeltaTime;
@@ -108,7 +111,16 @@ namespace Overcooked
             }
 
             Vector3 move = _moveDir * _moveSpeed;
-            _rb.velocity = new Vector3(move.x, _rb.velocity.y, move.z);
+
+            if (_moveDir.sqrMagnitude < 0.001f && _conveyorVelocity.sqrMagnitude > 0.001f)
+            {
+                float dot = Vector3.Dot(_moveDir.normalized, _conveyorVelocity.normalized);
+                move *= (1f + (dot * 0.2f));
+            }
+
+            Vector3 finalVel = move + _conveyorVelocity;
+
+            _rb.velocity = new Vector3(finalVel.x, _rb.velocity.y, finalVel.z);
 
             if (_moveDir.sqrMagnitude > 0.001f)
             {
@@ -131,6 +143,11 @@ namespace Overcooked
                 targetRotation,
                 _turnSpeed * Time.fixedDeltaTime
             );
+        }
+
+        public void SetConveyorVelocity(Vector3 velocity)
+        {
+            _conveyorVelocity = velocity;
         }
     }
 }

@@ -13,6 +13,9 @@ public class ChopBoard : ItemPlaceAndTake
     [Header("칼질 유지 판정")]
     [SerializeField] private float _pauseCheckDistance = 2.5f;
     [SerializeField, Range(-1f, 1f)] private float _pauseCheckDot = 0.5f;
+
+    [SerializeField] private GameObject _knife;
+
     private float _currentChopProgress = 0f;
 
     // 현재 다지기가 진행 중인지 나타내는 변수
@@ -140,6 +143,8 @@ public class ChopBoard : ItemPlaceAndTake
         {
             _canvasObj.SetActive(true);
         }
+
+        _knife.SetActive(false);
 
         if (_progressBar != null && _chopTimeMax > 0f)
         {
@@ -271,6 +276,10 @@ public class ChopBoard : ItemPlaceAndTake
 
         // 도구 표시 - 완전 중단 시 도구 숨김
         HidePlayerTools();
+
+
+        _knife.SetActive(true);
+
 
         _currentChopProgress = 0f;
         _currentChoppingPlayer = null;

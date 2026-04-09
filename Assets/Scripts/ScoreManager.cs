@@ -1,3 +1,4 @@
+using Overcooked;
 using Overcooked.Interfaces;
 using OverCooked;
 using System;
@@ -77,6 +78,47 @@ public class ScoreManager : MonoBehaviour, IScoreService
         FailedOrderPenalty = 0;
 
         UpdateScoreUI();
+    }
+
+    public void SaveBestScore(LevelData levelData)
+    {
+        if (levelData == null)
+        {
+            return;
+        }
+
+        string levelIdentifier = $"{levelData.Chapter}-{levelData.Stage}";
+        string scoreKey = $"BestScore_{levelIdentifier}";
+        string starKey = $"BestStar_{levelIdentifier}";
+
+        int previousBest = PlayerPrefs.GetInt(scoreKey, 0);
+
+        if (CurrentScore > previousBest)
+        {
+            PlayerPrefs.SetInt(scoreKey, CurrentScore);
+
+            int starCount = 0;
+            if (CurrentScore >= levelData.ThreeStar)
+            {
+                starCount = 3;
+            }
+
+            else if (CurrentScore >= levelData.TwoStar)
+            {
+                starCount = 2;
+            }
+
+            else if (CurrentScore >= levelData.OneStar)
+            {
+                starCount = 1;
+            }
+
+            PlayerPrefs.SetInt(starKey, starCount);
+
+            PlayerPrefs.Save();
+
+            Debug.Log($"저장 완료: {levelIdentifier} 스테이지 / 점수: {CurrentScore} / 별: {starCount}");
+        }
     }
 }
 

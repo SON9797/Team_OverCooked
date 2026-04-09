@@ -100,5 +100,7 @@ public class GameLifetimeScope : LifetimeScope
             .AsImplementedInterfaces()
             .AsSelf();
 
+        //builder.Register<IRecipeService, RecipeManager>(Lifetime.Singleton);
+
     }
 }
