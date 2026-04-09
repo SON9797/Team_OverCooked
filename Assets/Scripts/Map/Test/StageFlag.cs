@@ -4,23 +4,24 @@ using UnityEngine;
 
 public class StageFlag : MonoBehaviour
 {
-    [SerializeField] private string _stageNumberText = "1-1"; 
-    [SerializeField] private string _targetSceneName;      // 이동할 씬 이름
-    [SerializeField] private Sprite _stagePreviewImage;
+    [SerializeField] private string _stageKey = "Stage_1_1";
+
 
     [SerializeField] private StageTransUI _transUI;
 
     private void OnTriggerEnter(Collider other)
     {
+
         BusMove bus = other.GetComponentInParent<BusMove>();
         if (bus != null)
         {
             if (_transUI != null)
             {
-                _transUI.ShowUI(_stageNumberText, _targetSceneName, _stagePreviewImage);
+                _transUI.ShowUI(_stageKey);
             }
         }
     }
+
 
     private void OnTriggerExit(Collider other)
     {

@@ -4,13 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class StageTransUI : MonoBehaviour
 {
     [SerializeField] private GameObject _panel;
     [SerializeField] private Image _stageImageDisplay;
 
+    [SerializeField] private List<StageEntry> _stageEntries;
+
+    private Dictionary<string, StageData> _stageDictionary = new Dictionary<string, StageData>();
+
     private string _currentSceneTarget;
     private bool _isWaitingForInput = false;
+
+    [System.Serializable]
+    public struct StageEntry
+    {
+        public string stageKey;
+        public StageData data;
+    }
 
     private void Awake()
     {
@@ -18,6 +30,15 @@ public class StageTransUI : MonoBehaviour
         {
             _panel.SetActive(false);
         }
+
+        foreach (var entry in _stageEntries)
+        {
+            if (!_stageDictionary.ContainsKey(entry.stageKey))
+            {
+                _stageDictionary.Add(entry.stageKey, entry.data);
+            }
+        }
+
     }
     void Update()
     {
@@ -27,21 +48,21 @@ public class StageTransUI : MonoBehaviour
         }
     }
 
-    public void ShowUI(string stageTitle, string sceneName, Sprite stageSprite)
+    public void ShowUI(string stageKey)
     {
-        _currentSceneTarget = sceneName;
-        if (_stageImageDisplay != null && stageSprite != null)
+        if (_stageDictionary.TryGetValue(stageKey, out StageData stageData))
         {
-            _stageImageDisplay.sprite = stageSprite;
-            _stageImageDisplay.gameObject.SetActive(true); // 이미지가 있을 때만 켬
-        }
-        else if (_stageImageDisplay != null)
-        {
-            _stageImageDisplay.gameObject.SetActive(false); // 이미지가 없으면 끔
-        }
+            _currentSceneTarget = stageData.sceneName;
 
-        _panel.SetActive(true);
-        _isWaitingForInput = true;
+            if (_stageImageDisplay != null)
+            {
+                _stageImageDisplay.sprite = stageData.stageSprite;
+                _stageImageDisplay.gameObject.SetActive(stageData.stageSprite != null);
+            }
+
+            _panel.SetActive(true);
+            _isWaitingForInput = true;
+        }
     }
 
     public void HideUI()
