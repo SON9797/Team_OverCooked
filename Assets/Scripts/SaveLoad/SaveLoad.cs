@@ -73,6 +73,7 @@ public class SaveLoad : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
         
+        /*
         SaveData testData = new SaveData();
         testData.currentChapter = 1;
         testData.currentSubChapter = 1;
@@ -81,7 +82,7 @@ public class SaveLoad : MonoBehaviour
         testData.totalStarCount = 2;
         testData.bestScores["1-1"]=testScore;
         Save(testData, 0);
-        
+        */
         LoadAllSlot();
         Debug.Log($"{savedatas[0].currentChapter}");
     }

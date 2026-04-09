@@ -32,18 +32,19 @@ public class WorldMapLevelHover : MonoBehaviour
         //ShowLevel(1, 1);
     }
 
-    public void ShowLevel(int mainChapter,int subChapter)
+    public void ShowLevel(string chapter)
     {
+
         //해당 스테이지 사진 받아오기
-        stagePicture.sprite = imageDict[$"{mainChapter}-{subChapter}"];
+        stagePicture.sprite = imageDict[chapter];
 
         //해당 스테이지 별,최고점수 받아오기
         SaveData savedata = SaveLoad.instance.currentData;
         int starcount=0;
         int bestscore=0;
-        if (savedata.bestScores.ContainsKey($"{mainChapter}-{subChapter}")) {
-            starcount = savedata.bestScores[$"{mainChapter}-{subChapter}"].starCount;
-            bestscore = savedata.bestScores[$"{mainChapter}-{subChapter}"].score;
+        if (savedata.bestScores.ContainsKey(chapter)) {
+            starcount = savedata.bestScores[chapter].starCount;
+            bestscore = savedata.bestScores[chapter].score;
         }
         for(int i = 0; i < stars.Count; i++)
         {
@@ -55,10 +56,18 @@ public class WorldMapLevelHover : MonoBehaviour
         }
         bestScoreText.text=bestscore.ToString();
 
-        gameObject.SetActive(true);
+        CanvasGroup cg = GetComponent<CanvasGroup>();
+        cg.alpha = 1f;
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+        //gameObject.SetActive(true);
     }
     public void HideWindow()
     {
-        gameObject.SetActive(false);
+        CanvasGroup cg = GetComponent<CanvasGroup>();
+        cg.alpha = 0f;           // 안 보이게
+        cg.interactable = false; // 클릭 막기
+        cg.blocksRaycasts = false;
+        //gameObject.SetActive(false);
     }
 }
