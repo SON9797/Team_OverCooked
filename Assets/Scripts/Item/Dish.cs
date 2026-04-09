@@ -10,7 +10,19 @@ public class Dish : MonoBehaviour
 {
     [SerializeField] Transform foodPos;
     HashSet<IngreDientData> mix=new HashSet<IngreDientData>();
-    [Inject] IRecipeService recipeService;
+
+    private IRecipeService recipeService;
+    private IInGameSoundManager _inGameSoundManager;
+
+    [Inject]
+    public void Construct(IRecipeService recipeService, IInGameSoundManager inGameSoundManager)
+    {
+        this.recipeService = recipeService;
+        _inGameSoundManager = inGameSoundManager;
+    }
+
+    //[Inject] 
+    //IRecipeService recipeService;
 
     //해당 함수를 사용하면 접시에 매개변수의 재료를 추가한다.
     //만약 조합이 존재하지 않으면, 접시에 재료가 올라가지 않는다.
@@ -40,6 +52,8 @@ public class Dish : MonoBehaviour
         print("조합성공");
         // 진짜 조합함.
         mix.Add(ingredientData);
+
+        _inGameSoundManager.PlaySFX(OverCooked.SFXType.ItemDrop);
         
         //접시에 얹기
         VisualModel(recipyModel);

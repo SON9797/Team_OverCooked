@@ -3,6 +3,8 @@ using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
+using OverCooked;
 
 namespace Overcooked
 {
@@ -104,6 +106,14 @@ namespace Overcooked
         public bool CanThrowHeldObject => _currentHeldObject != null && _currentHeldObject.GetComponent<Ingredient>() != null;
 
         public bool IsThrowAiming => _isThrowAiming;
+
+        private IInGameSoundManager _inGameSoundManager;
+
+        [Inject]
+        public void Construct(IInGameSoundManager inGameSoundManager)
+        {
+            _inGameSoundManager = inGameSoundManager;
+        }
 
         private void Awake()
         {
@@ -367,7 +377,7 @@ namespace Overcooked
             _isThrowAiming = false;
             _playerIndicators?.SetThrowAiming(false);
         }
-
+               
         public void TryThrowHeldObject()
         {
             // 현재 선택된 플레이어만 가능
@@ -445,6 +455,8 @@ namespace Overcooked
                 throwRb.angularVelocity = Vector3.zero;
                 throwRb.AddForce(forward * _throwForce + Vector3.up * _throwUpForce, ForceMode.VelocityChange);
             }
+
+            _inGameSoundManager.PlaySFX(SFXType.Throw);
 
             // 자기 자신과 잠깐 충돌 무시
             StartCoroutine(CoIgnorePlayerCollisionTemporarily(throwCols));
@@ -1000,6 +1012,8 @@ namespace Overcooked
 
             if (counter.PlaceItem(_currentHeldObject))
             {
+                _inGameSoundManager.PlaySFX(SFXType.ItemDrop);
+
                 ClearCurrentHeldObject();
                 Debug.Log($"{counter.name}에 아이템 자식 설정 성공");
             }
@@ -1030,6 +1044,8 @@ namespace Overcooked
                 _currentHeldRb.velocity = Vector3.zero;
                 _currentHeldRb.angularVelocity = Vector3.zero;
             }
+
+            _inGameSoundManager.PlaySFX(SFXType.ItemDrop);
 
             SetHeldColliderEnabled(true);
             ClearCurrentHeldObject();
@@ -1062,6 +1078,8 @@ namespace Overcooked
 
             // 손에 들고 있을 때는 콜라이더 끔
             SetHeldColliderEnabled(false);
+
+            _inGameSoundManager.PlaySFX(SFXType.ItemPickUp);
 
             _currentHeldObject.transform.SetParent(_holdPoint);
             _currentHeldObject.transform.localPosition = Vector3.zero;
