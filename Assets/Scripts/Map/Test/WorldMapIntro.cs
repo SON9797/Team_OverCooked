@@ -20,12 +20,26 @@ public class WorldMapIntro : MonoBehaviour
 
     private IEnumerator IntroSequence()
     {
+        bool isAlreadyCleared = false;
+        if (SaveLoad.instance != null && SaveLoad.instance.currentData.bestScores.ContainsKey("1-1"))
+        {
+            isAlreadyCleared = true;
+        }
+
         if (_stage1_1Open)
         {
             yield break;
         }    
         _mapCamera.enabled = false;
 
+        if (isAlreadyCleared)
+        {
+            // 1-1이 이미 클리어되었다면 연출 전체를 스킵하고 카메라만 바로 세팅
+            _mapCamera.transform.position = _playerTransform.position + _introOffset;
+            _mapCamera.SetTarget(_playerTransform, _introOffset);
+            _stage1_1Open = true;
+            yield break;
+        }
         _mapCamera.transform.position = _firstStageTransform.position + _introOffset;
         _mapCamera.transform.LookAt(_firstStageTransform);
 

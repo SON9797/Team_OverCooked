@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UIElements;
 
 [Serializable]
@@ -35,10 +36,10 @@ public class StageController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TestUnlockNextStage();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+         //   TestUnlockNextStage();
+        //}
     }
 
     private void TestUnlockNextStage()
@@ -114,19 +115,31 @@ public class StageController : MonoBehaviour
     }
 
     // 게임 클리어시 호출
-    public void MarkStageAsCleared(string clearedStagename)
+    public void MarkStageAsCleared(int mainChapter, int subChapter, int score, int stars)
     {
-        string nextstage = InputStagePlus(clearedStagename);
+        string currentKey = $"{mainChapter}-{subChapter}";
 
-        if (_stageTransformDict.ContainsKey(nextstage))
+        if (SaveLoad.instance != null)
         {
-            OnStageUnlockAnimation(nextstage);
+            SaveLoad.instance.CurrentDataUpdate(mainChapter, subChapter, score, stars);
+            SaveLoad.instance.AutoSave();
+        }
+
+        string nextStageKey = InputStagePlus(currentKey);
+
+        if (_stageTransformDict.ContainsKey(nextStageKey))
+        {
+            PlayerPrefs.SetString("PendingUnlockStage", nextStageKey);
+            PlayerPrefs.Save();
+
+            OnStageUnlockAnimation(nextStageKey);
         }
         else
         {
-            Debug.Log("마지막 스테이지입니다! 더 이상 열 길 이 없습니다.");
+            Debug.Log("마지막 스테이지이거나 다음 스테이지 데이터가 없습니다.");
         }
     }
+
     private string InputStagePlus(string inputstage)
     {
         var split = inputstage.Split('-');

@@ -79,9 +79,9 @@ public class WorldMapTileRotate : MonoBehaviour
 
     private void CheckIfAlreadyFlipped()
     {
-        string saveKey = "Stage_Clear_" + _parentStageIndex;
+        string stageKey = $"1-{_parentStageIndex}"; // ¿¹: 1-1, 1-2 ÇüÅÂ
 
-        if (PlayerPrefs.GetInt(saveKey, 0) == 1)
+        if (SaveLoad.instance != null && SaveLoad.instance.currentData.bestScores.ContainsKey(stageKey))
         {
             SetTargetStateImmediate();
         }
