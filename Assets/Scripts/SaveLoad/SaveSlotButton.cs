@@ -55,7 +55,7 @@ public class SaveSlotButton : MonoBehaviour
         SaveLoad.instance.autoSaveIndex = index;
         if (mode == SaveSlotMode.newgame)
         {
-            SaveLoad.instance.CurrentDataUpdate(0, 0, 0, 0);
+            //SaveLoad.instance.CurrentDataUpdate(0, 0, 0, 0);
             SaveLoad.instance.AutoSave();
         }
         
