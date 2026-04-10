@@ -3,7 +3,6 @@ using Overcooked.Interfaces;
 using OverCooked;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -34,11 +33,14 @@ public class GameLifetimeScope : LifetimeScope
             builder.RegisterInstance(_currentLevelData);
         }
 
+        // 주문 리스트 UI 등록
         builder.RegisterComponentInHierarchy<OrderListUI>();
 
+        // 타이머 등록
         builder.Register<TimerManager>(Lifetime.Singleton)
                .AsImplementedInterfaces();
 
+        // 인게임 UI 매니저 등록
         if (_inGameUiManager != null)
         {
             builder.RegisterComponent(_inGameUiManager)
@@ -46,16 +48,52 @@ public class GameLifetimeScope : LifetimeScope
                    .AsSelf();
         }
 
+        // 씬 흐름 매니저 등록
         builder.Register<SceneFlowManager>(Lifetime.Singleton)
                .AsImplementedInterfaces()
                .AsSelf();
 
+        // 인게임 입력 등록
         builder.Register<IInGamePlayerInput, InGamePlayerInput>(Lifetime.Singleton);
 
+        // 플레이어 스위치 매니저 등록
         if (_playerSwitchManager != null)
         {
             builder.RegisterComponent(_playerSwitchManager);
         }
+
+        // 스코어 매니저 등록
+        builder.RegisterComponentInHierarchy<ScoreManager>()
+               .AsImplementedInterfaces()
+               .AsSelf();
+
+        // 주문 매니저 등록
+        builder.RegisterComponentInHierarchy<OrderManager>()
+               .AsSelf();
+
+        // 제출 카운터 등록
+        builder.RegisterComponentInHierarchy<DeliveryCounter>()
+               .AsSelf();
+
+        // 접시 리스폰 등록
+        builder.RegisterComponentInHierarchy<PlateRespawn>();
+
+        // 접시 팩토리 등록
+        builder.Register<PlateFactory>(resolver =>
+        {
+            return new PlateFactory(resolver, _platePrefab, _dirtyPlatePrefab);
+        }, Lifetime.Singleton);
+
+        // Pause Menu 관련 등록
+        builder.RegisterComponentInHierarchy<PauseMenuContorller>();
+
+        // 엔딩 별 연출 관련 등록
+        builder.RegisterComponentInHierarchy<EndingStarsContorller>();
+
+        // 인게임 사운드 매니저 등록
+        builder.RegisterComponentInHierarchy<IInGameSoundManager>()
+               .AsImplementedInterfaces()
+               .AsSelf();
 
         // 빌드 완료 후 필요한 게임오브젝트에 주입
         builder.RegisterBuildCallback(container =>
@@ -74,40 +112,12 @@ public class GameLifetimeScope : LifetimeScope
             {
                 container.InjectGameObject(_playerSwitchManager.gameObject);
             }
+
+            DishWash[] dishWashes = FindObjectsOfType<DishWash>(true);
+            for (int i = 0; i < dishWashes.Length; i++)
+            {
+                container.InjectGameObject(dishWashes[i].gameObject);
+            }
         });
-
-        // 스코어 / 주문 / 제출 관련 등록
-        builder.RegisterComponentInHierarchy<ScoreManager>()
-               .AsImplementedInterfaces()
-               .AsSelf();
-
-        builder.RegisterComponentInHierarchy<OrderManager>()
-               .AsSelf();
-
-        builder.RegisterComponentInHierarchy<DeliveryCounter>()
-               .AsSelf();
-
-        // 접시 리스폰 통합 스크립트 등록
-        builder.RegisterComponentInHierarchy<PlateRespawn>();
-
-        // 접시 팩토리 등록
-        builder.Register<PlateFactory>(resolver =>
-        {
-            return new PlateFactory(resolver, _platePrefab, _dirtyPlatePrefab);
-        }, Lifetime.Singleton);
-
-        // Pause Menu 버튼 관련
-        builder.RegisterComponentInHierarchy<PauseMenuContorller>();
-
-        // Ending Panel 별 연출 관련
-        builder.RegisterComponentInHierarchy<EndingStarsContorller>();
-
-        // 인게임 사운드 관련
-        builder.RegisterComponentInHierarchy<IInGameSoundManager>()
-               .AsImplementedInterfaces()
-               .AsSelf();
-
-
-        builder.RegisterComponentInHierarchy<DishWash>();
     }
 }
