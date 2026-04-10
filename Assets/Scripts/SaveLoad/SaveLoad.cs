@@ -105,26 +105,29 @@ public class SaveLoad : MonoBehaviour
 
         Debug.Log("저장 완료: " + path);
     }
-    public void CurrentDataUpdate(int mainChapter,int subChapter,int bestscore,int starcount)
+
+    public void CurrentDataUpdate(int mainChapter, int subChapter, int bestscore, int starcount)
     {
-        //제일 멀리간 스테이지 업데이트
+        if (currentData.bestScores == null)
+        {
+            currentData.bestScores = new Dictionary<string, ChapterScore>();
+        }
+
         if (currentData.currentChapter < mainChapter)
         {
             currentData.currentChapter = mainChapter;
             currentData.currentSubChapter = subChapter;
         }
-        else if(currentData.currentChapter==mainChapter && currentData.currentSubChapter<subChapter)
+        else if (currentData.currentChapter == mainChapter && currentData.currentSubChapter < subChapter)
         {
             currentData.currentSubChapter = subChapter;
-            
         }
-        //베스트 스코어, 별 업데이트
-        Chapter chapter =new Chapter();
-        chapter.mainChapter=mainChapter;
-        chapter.subChapter=subChapter;
-        
-        string chapterString=chapter.ToKey();
-        //이미 저장된 점수가 있으면 비교하고 교체
+
+        Chapter chapter = new Chapter();
+        chapter.mainChapter = mainChapter;
+        chapter.subChapter = subChapter;
+        string chapterString = chapter.ToKey();
+
         if (currentData.bestScores.ContainsKey(chapterString))
         {
             if (currentData.bestScores[chapterString].score < bestscore)
@@ -137,22 +140,18 @@ public class SaveLoad : MonoBehaviour
                 currentData.bestScores[chapterString].score = bestscore;
             }
         }
-        //새로운 저장이면 그냥 저장.
         else
         {
-            currentData.bestScores[chapterString].starCount = starcount;
-            currentData.bestScores[chapterString].score = bestscore;
-
+            currentData.bestScores[chapterString] = ToChapterScore(bestscore, starcount);
             currentData.totalStarCount += starcount;
         }
-        
-       
-        
     }
+
     public void AutoSave()
     {
         Save(currentData, autoSaveIndex);
     }
+
     public SaveData Load(int slotNum)
     {
         string path = Path.Combine(Application.persistentDataPath, $"save{slotNum}.json");
