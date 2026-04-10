@@ -38,6 +38,13 @@ namespace Overcooked
 
         public void Setup(RecipeData data, float timeLimit)
         {
+            //if (_rectTransform == null)
+            //{
+            //    _rectTransform = GetComponent<RectTransform>();
+            //}
+            //
+            //_rectTransform.anchoredPosition = new Vector2(10000f, _rectTransform.anchoredPosition.y);
+
             CurrentRecipeData = data;
 
             if (_dishImage != null && data.FinishedDishImage != null)
@@ -95,11 +102,60 @@ namespace Overcooked
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
 
+            StartCoroutine(UpdateLayoutNextFrame(timeLimit));
+        }
+
+        private IEnumerator UpdateLayoutNextFrame(float timeLimit)
+        {
+            yield return new WaitForEndOfFrame();
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_bottomGroupParent as RectTransform);
+
+            int ingredientCount = CurrentRecipeData.Ingredients.Count;
+
+            float finalWidth;
+
+            if (ingredientCount >= 3)
+            {
+                float contentWidth = LayoutUtility.GetPreferredWidth(_bottomGroupParent as RectTransform);
+                finalWidth = Mathf.Clamp(contentWidth, 180f, 350f);
+            }
+            else
+            {
+                finalWidth = 180f;
+            }
+
+            _rectTransform.sizeDelta = new Vector2(finalWidth, _rectTransform.sizeDelta.y);
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
+
             StartCoroutine(LinearSlideIn());
             StartCoroutine(TimerRoutine(timeLimit));
         }
 
-        
+        private IEnumerator LinearSlideIn()
+        {
+            yield return new WaitForEndOfFrame();
+
+            Vector2 targetPos = _rectTransform.anchoredPosition;
+            Vector2 startPos = targetPos + new Vector2(_startOffsetX, 0);
+
+            float elapsedTime = 0f;
+
+            while (elapsedTime < _moveDuration)
+            {
+                elapsedTime += Time.deltaTime;
+
+                float t = elapsedTime / _moveDuration;
+
+                _rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, t);
+
+                yield return null;
+            }
+
+            _rectTransform.anchoredPosition = targetPos;
+        }
+
         private IEnumerator TimerRoutine(float timeLimit)
         {
             float currentTime = timeLimit;
@@ -133,29 +189,6 @@ namespace Overcooked
             }
 
             OnTimeOut?.Invoke(this);
-        }
-
-        private IEnumerator LinearSlideIn()
-        {
-            yield return new WaitForEndOfFrame();
-
-            Vector2 targetPos = _rectTransform.anchoredPosition;
-            Vector2 startPos = targetPos + new Vector2(_startOffsetX, 0);
-
-            float elapsedTime = 0f;
-
-            while (elapsedTime < _moveDuration)
-            {
-                elapsedTime += Time.deltaTime;
-
-                float t = elapsedTime / _moveDuration;
-
-                _rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, t);
-
-                yield return null;
-            }
-
-            _rectTransform.anchoredPosition = targetPos;
         }
 
         public IEnumerator PlaySuccessEffect(Action onComplete)
