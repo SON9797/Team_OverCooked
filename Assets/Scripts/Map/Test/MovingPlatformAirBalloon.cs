@@ -2,31 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingPlatform : MonoBehaviour
+public class MovingPlatformAirBalloon : MonoBehaviour
 {
-    public Transform[] _waypoints;
-    public float _moveSpeed = 2.0f; // 이동 속도
-    public float _waitTime = 10f;  // 정지 지점에서의 대기 시간
+    [SerializeField] private Transform[] _waypoints;
+    [SerializeField] private Transform _startPoints;
+
+    [SerializeField] private float _moveSpeed = 2.0f;
+    [SerializeField] private float _waitTime = 1.5f;
+    [SerializeField] private float _startDelay = 20.0f;
 
     private int _currentIndex = 0;
-    private bool _isMoving = true;
 
     void Start()
     {
         if (_waypoints.Length > 0)
         {
-            transform.position = _waypoints[0].position;
             StartCoroutine(MoveRoutine());
         }
     }
-
-    IEnumerator MoveRoutine()
+    private IEnumerator MoveRoutine()
     {
+        transform.position = _startPoints.position;
+        yield return new WaitForSeconds(_startDelay);
+
+        transform.position = _waypoints[0].position;
+
         while (true)
         {
             _currentIndex = (_currentIndex + 1) % _waypoints.Length;
-
-            Debug.Log($"현재 목표 지점 인덱스: {_currentIndex} / 좌표: {_waypoints[_currentIndex].position}");
 
             Vector3 targetPosition = _waypoints[_currentIndex].position;
 
