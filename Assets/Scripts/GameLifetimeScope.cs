@@ -17,9 +17,11 @@ public class GameLifetimeScope : LifetimeScope
 
     [SerializeField] private InGameInputInjector _player1Injector;
     [SerializeField] private InGameInputInjector _player2Injector;
-    [SerializeField] private GameObject _platePrefab;
-    [SerializeField] private GameObject _DirtyPlatePrefab;
 
+    [SerializeField] private GameObject _platePrefab;
+    [SerializeField] private GameObject _dirtyPlatePrefab;
+
+    // VContainer 등록 설정
     protected override void Configure(IContainerBuilder builder)
     {
         if (_currentLevelData != null)
@@ -45,7 +47,8 @@ public class GameLifetimeScope : LifetimeScope
         }
 
         builder.Register<SceneFlowManager>(Lifetime.Singleton)
-               .AsImplementedInterfaces().AsSelf();
+               .AsImplementedInterfaces()
+               .AsSelf();
 
         builder.Register<IInGamePlayerInput, InGamePlayerInput>(Lifetime.Singleton);
 
@@ -54,6 +57,7 @@ public class GameLifetimeScope : LifetimeScope
             builder.RegisterComponent(_playerSwitchManager);
         }
 
+        // 빌드 완료 후 필요한 게임오브젝트에 주입
         builder.RegisterBuildCallback(container =>
         {
             if (_player1Injector != null)
@@ -72,22 +76,25 @@ public class GameLifetimeScope : LifetimeScope
             }
         });
 
-        // 스코어 관련 / 레시피 UI 관련
+        // 스코어 / 주문 / 제출 관련 등록
         builder.RegisterComponentInHierarchy<ScoreManager>()
-            .AsImplementedInterfaces()
-            .AsSelf();
-        builder.RegisterComponentInHierarchy<OrderManager>().AsSelf();
-        builder.RegisterComponentInHierarchy<DeliveryCounter>().AsSelf();
+               .AsImplementedInterfaces()
+               .AsSelf();
 
+        builder.RegisterComponentInHierarchy<OrderManager>()
+               .AsSelf();
 
-        builder.RegisterComponentInHierarchy<PlateReSpawn>();
-        builder.RegisterComponentInHierarchy<DirtyPlateSpawn>();
+        builder.RegisterComponentInHierarchy<DeliveryCounter>()
+               .AsSelf();
 
-        builder.Register<PlateFactory>(Lifetime.Singleton)
-       .WithParameter<GameObject>(_platePrefab);
+        // 접시 리스폰 통합 스크립트 등록
+        builder.RegisterComponentInHierarchy<PlateRespawn>();
 
-        builder.Register<DirtyPlateFactory>(Lifetime.Singleton)
-       .WithParameter<GameObject>(_DirtyPlatePrefab);
+        // 접시 팩토리 등록
+        builder.Register<PlateFactory>(resolver =>
+        {
+            return new PlateFactory(resolver, _platePrefab, _dirtyPlatePrefab);
+        }, Lifetime.Singleton);
 
         // Pause Menu 버튼 관련
         builder.RegisterComponentInHierarchy<PauseMenuContorller>();
@@ -97,10 +104,10 @@ public class GameLifetimeScope : LifetimeScope
 
         // 인게임 사운드 관련
         builder.RegisterComponentInHierarchy<IInGameSoundManager>()
-            .AsImplementedInterfaces()
-            .AsSelf();
+               .AsImplementedInterfaces()
+               .AsSelf();
 
-        //builder.Register<IRecipeService, RecipeManager>(Lifetime.Singleton);
 
+        builder.RegisterComponentInHierarchy<DishWash>();
     }
 }

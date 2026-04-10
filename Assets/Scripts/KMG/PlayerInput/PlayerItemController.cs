@@ -154,7 +154,7 @@ namespace Overcooked
                 }
 
                 // 접시 리스폰 상자에서 집기
-                PlateReSpawn respawn = target.GetComponentInParent<PlateReSpawn>();
+                PlateRespawn respawn = target.GetComponentInParent<PlateRespawn>();
                 if (respawn != null && respawn.HasItem)
                 {
                     TryPickUpFromCounter(respawn);
@@ -635,7 +635,7 @@ namespace Overcooked
                     t.GetComponentInParent<IngredientSource>() != null ||
                     t.GetComponentInParent<ItemPlaceAndTake>() != null ||
                     t.GetComponentInParent<StuffBoxOpen>() != null ||
-                    t.GetComponentInParent<PlateReSpawn>() != null ||
+                    t.GetComponentInParent<PlateRespawn>() != null ||
                     t.GetComponentInParent<ChopBoard>() != null ||
                     t.GetComponentInParent<Ingredient>() != null ||
                     t.GetComponentInParent<Dish>() != null ||
