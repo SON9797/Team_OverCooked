@@ -109027,12 +109027,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snapPoint: {fileID: 2448}
-  _washTime: 3
+  _washTimePerPlate: 3
+  _progressBar: {fileID: 1215916520}
+  _canvasObj: {fileID: 774469232}
+  _pauseCheckDistance: 2.5
+  _pauseCheckDot: 0.5
   _inDishWasher:
   - {fileID: 1863751125}
   - {fileID: 1383730189}
   - {fileID: 174627808}
-  _canvasObj: {fileID: 774469232}
+  _cleanPlateHeightInterval: 0.2
 --- !u!1 &436310268
 GameObject:
   m_ObjectHideFlags: 0
@@ -112106,7 +112110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _snapPoint: {fileID: 3433}
   _maxPlate: 4
-  _respawnTime: 0.5
+  _respawnTime: 3
   _heightInterval: 0.2
   _plates:
   - {x: 14.38, y: 0.5, z: 4.8}

@@ -124,6 +124,7 @@ namespace Overcooked
             _playerCols = GetComponentsInChildren<Collider>();
         }
 
+        // 일반 재료/접시 상호작용 처리
         public void TryInteractionIngredient()
         {
             // 현재 선택된 플레이어만 상호작용 가능
@@ -161,6 +162,14 @@ namespace Overcooked
                     return;
                 }
 
+                // 설거지 완료 접시 더미에서 집기
+                DishWash dishWash = target.GetComponentInParent<DishWash>();
+                if (dishWash != null && dishWash.HasItem)
+                {
+                    TryPickUpFromCounter(dishWash);
+                    return;
+                }
+
                 // 조리대 위 아이템 집기
                 ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
                 if (counter != null && counter.HasItem)
@@ -192,6 +201,17 @@ namespace Overcooked
             {
                 if (target != null)
                 {
+                    // 설거지통에 더러운 접시 넣기
+                    DishWash dishWash = target.GetComponentInParent<DishWash>();
+                    if (dishWash != null)
+                    {
+                        if (_currentHeldObject.CompareTag("Dirty"))
+                        {
+                            TryPlaceHeldObject(dishWash);
+                            return;
+                        }
+                    }
+
                     ItemPlaceAndTake counter = target.GetComponentInParent<ItemPlaceAndTake>();
 
                     if (counter != null)
@@ -203,13 +223,11 @@ namespace Overcooked
                                 if (heldCookware.IsCooked && dishOnCounter2.AddCookedRecipe(heldCookware.GetIngredientDataList()))
                                 {
                                     heldCookware.GiveFoodToPlate(dishOnCounter2);
-
                                     return;
                                 }
-                            }                            
+                            }
                         }
-
-                        else if (_currentHeldObject.TryGetComponent<Dish>(out Dish heldDish)) 
+                        else if (_currentHeldObject.TryGetComponent<Dish>(out Dish heldDish))
                         {
                             Cookware counterCookware = target.GetComponentInParent<Cookware>();
 
@@ -222,7 +240,6 @@ namespace Overcooked
                                 }
                             }
                         }
-
 
                         // 조리대 위 접시에 재료 담기
                         if (counter.HasDish(out Dish dishOnCounter))
@@ -252,6 +269,7 @@ namespace Overcooked
             }
         }
 
+        // 진행형 상호작용 처리
         public void TryInteractionCook()
         {
             // 현재 선택된 플레이어만 상호작용 가능
@@ -260,13 +278,13 @@ namespace Overcooked
                 return;
             }
 
-            // 던지는 중 / 조준 중에는 칼질 막기
+            // 던지는 중 / 조준 중에는 진행형 상호작용 막기
             if (_isThrowing || _isThrowAiming)
             {
                 return;
             }
 
-            // 손에 아이템 들고 있으면 칼질 막기
+            // 손에 아이템 들고 있으면 진행형 상호작용 막기
             if (HasIngredient)
             {
                 _animationController?.SetChopping(false);
@@ -286,6 +304,7 @@ namespace Overcooked
                 return;
             }
 
+            // 도마 상호작용
             ChopBoard chopBoard = target.GetComponentInParent<ChopBoard>();
             if (chopBoard != null)
             {
@@ -299,6 +318,15 @@ namespace Overcooked
                         _chopSoundCoroutine = StartCoroutine(PlayChopSoundLoop());
                     }
                 }
+                return;
+            }
+
+            // 설거지통 상호작용
+            DishWash dishWash = target.GetComponentInParent<DishWash>();
+            if (dishWash != null)
+            {
+                dishWash.ToggleWash(this);
+                _animationController?.SetChopping(false);
                 return;
             }
 
@@ -584,6 +612,7 @@ namespace Overcooked
             _currentWallBounceCount++;
         }
 
+        // 가장 가까운 상호작용 대상을 찾음
         private Transform FindClosestInteractTarget()
         {
             Collider[] hits = Physics.OverlapSphere(_rayPoint.position, _interactionDistance, _interactionLayer);
@@ -623,7 +652,8 @@ namespace Overcooked
                 // 상자/카운터류
                 bool isBox = t.GetComponentInParent<ItemPlaceAndTake>() != null ||
                              t.GetComponentInParent<IngredientSource>() != null ||
-                             t.GetComponentInParent<StuffBoxOpen>() != null;
+                             t.GetComponentInParent<StuffBoxOpen>() != null ||
+                             t.GetComponentInParent<DishWash>() != null;
 
                 if (!isPickable && !isBox)
                 {
@@ -637,6 +667,7 @@ namespace Overcooked
                     t.GetComponentInParent<StuffBoxOpen>() != null ||
                     t.GetComponentInParent<PlateRespawn>() != null ||
                     t.GetComponentInParent<ChopBoard>() != null ||
+                    t.GetComponentInParent<DishWash>() != null ||
                     t.GetComponentInParent<Ingredient>() != null ||
                     t.GetComponentInParent<Dish>() != null ||
                     t.GetComponentInParent<Cookware>() != null;
