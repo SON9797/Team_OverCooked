@@ -25770,11 +25770,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tileManager: {fileID: 950081754}
-  _stageFlagTransform:
-  - {fileID: 1026678665}
-  - {fileID: 1858428264}
-  - {fileID: 1967886854}
-  - {fileID: 912703196}
+  _stageFlagTransformInput:
+  - name: 1-1
+    transform: {fileID: 1026678665}
+  - name: 1-2
+    transform: {fileID: 1858428264}
+  - name: 1-3
+    transform: {fileID: 1967886854}
+  - name: 1-4
+    transform: {fileID: 912703196}
   _busMove: {fileID: 484163147}
   _mapCamera: {fileID: 1755630893}
 --- !u!4 &1451994208

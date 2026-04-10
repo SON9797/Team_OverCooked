@@ -1,22 +1,35 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+[Serializable]
+public class StageTransform
+{
+    public string name;
+    public Transform transform;
+}
+
 public class StageController : MonoBehaviour
 {
     public WorldMapManager _tileManager;
-    public Transform[] _stageFlagTransform; // 현재 스테이지 깃발 위치
+    [SerializeField] List<StageTransform> _stageFlagTransformInput;// 현재 스테이지 깃발 위치
+    Dictionary<string, Transform> _stageTransformDict = new Dictionary<string, Transform>();
 
     public BusMove _busMove;
 
     public WorldMapCamera _mapCamera;
 
     private Coroutine _waitRoutine;
-    private int _testStageIndex = 1;
+    private string _testStageName = "1-1";
     private void Start()
     {
         PlayerPrefs.DeleteAll();
+        for(int i = 0; i < _stageFlagTransformInput.Count; i++)
+        {
+            _stageTransformDict[_stageFlagTransformInput[i].name]= _stageFlagTransformInput[i].transform;
+        }
         CheckNewStageUnlock();
     }
 
@@ -31,15 +44,15 @@ public class StageController : MonoBehaviour
     private void TestUnlockNextStage()
     {
         // 배열 범위를 넘지 않는지 체크
-        if (_testStageIndex < _stageFlagTransform.Length)
+        if (_stageTransformDict.ContainsKey(_testStageName))
         {
-            Debug.Log($"{_testStageIndex} 스테이지 연출 테스트 시작!");
+            Debug.Log($"{_testStageName} 스테이지 연출 테스트 시작!");
 
             // 즉시 연출 호출
-            OnStageUnlockAnimation(_testStageIndex);
+            OnStageUnlockAnimation(_testStageName);
 
             // 다음번엔 그다음 스테이지가 열리도록 인덱스 증가
-            _testStageIndex++;
+            StagePlus();
         }
         else
         {
@@ -49,6 +62,10 @@ public class StageController : MonoBehaviour
 
     private void CheckNewStageUnlock()
     {
+        OnStageUnlockAnimation(_testStageName);
+        // 다음번엔 그다음 스테이지가 열리도록 인덱스 증가
+        StagePlus();
+        /*
         for (int i = 1; i < _stageFlagTransform.Length; i++)
         {
             string key = "Stage_" + i + "_UnlockAnimation";
@@ -62,8 +79,9 @@ public class StageController : MonoBehaviour
                 break;
             }
         }
+        */
     }
-    public void OnStageUnlockAnimation(int stageIndex)
+    public void OnStageUnlockAnimation(string stageIndex)
     {
         if (_waitRoutine != null)
         {
@@ -73,7 +91,7 @@ public class StageController : MonoBehaviour
 
         Debug.Log($"{stageIndex} 스테이지 길 열기 연출 시작!");
 
-        Transform target = _stageFlagTransform[stageIndex];
+        Transform target = _stageTransformDict[stageIndex];
 
         _mapCamera.FocusTarget(target, () =>
         {
@@ -96,18 +114,45 @@ public class StageController : MonoBehaviour
     }
 
     // 게임 클리어시 호출
-    public void MarkStageAsCleared(int clearedStageIndex)
+    public void MarkStageAsCleared(string clearedStagename)
     {
-        int nextStage = clearedStageIndex + 1;
+        string nextstage = InputStagePlus(clearedStagename);
 
-        if (nextStage < _stageFlagTransform.Length)
+        if (_stageTransformDict.ContainsKey(nextstage))
         {
-            OnStageUnlockAnimation(nextStage);
+            OnStageUnlockAnimation(nextstage);
         }
         else
         {
             Debug.Log("마지막 스테이지입니다! 더 이상 열 길 이 없습니다.");
         }
+    }
+    private string InputStagePlus(string inputstage)
+    {
+        var split = inputstage.Split('-');
+        int mainChapter = int.Parse(split[0]);
+        int subChapter = int.Parse(split[1]) + 1;
+
+        string connect = $"{mainChapter}-{subChapter}";
+        if (!_stageTransformDict.ContainsKey(connect))
+        {
+            connect = $"{mainChapter + 1}-1";
+        }
+        return connect;
+    }
+    private void StagePlus()
+    {
+        var split = _testStageName.Split('-');
+
+        int mainChapter = int.Parse(split[0]);
+        int subChapter = int.Parse(split[1])+1;
+
+        string connect = $"{mainChapter}-{subChapter}";
+        if (!_stageTransformDict.ContainsKey(connect))
+        {
+            connect = $"{mainChapter + 1}-1";
+        }
+        _testStageName = connect;
     }
 
 
