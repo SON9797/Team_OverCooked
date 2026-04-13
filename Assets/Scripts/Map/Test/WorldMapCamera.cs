@@ -20,7 +20,7 @@ public class WorldMapCamera : MonoBehaviour
 
         Vector3 targetPosition = _target.position + _offset;
 
-        transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.fixedDeltaTime);
     }
 
     public void SetTarget(Transform newTarget, Vector3 customOffset)
@@ -66,6 +66,11 @@ public class WorldMapCamera : MonoBehaviour
     private IEnumerator ReturnRoutine(Transform player)
     {
         Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
+
+        Vector3 targetPos = player.position + _offset;
+        Quaternion targetRot = Quaternion.Euler(49.48f, 0, 0);
+
         float duration = 1.0f;
         float elapsed = 0f;
 
@@ -73,7 +78,10 @@ public class WorldMapCamera : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = Mathf.SmoothStep(0, 1, elapsed / duration);
-            transform.position = Vector3.Lerp(startPos, player.position + new Vector3(0, 7, -4), t);
+            transform.position = Vector3.Lerp(startPos, player.position + _offset, t);
+
+            transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+
             yield return null;
         }
 

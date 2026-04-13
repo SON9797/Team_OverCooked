@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UIElements;
 
 [Serializable]
@@ -25,20 +26,22 @@ public class StageController : MonoBehaviour
     private string _testStageName = "1-1";
     private void Start()
     {
-        PlayerPrefs.DeleteAll();
-        for(int i = 0; i < _stageFlagTransformInput.Count; i++)
+        //PlayerPrefs.DeleteAll();
+        _stageTransformDict.Clear();
+        for (int i = 0; i < _stageFlagTransformInput.Count; i++)
         {
-            _stageTransformDict[_stageFlagTransformInput[i].name]= _stageFlagTransformInput[i].transform;
+            _stageTransformDict[_stageFlagTransformInput[i].name] = _stageFlagTransformInput[i].transform;
         }
-        CheckNewStageUnlock();
+
+        
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TestUnlockNextStage();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //   TestUnlockNextStage();
+        //}
     }
 
     private void TestUnlockNextStage()
@@ -60,8 +63,47 @@ public class StageController : MonoBehaviour
         }
     }
 
-    private void CheckNewStageUnlock()
+    public void CheckNewStageUnlockPublic()
     {
+        Debug.Log("[StageController] CheckNewStageUnlockPublic 호출됨");
+        Debug.Log($"[StageController] PendingUnlockStage 존재 여부: {PlayerPrefs.HasKey("PendingUnlockStage")}");
+
+
+        if (PlayerPrefs.HasKey("PendingUnlockStage"))
+        {
+            string nextStageKey = PlayerPrefs.GetString("PendingUnlockStage");
+            Debug.Log($"[StageController] 해금 시도 키: {nextStageKey}");
+            Debug.Log($"[StageController] _stageTransformDict 키 목록:");
+            foreach (var key in _stageTransformDict.Keys)
+                Debug.Log($"  - {key}");
+
+
+            if (_stageTransformDict.ContainsKey(nextStageKey))
+            {
+                OnStageUnlockAnimation(nextStageKey);
+            }
+            else
+            {
+                Debug.LogWarning($"[StageController] '{nextStageKey}' 키가 딕셔너리에 없음!");
+            }
+            PlayerPrefs.DeleteKey("PendingUnlockStage");
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            Debug.Log("[StageController] PendingUnlockStage가 PlayerPrefs에 없음!");
+            Debug.Log("[StageController] 현재 저장된 모든 베스트스코어 키:");
+            if (SaveLoad.instance != null)
+            {
+                foreach (var key in SaveLoad.instance.currentData.bestScores.Keys)
+                    Debug.Log($"  - {key}");
+            }
+        }
+    }
+
+
+    private void CheckNewStageUnlock() => CheckNewStageUnlockPublic();
+        /*
         OnStageUnlockAnimation(_testStageName);
         // 다음번엔 그다음 스테이지가 열리도록 인덱스 증가
         StagePlus();
@@ -80,7 +122,6 @@ public class StageController : MonoBehaviour
             }
         }
         */
-    }
     public void OnStageUnlockAnimation(string stageIndex)
     {
         if (_waitRoutine != null)
@@ -114,31 +155,39 @@ public class StageController : MonoBehaviour
     }
 
     // 게임 클리어시 호출
-    public void MarkStageAsCleared(string clearedStagename)
+    public void 
+        
+        MarkStageAsCleared(int mainChapter, int subChapter, int score, int stars)
     {
-        string nextstage = InputStagePlus(clearedStagename);
+        Debug.Log($"[StageController] MarkStageAsCleared 호출됨: {mainChapter}-{subChapter}");
 
-        if (_stageTransformDict.ContainsKey(nextstage))
+        if (SaveLoad.instance != null)
         {
-            OnStageUnlockAnimation(nextstage);
+            SaveLoad.instance.CurrentDataUpdate(mainChapter, subChapter, score, stars);
+            SaveLoad.instance.AutoSave();
+            Debug.Log($"[StageController] {mainChapter}-{subChapter} 클리어 및 저장 완료");
         }
         else
         {
-            Debug.Log("마지막 스테이지입니다! 더 이상 열 길 이 없습니다.");
+            Debug.LogError("[StageController] SaveLoad.instance가 null!");
         }
+
+        string nextStageKey = InputStagePlus($"{mainChapter}-{subChapter}");
+        Debug.Log($"[StageController] 다음 스테이지 키: {nextStageKey}");
+
+        // 게임씬엔 월드맵 타일이 없으므로 딕셔너리 검증 없이 바로 저장
+        PlayerPrefs.SetString("PendingUnlockStage", nextStageKey);
+        PlayerPrefs.Save();
+        Debug.Log($"[StageController] PlayerPrefs 저장 완료: {nextStageKey}");
     }
+
     private string InputStagePlus(string inputstage)
     {
         var split = inputstage.Split('-');
         int mainChapter = int.Parse(split[0]);
         int subChapter = int.Parse(split[1]) + 1;
 
-        string connect = $"{mainChapter}-{subChapter}";
-        if (!_stageTransformDict.ContainsKey(connect))
-        {
-            connect = $"{mainChapter + 1}-1";
-        }
-        return connect;
+        return $"{mainChapter}-{subChapter}";
     }
     private void StagePlus()
     {

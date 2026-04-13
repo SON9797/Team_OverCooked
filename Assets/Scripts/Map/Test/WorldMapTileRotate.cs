@@ -10,6 +10,7 @@ public class WorldMapTileRotate : MonoBehaviour
     [SerializeField] private Material _nextMaterial; // 바뀔 머테리얼
     [SerializeField] private List<WorldMapBuilding> _myBuildings = new List<WorldMapBuilding>();
     [SerializeField] private int _parentStageIndex;
+    [SerializeField] private int _parentMainChapter = 1;
 
     public bool _isFlipping = false;
     private bool _isActivated = false;
@@ -20,6 +21,10 @@ public class WorldMapTileRotate : MonoBehaviour
         _meshRenderer = GetComponent<MeshRenderer>();
         _initialPosition = transform.position;
 
+        
+    }
+    private void Start()
+    {
         CheckIfAlreadyFlipped();
     }
     public void Flip()
@@ -79,9 +84,9 @@ public class WorldMapTileRotate : MonoBehaviour
 
     private void CheckIfAlreadyFlipped()
     {
-        string saveKey = "Stage_Clear_" + _parentStageIndex;
+        string stageKey = $"{_parentMainChapter}-{_parentStageIndex}"; // 예: 1-1, 1-2 형태
 
-        if (PlayerPrefs.GetInt(saveKey, 0) == 1)
+        if (SaveLoad.instance != null && SaveLoad.instance.currentData.bestScores.ContainsKey(stageKey))
         {
             SetTargetStateImmediate();
         }
@@ -101,14 +106,23 @@ public class WorldMapTileRotate : MonoBehaviour
 
         if (_myBuildings != null)
         {
+            Debug.Log($"[TileRotate] {gameObject.name} 건물 즉시 활성화 - 건물 수: {_myBuildings.Count}");
             foreach (var building in _myBuildings)
             {
                 if (building != null)
                 {
-                    building.gameObject.SetActive(true);
-                    building.transform.localScale = Vector3.one;
+                    building.AppearImmediate();
+                    Debug.Log($"[TileRotate] 건물 활성화: {building.gameObject.name}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[TileRotate] {gameObject.name}의 _myBuildings 리스트에 null 항목 있음!");
                 }
             }
+        }
+        else
+        {
+            Debug.LogWarning($"[TileRotate] {gameObject.name} _myBuildings 리스트 자체가 null");
         }
     }
 }

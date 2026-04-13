@@ -85,6 +85,17 @@ public class SaveLoad : MonoBehaviour
         */
         LoadAllSlot();
         Debug.Log($"{savedatas[0].currentChapter}");
+        //수정
+        if (savedatas[0] != null)
+        {
+            currentData = savedatas[0];
+            // 딕셔너리가 null로 로드되는 것을 방지
+            if (currentData.bestScores == null)
+                currentData.bestScores = new Dictionary<string, ChapterScore>();
+
+            Debug.Log($"[SaveLoad] 데이터 로드 완료. 스테이지 개수: {currentData.bestScores.Count}");
+        }
+        //수정
     }
 
     public void LoadAllSlot()
@@ -108,6 +119,17 @@ public class SaveLoad : MonoBehaviour
 
     public void CurrentDataUpdate(int mainChapter, int subChapter, int bestscore, int starcount)
     {
+        //수정
+        if (currentData == null)
+        {
+            currentData = new SaveData();
+        }
+        if (currentData.bestScores == null)
+        {
+            currentData.bestScores = new Dictionary<string, ChapterScore>();
+        }
+        //수정
+
         if (currentData.bestScores == null)
         {
             currentData.bestScores = new Dictionary<string, ChapterScore>();
@@ -126,18 +148,16 @@ public class SaveLoad : MonoBehaviour
         Chapter chapter = new Chapter();
         chapter.mainChapter = mainChapter;
         chapter.subChapter = subChapter;
-        string chapterString = chapter.ToKey();
+        string chapterString = $"{mainChapter}-{subChapter}";//수정
 
         if (currentData.bestScores.ContainsKey(chapterString))
         {
             if (currentData.bestScores[chapterString].score < bestscore)
             {
-                if (starcount - currentData.bestScores[chapterString].starCount > 0)
-                {
-                    currentData.totalStarCount += starcount - currentData.bestScores[chapterString].starCount;
-                }
-                currentData.bestScores[chapterString].starCount = starcount;
+                //수정
+                currentData.totalStarCount += Mathf.Max(0, starcount - currentData.bestScores[chapterString].starCount);//수정
                 currentData.bestScores[chapterString].score = bestscore;
+                currentData.bestScores[chapterString].starCount = starcount;
             }
         }
         else
@@ -145,6 +165,7 @@ public class SaveLoad : MonoBehaviour
             currentData.bestScores[chapterString] = ToChapterScore(bestscore, starcount);
             currentData.totalStarCount += starcount;
         }
+        Debug.Log($"[SaveLoad] {chapterString} 메모리 업데이트 완료. 현재 총 저장 개수: {currentData.bestScores.Count}");
     }
 
     public void AutoSave()
