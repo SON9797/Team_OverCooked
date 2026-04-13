@@ -48625,9 +48625,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1955991848}
-        m_TargetAssemblyTypeName: OverCooked.PauseMenuContorller, Assembly-CSharp
-        m_MethodName: OnClickExit
+      - m_Target: {fileID: 1355472864}
+        m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
+        m_MethodName: GotoWorldMapExitPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -51942,11 +51942,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
---- !u!1 &1355472863 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5601174164286223615, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+--- !u!114 &1355472864 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6796081749358308879, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
   m_PrefabInstance: {fileID: 1355472862}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31e43702112a73b4cae924bc9e4a4961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1358356567 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7078992284501183067, guid: 349047e1a11092f4986fb1d84c68b4be, type: 3}
@@ -53655,9 +53661,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1355472863}
-        m_TargetAssemblyTypeName: OverCooked.PauseMenuContorller, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: 1355472864}
+        m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
+        m_MethodName: RestartPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -33,7 +33,7 @@ namespace OverCooked
             if (_sfxDictionary.TryGetValue(sfxType, out SoundData soundData))
             {
                 soundData.Play(_sfxSource);
-            }
+            }            
         }
 
         public void PlayBGM(AudioClip clip)

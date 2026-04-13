@@ -117,7 +117,7 @@ public class GameLifetimeScope : LifetimeScope
             for (int i = 0; i < dishWashes.Length; i++)
             {
                 container.InjectGameObject(dishWashes[i].gameObject);
-            }
+            }            
         });
     }
 }
