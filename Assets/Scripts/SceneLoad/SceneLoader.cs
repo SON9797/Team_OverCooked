@@ -47,7 +47,7 @@ public class SceneLoader : MonoBehaviour
             float target = op.progress / 0.9f;
             displayed = Mathf.Lerp(displayed, target, Time.deltaTime * 5f);
             loadingscreen.ProgressAdapt(displayed);
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             yield return null;
         }
 
