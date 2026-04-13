@@ -1,8 +1,11 @@
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using VContainer;
+using OverCooked;
 
 public class HoverAnime_MenuApear : MonoBehaviour, IPointerEnterHandler
 {
@@ -14,6 +17,15 @@ public class HoverAnime_MenuApear : MonoBehaviour, IPointerEnterHandler
     int hoverCount=0;
 
     MenuApearManager menuManager;
+
+    private IInGameSoundManager _soundManager;
+
+    [Inject]
+    public void Construct(IInGameSoundManager soundManager)
+    {
+        Debug.Log($"{gameObject.name} 사운드 매니저 주입");
+        _soundManager = soundManager;
+    }
 
     void Start()
     {
@@ -30,6 +42,12 @@ public class HoverAnime_MenuApear : MonoBehaviour, IPointerEnterHandler
     {
         if (menu.activeSelf)
             return;
+
+        if (_soundManager != null)
+        {
+            _soundManager.PlaySFX(SFXType.UI_ButtonSound);
+        }
+
         menu.transform.position = originMenuPos;
         menu.SetActive(true);
         StartCoroutine(ScrollMove());
