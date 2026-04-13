@@ -29,6 +29,7 @@ public class SceneLoader : MonoBehaviour
         float mintime = 1;
         float timer = 0;
         LoadingScreen loadingscreen=Instantiate(loadingscreenPrefab);
+        Time.timeScale = 1;
         if (content != null)
         {
             loadingscreen.ContentAdapt(content);
