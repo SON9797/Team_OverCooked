@@ -15,6 +15,7 @@ public class SaveSlotButton : MonoBehaviour
     [SerializeField] TextMeshProUGUI totalStar;
     [SerializeField] TextMeshProUGUI defaultText;
     [SerializeField] GameObject starImg;
+    [SerializeField] GameObject contentprefab;
 
     int index;
     bool loadck = false;
@@ -60,7 +61,7 @@ public class SaveSlotButton : MonoBehaviour
         }
         
         MenuManager.instance.MinusMenuStack();
-        MenuManager.instance.worldMap.OpenWindow();
+        MenuManager.instance.worldMap.OpenWindow(contentprefab);
         //SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
 
 

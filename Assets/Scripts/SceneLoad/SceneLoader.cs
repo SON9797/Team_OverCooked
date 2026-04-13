@@ -7,6 +7,7 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance;
     [SerializeField] LoadingScreen loadingscreenPrefab;
+    [SerializeField] GameObject defaultContent;
     private void Start()
     {
         if (Instance != null)
@@ -17,18 +18,26 @@ public class SceneLoader : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    public void LoadSceneAsync(string sceneName)
+    public void LoadSceneAsync(string sceneName, GameObject content = null)
     {
-        StartCoroutine(LoadRoutine(sceneName));
+        StartCoroutine(LoadRoutine(sceneName,content));
     }
 
-    IEnumerator LoadRoutine(string sceneName)
+    IEnumerator LoadRoutine(string sceneName, GameObject content = null)
     {
         //페이드 연출 코드 추가 가능
         float mintime = 1;
         float timer = 0;
         LoadingScreen loadingscreen=Instantiate(loadingscreenPrefab);
-        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
+        if (content != null)
+        {
+            loadingscreen.ContentAdapt(content);
+        }
+        else
+        {
+            loadingscreen.ContentAdapt(defaultContent);
+        }
+            AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
         op.allowSceneActivation = false;
 
         float displayed = 0f;

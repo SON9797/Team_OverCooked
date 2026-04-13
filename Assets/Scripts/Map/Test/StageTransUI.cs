@@ -10,10 +10,13 @@ public class StageTransUI : MonoBehaviour
 
     [SerializeField] WorldMapLevelHover levelPanel;
     [SerializeField] private List<StageEntry> _stageEntries;
+    [SerializeField] GameObject StageLoadObject;
+
 
     private Dictionary<string, StageData> _stageDictionary = new Dictionary<string, StageData>();
 
     private string _currentSceneTarget;
+    private string _currentStageKey;
     private bool _isWaitingForInput = false;
 
     [System.Serializable]
@@ -39,7 +42,10 @@ public class StageTransUI : MonoBehaviour
     {
         if(_isWaitingForInput && Input.GetKeyDown(KeyCode.Space))
         {
-            SceneManager.LoadScene(_currentSceneTarget);
+
+            //SceneManager.LoadScene(_currentSceneTarget);
+            MenuManager.instance.enterStage = _currentStageKey;
+            SceneLoader.Instance.LoadSceneAsync(_currentSceneTarget,StageLoadObject);
         }
     }
 
@@ -50,6 +56,7 @@ public class StageTransUI : MonoBehaviour
             _currentSceneTarget = stageData.sceneName;
 
             levelPanel.ShowLevel(stageKey);
+            _currentStageKey = stageKey;
 
             _isWaitingForInput = true;
         }

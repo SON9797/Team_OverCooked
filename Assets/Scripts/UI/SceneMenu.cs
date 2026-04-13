@@ -12,12 +12,12 @@ public class SceneMenu : IMenu
     public string sceneName;
 
 
-    public void OpenWindow()
+    public void OpenWindow(GameObject contentPrefab)
     {
         menuManager = MenuManager.instance;
         prevScenename = menuManager.GetPrevSceneName();
         currentScenename = sceneName;
-        SceneLoader.Instance.LoadSceneAsync(currentScenename);
+        SceneLoader.Instance.LoadSceneAsync(currentScenename,contentPrefab);
         menuManager.AddMenuStack(this);
         Debug.Log($"current:{currentScenename},prev:{prevScenename}");
     }
