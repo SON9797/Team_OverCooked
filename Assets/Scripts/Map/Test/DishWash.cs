@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 using Overcooked;
+using Overcooked.Interfaces;
 
 public class DishWash : ItemPlaceAndTake
 {
@@ -26,6 +27,14 @@ public class DishWash : ItemPlaceAndTake
     [SerializeField] private float _cleanPlateHeightInterval = 0.2f;
 
     [Inject] private PlateFactory _plateFactory;
+
+    private IInGameSoundManager _inGameSoundManager;
+
+    [Inject]
+    public void Construct(IInGameSoundManager inGameSoundManager)
+    {
+        _inGameSoundManager = inGameSoundManager;
+    }
 
     private int _dirtyPlateCount = 0;
     private float _currentWashProgress = 0f;
@@ -251,6 +260,7 @@ public class DishWash : ItemPlaceAndTake
         Animator animator = _currentWashingPlayer.GetComponent<Animator>();
         if (animator != null)
         {
+            _inGameSoundManager.PlaySFX(OverCooked.SFXType.Washing);
             animator.SetBool(IsWashingHash, isWash);
         }
     }
