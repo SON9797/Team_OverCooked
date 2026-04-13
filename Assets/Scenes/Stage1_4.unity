@@ -4249,8 +4249,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3045}
   - component: {fileID: 6529}
-  - component: {fileID: 1369025448}
-  - component: {fileID: 1369025447}
+  - component: {fileID: 398234276}
   m_Layer: 0
   m_Name: Worktop
   m_TagString: Untagged
@@ -210911,6 +210910,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 394923614}
   m_CullTransparentMesh: 1
+--- !u!114 &398234276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a706220e19ffe418a616c5b214624f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _snapPoint: {fileID: 3432}
+  _maxPlate: 4
+  _respawnTime: 3
+  _heightInterval: 0.2
+  _plates:
+  - {x: 13.24, y: 0.5, z: -7.28}
+  - {x: 13.24, y: 0.5, z: -6.03}
+  - {x: 15.52, y: 0.5, z: -7.28}
+  - {x: 15.52, y: 0.5, z: -6.03}
+  _returnPlateType: 1
+  _spawnedCleanPlates: []
+  _spawnedDirtyPlates: []
+  _checkedOutPlates: []
 --- !u!1 &399054299
 GameObject:
   m_ObjectHideFlags: 0
@@ -211492,7 +211516,7 @@ MonoBehaviour:
   _player1Injector: {fileID: 585294200}
   _player2Injector: {fileID: 1961658756}
   _platePrefab: {fileID: 2790184470915138096, guid: 51ef9d6793213bd458d8e04116d88fb4, type: 3}
-  _DirtyPlatePrefab: {fileID: 0}
+  _dirtyPlatePrefab: {fileID: 0}
 --- !u!4 &562121821
 Transform:
   m_ObjectHideFlags: 0
@@ -214556,13 +214580,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snapPoint: {fileID: 3432}
-  _washTime: 3
-  _cleanPlatePrefab: {fileID: 4554108280989266086, guid: 9bf0ff92aa8f58c458deaf860450d11e, type: 3}
+  _washTimePerPlate: 3
+  _progressBar: {fileID: 0}
+  _canvasObj: {fileID: 0}
+  _pauseCheckDistance: 2.5
+  _pauseCheckDot: 0.5
   _inDishWasher:
   - {fileID: 391}
   - {fileID: 1169}
   - {fileID: 1916}
-  _canvasObj: {fileID: 0}
+  _cleanPlateHeightInterval: 0.2
 --- !u!114 &1067232990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216140,7 +216167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _snapPoint: {fileID: 4778}
   _deliveryDelay: 0.5
-  _plateSpawner: {fileID: 1369025447}
+  _plateSpawner: {fileID: 398234276}
 --- !u!114 &1340534533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216462,56 +216489,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snapPoint: {fileID: 3559}
---- !u!114 &1369025447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 490}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00fd79bc006e1534d9d6005b9c102e13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _snapPoint: {fileID: 3432}
-  _maxPlate: 4
-  _respawnTime: 0.5
-  _heightInterval: 0.2
-  _plates:
-  - {x: 1.39, y: 0.58, z: -1.53}
-  - {x: -1.01, y: 0.58, z: -1.53}
-  - {x: -1.01, y: 0.58, z: -0.33}
-  - {x: 1.39, y: 0.58, z: -0.33}
-  _spawnedPlate: []
-  _checkedOutPlates: []
---- !u!114 &1369025448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06bcd733ee384534ab465d0e6e3cba36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _snapPoint: {fileID: 3432}
-  _platePrefab: {fileID: 4554108280989266086, guid: 9bf0ff92aa8f58c458deaf860450d11e, type: 3}
-  _dirtyPlatePrefab: {fileID: 2065768347962614607, guid: b977fe0e38fcd0e4f81fce4d370964fd, type: 3}
-  _maxPlate: 4
-  _respawnTime: 3
-  _heightInterval: 0.2
-  _plates:
-  - {x: 13.24, y: 0.5, z: -7.28}
-  - {x: 13.24, y: 0.5, z: -6.03}
-  - {x: 15.52, y: 0.5, z: -7.28}
-  - {x: 15.52, y: 0.5, z: -6.03}
-  _plateReSpawn: {fileID: 1369025447}
-  _spawnedPlate: []
-  _spawnedDirtyPlates: []
-  _checkedOutDirtyPlates: []
 --- !u!114 &1379700542
 MonoBehaviour:
   m_ObjectHideFlags: 0
