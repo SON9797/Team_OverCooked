@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour
     public SceneMenu lobbyMap { get; private set; } = new SceneMenu();
     public SceneMenu worldMap { get; private set; }=new SceneMenu();
 
+    public string enterStage = "1-1";
     private void Awake()
     {
         if (instance != null)
