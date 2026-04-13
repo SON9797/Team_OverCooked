@@ -214580,12 +214580,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snapPoint: {fileID: 3432}
-  _washTime: 3
+  _washTimePerPlate: 3
+  _progressBar: {fileID: 0}
+  _canvasObj: {fileID: 0}
+  _pauseCheckDistance: 2.5
+  _pauseCheckDot: 0.5
   _inDishWasher:
   - {fileID: 391}
   - {fileID: 1169}
   - {fileID: 1916}
-  _canvasObj: {fileID: 0}
+  _cleanPlateHeightInterval: 0.2
 --- !u!114 &1067232990
 MonoBehaviour:
   m_ObjectHideFlags: 0

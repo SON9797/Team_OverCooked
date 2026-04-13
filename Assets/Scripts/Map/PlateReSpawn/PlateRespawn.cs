@@ -1,3 +1,4 @@
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,14 @@ public class PlateRespawn : ItemPlaceAndTake
     public List<GameObject> _checkedOutPlates = new List<GameObject>();
 
     private bool _isRespawning = false;
+
+    private IInGameSoundManager _inGameSoundManager;
+
+    [Inject]
+    public void Construct(IInGameSoundManager inGameSoundManager)
+    {
+        _inGameSoundManager = inGameSoundManager;
+    }
 
     // 시작 시 초기 위치들에 깨끗한 접시를 생성
     private new void Start()
@@ -116,10 +125,12 @@ public class PlateRespawn : ItemPlaceAndTake
 
         if (plateType == PlateReturnType.Clean)
         {
+            _inGameSoundManager.PlaySFX(OverCooked.SFXType.FinishWashing);
             _spawnedCleanPlates.Add(newItem);
         }
         else
         {
+            _inGameSoundManager.PlaySFX(OverCooked.SFXType.FinishWashing);
             _spawnedDirtyPlates.Add(newItem);
         }
 
