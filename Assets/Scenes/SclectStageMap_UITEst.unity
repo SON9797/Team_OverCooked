@@ -2822,6 +2822,7 @@ MonoBehaviour:
   - {fileID: 1584049054}
   - {fileID: 1286102753}
   _soundManager: {fileID: 1792242353}
+  _lobbyBGM: {fileID: 8300000, guid: e0c4012bdfcffe449aed6dbc4fb5fc12, type: 3}
 --- !u!1 &498975457
 GameObject:
   m_ObjectHideFlags: 0
@@ -9492,7 +9493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sfxSource: {fileID: 1792242352}
-  _bgmSource: {fileID: 1792242352}
+  _bgmSource: {fileID: 1792242351}
   _library: {fileID: 11400000, guid: 37476652c9bedb84d964ba74ea1580a8, type: 2}
 --- !u!4 &1792242354
 Transform:
