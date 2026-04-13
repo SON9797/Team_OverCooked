@@ -34,7 +34,7 @@ public class Anime_MoveSelf : MonoBehaviour
         while (t < duration)
         {
 
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             rect.anchoredPosition = Vector3.Lerp(rect.anchoredPosition, targetPos, t / duration);
             yield return null;
         }
