@@ -36,7 +36,7 @@ public class HoverAnime_BigtoOrigin : MonoBehaviour, IPointerEnterHandler
         float t = 0;
         while (t < duration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             transform.localScale = Vector3.Lerp(transform.localScale, originScale, t / duration);
             yield return null;
         }
