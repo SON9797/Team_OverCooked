@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class PopupManager : MonoBehaviour
@@ -11,6 +12,7 @@ public class PopupManager : MonoBehaviour
     [SerializeField] PopupWindow popupWindow;
     [SerializeField] Transform canvasTransform;
     [SerializeField] GameObject saveSlot;
+    [SerializeField] GameObject StageLoadObject;
     
 
     private PopupWindow currentPopup;
@@ -106,6 +108,41 @@ public class PopupManager : MonoBehaviour
         }
         OpenPopup(titletext, contentObj: slotList);
 
+    }
+    public void GotoWorldMapExitPopup()
+    {
+        string titletext = "Exit";
+        string contentText = "Do you want to exit?";
+        PopupButtonData btnCancel = new PopupButtonData();
+        btnCancel.text = "Cancel";
+        btnCancel.onclickAction = ClosePopup;
+        PopupButtonData btnok = new PopupButtonData();
+        btnok.text = "OK";
+        btnok.onclickAction = ClosePopup;
+        btnok.onclickAction +=()=> SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
+
+        List <PopupButtonData> buttonlist = new List<PopupButtonData>();
+        buttonlist.Add(btnCancel);
+        buttonlist.Add(btnok);
+        OpenPopup(titletext, buttonlist, contentText);
+
+    }
+    public void RestartPopup()
+    {
+        string titletext = "Restart";
+        string contentText = "Do you want to restart?";
+        PopupButtonData btnCancel = new PopupButtonData();
+        btnCancel.text = "Cancel";
+        btnCancel.onclickAction = ClosePopup;
+        PopupButtonData btnok = new PopupButtonData();
+        btnok.text = "OK";
+        btnok.onclickAction = ClosePopup;
+        btnok.onclickAction +=()=> SceneLoader.Instance.LoadSceneAsync(SceneManager.GetActiveScene().name, StageLoadObject);
+
+        List <PopupButtonData> buttonlist = new List<PopupButtonData>();
+        buttonlist.Add(btnCancel);
+        buttonlist.Add(btnok);
+        OpenPopup(titletext, buttonlist, contentText);
     }
     public void ClosePopup()
     {
