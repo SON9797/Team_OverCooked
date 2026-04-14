@@ -93,5 +93,15 @@ namespace Overcooked.Interfaces
         void PlaySFX(SFXType sfxType);
         void PlayBGM(AudioClip clip);
         void StopAllSounds();
+        void StopSFX(SFXType sfxType);
+    }
+
+    public interface IWorldMapSoundManager
+    {
+        void PlaySFX(SFXType sfxType);
+        void PlayBGM(AudioClip clip);
+        void StopAllSounds();
+        void StopSFX(SFXType sfxType);
+        void PlayLoopSFX(SFXType sfxType);
     }
 }
