@@ -73,7 +73,7 @@ public class SaveSlotButton : MonoBehaviour
             SaveLoad.instance.AutoSave();
             */
         }
-        PlayerPrefs.SetInt("Continue", index);
+        PlayerPrefs.SetInt("ContinueGame", index);
         PlayerPrefs.Save();
         MenuManager.instance.MinusMenuStack();
         MenuManager.instance.worldMap.OpenWindow(contentprefab);

@@ -223,12 +223,20 @@ public class SaveLoad : MonoBehaviour
         currentData=savedatas[index];
         return true;
     }
-    public void ContinueGame()
+    public bool ContinueGame()
     {
-        if (PlayerPrefs.HasKey("Continue"))
+        if (PlayerPrefs.HasKey("ContinueGame"))
         {
-            SaveLoad.instance.autoSaveIndex = PlayerPrefs.GetInt("Continue");
-            Load(PlayerPrefs.GetInt("Continue"));
+            SaveLoad.instance.autoSaveIndex = PlayerPrefs.GetInt("ContinueGame");
+            Load(PlayerPrefs.GetInt("ContinueGame"));
+            return true;
+        }
+        else
+        {
+            print("continue할 파일없음");
+            PopupManager.instance.OpenInformationPopup("Please Click New Game First");
+            return false;
+            
         }
         
     }

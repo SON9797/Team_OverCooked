@@ -6,7 +6,7 @@ public class ContinueButton : MonoBehaviour
 {
    public void Onclick()
     {
-        SaveLoad.instance.ContinueGame();
-        MenuManager.instance.worldMap.OpenWindow();
+        if(SaveLoad.instance.ContinueGame())
+            MenuManager.instance.worldMap.OpenWindow();
     }
 }
