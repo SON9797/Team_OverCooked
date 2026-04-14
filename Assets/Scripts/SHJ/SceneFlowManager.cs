@@ -124,7 +124,7 @@ namespace Overcooked
             _uiManager.SetPanelActive(_uiManager.CoinPanel, false);
             _uiManager.SetPanelActive(_uiManager.TimerPanel, false);
 
-            _inGameSoundManager.StopBGM();
+            _inGameSoundManager.StopAllSounds();
 
             _uiManager.SetPanelActive(_uiManager.TimesUpPanel, true);
             _inGameSoundManager.PlaySFX(SFXType.UI_TimesUp);

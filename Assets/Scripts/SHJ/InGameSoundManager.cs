@@ -53,11 +53,16 @@ namespace OverCooked
             _bgmSource.Play();
         }
 
-        public void StopBGM()
+        public void StopAllSounds()
         {
             if (_bgmSource != null && _bgmSource.isPlaying)
             {
                 _bgmSource.Stop();
+            }
+
+            if (_sfxSource != null && _sfxSource.isPlaying)
+            {
+                _sfxSource.Stop();
             }
         }
 

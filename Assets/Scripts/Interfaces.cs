@@ -92,6 +92,6 @@ namespace Overcooked.Interfaces
     {
         void PlaySFX(SFXType sfxType);
         void PlayBGM(AudioClip clip);
-        void StopBGM();
+        void StopAllSounds();
     }
 }
