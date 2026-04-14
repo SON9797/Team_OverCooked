@@ -118,6 +118,12 @@ public class GameLifetimeScope : LifetimeScope
             {
                 container.InjectGameObject(dishWashes[i].gameObject);
             }            
+
+            var irisFader = FindObjectOfType<IrisFader>(true);
+            if (irisFader != null)
+            {
+                container.InjectGameObject(irisFader.gameObject);
+            }
         });
     }
 }

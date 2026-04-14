@@ -25,6 +25,8 @@ namespace OverCooked
         UI_ResultEnding,
         UI_ResultScore,
         UI_ButtonSound,
+        UI_Screen_In,
+        UI_Screen_Out,
 
     }
 }
