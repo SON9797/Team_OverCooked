@@ -110170,9 +110170,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 282542168}
-        m_TargetAssemblyTypeName: OverCooked.PauseMenuContorller, Assembly-CSharp
-        m_MethodName: OnClickRestart
+      - m_Target: {fileID: 739679955}
+        m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
+        m_MethodName: RestartPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -111642,6 +111642,114 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 735773245}
   m_CullTransparentMesh: 1
+--- !u!1001 &739679954
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446385366481013205, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5601174164286223615, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+      propertyPath: m_Name
+      value: PopupUI
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+--- !u!114 &739679955 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6796081749358308879, guid: 8c7c6cc4ec587234b94c95eb41a936f9, type: 3}
+  m_PrefabInstance: {fileID: 739679954}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31e43702112a73b4cae924bc9e4a4961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &755372224
 GameObject:
   m_ObjectHideFlags: 0
@@ -118116,9 +118224,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 282542168}
-        m_TargetAssemblyTypeName: OverCooked.PauseMenuContorller, Assembly-CSharp
-        m_MethodName: OnClickExit
+      - m_Target: {fileID: 739679955}
+        m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
+        m_MethodName: GotoWorldMapExitPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -119287,7 +119395,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 146.21605, w: 0}
+  m_margin: {x: -32.50156, y: 0, z: 146.21605, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -120969,3 +121077,4 @@ SceneRoots:
   - {fileID: 1864598872}
   - {fileID: 1631672613}
   - {fileID: 492163980}
+  - {fileID: 739679954}

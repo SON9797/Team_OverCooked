@@ -119,14 +119,14 @@ public class PopupManager : MonoBehaviour
         PopupButtonData btnok = new PopupButtonData();
         btnok.text = "OK";
         btnok.onclickAction = ClosePopup;
-        btnok.onclickAction +=()=> SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
+        btnok.onclickAction += () => StartCoroutine(TransitionAndLoadScene("WorldMapScene"));
 
         List <PopupButtonData> buttonlist = new List<PopupButtonData>();
         buttonlist.Add(btnCancel);
         buttonlist.Add(btnok);
         OpenPopup(titletext, buttonlist, contentText);
-
     }
+
     public void RestartPopup()
     {
         string titletext = "Restart";
@@ -137,8 +137,7 @@ public class PopupManager : MonoBehaviour
         PopupButtonData btnok = new PopupButtonData();
         btnok.text = "OK";
         btnok.onclickAction = ClosePopup;
-        btnok.onclickAction +=()=> SceneLoader.Instance.LoadSceneAsync(SceneManager.GetActiveScene().name, StageLoadObject);
-
+        btnok.onclickAction += () => StartCoroutine(TransitionAndLoadScene(SceneManager.GetActiveScene().name, StageLoadObject));
         List <PopupButtonData> buttonlist = new List<PopupButtonData>();
         buttonlist.Add(btnCancel);
         buttonlist.Add(btnok);
@@ -149,4 +148,21 @@ public class PopupManager : MonoBehaviour
         currentPopup.CloseWindow();
     }
 
+    private IEnumerator TransitionAndLoadScene(string sceneName, GameObject loadObject = null)
+    {
+        if (IrisFader.Instance != null)
+        {
+            yield return StartCoroutine(IrisFader.Instance.IrisInToBlack());
+        }
+
+        if (loadObject != null)
+        {
+            SceneLoader.Instance.LoadSceneAsync(sceneName, loadObject);
+        }
+
+        else
+        {
+            SceneLoader.Instance.LoadSceneAsync(sceneName);
+        }    
+    }
 }
