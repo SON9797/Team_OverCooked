@@ -22,6 +22,7 @@ namespace Overcooked
         MaleAsian,
         MiddleEastern,
         Mike,
+
         Mole,
         Mouse,
         NativeAmerican,
