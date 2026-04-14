@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class LoadingStage : MonoBehaviour
@@ -30,8 +31,12 @@ public class LoadingStage : MonoBehaviour
         }
         LevelData levelData = SoStageDatas.instance.levelDatas[stagename];
         stagePicture.sprite = levelData.LoadingImage;
-        
-        for(int i = 0; i < stars.Count; i++)
+        starsScore[0].text = levelData.OneStar.ToString();
+        starsScore[1].text = levelData.TwoStar.ToString();
+        starsScore[2].text = levelData.ThreeStar.ToString();
+
+
+        for (int i = 0; i < stars.Count; i++)
         {
             stars[i].sprite = emptyStar;
         }
