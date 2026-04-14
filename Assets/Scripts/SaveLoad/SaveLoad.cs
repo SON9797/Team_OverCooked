@@ -1,8 +1,10 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -64,6 +66,7 @@ public class SaveData
     //Ãß°¡
 
 }
+
 
 public class SaveLoad : MonoBehaviour
 {
@@ -220,5 +223,14 @@ public class SaveLoad : MonoBehaviour
         }
         currentData=savedatas[index];
         return true;
+    }
+    public void ContinueGame()
+    {
+        if (PlayerPrefs.HasKey("Continue"))
+        {
+            SaveLoad.instance.autoSaveIndex = PlayerPrefs.GetInt("Continue");
+            Load(PlayerPrefs.GetInt("Continue"));
+        }
+        
     }
 }
