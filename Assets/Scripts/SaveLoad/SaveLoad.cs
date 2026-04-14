@@ -37,6 +37,8 @@ public class SaveData
     public int totalStarCount;
     public Dictionary<string,ChapterScore> bestScores = new Dictionary<string,ChapterScore>();
 
+    public List<string> unlockedStages = new List<string>(); //추가
+
     public ChapterScore GetScore(Chapter chapter)
     {
         string key = chapter.ToKey();
@@ -47,6 +49,19 @@ public class SaveData
         return null;
     }
 
+    //추가
+    public bool IsUnlocked(string stageKey)
+    {
+        return bestScores.ContainsKey(stageKey) || unlockedStages.Contains(stageKey);
+    }
+    public void UnlockStage(string stageKey)
+    {
+        if (!unlockedStages.Contains(stageKey))
+        {
+            unlockedStages.Add(stageKey);
+        }
+    }
+    //추가
 
 }
 

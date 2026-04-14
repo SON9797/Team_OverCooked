@@ -88,12 +88,17 @@ public class ScoreManager : MonoBehaviour, IScoreService
         SaveLoad saveload = SaveLoad.instance;
         
         string levelIdentifier = $"{levelData.Chapter}-{levelData.Stage}";
+
+        string nextStageKey = $"{levelData.Chapter}-{levelData.Stage + 1}";//추가
+
         string scoreKey = $"BestScore_{levelIdentifier}";
         string starKey = $"BestStar_{levelIdentifier}";
 
         int previousBest = PlayerPrefs.GetInt(scoreKey, 0);
 
-        bool isFirstClear = previousBest == 0;
+        //bool isFirstClear = previousBest == 0;
+        bool isFirstClear = !saveload.currentData.bestScores.ContainsKey(levelIdentifier);
+        
 
         if (CurrentScore > previousBest)
         {
@@ -116,12 +121,6 @@ public class ScoreManager : MonoBehaviour, IScoreService
             }
 
             PlayerPrefs.SetInt(starKey, starCount);
-            //수정
-            string nextStageKey = GetNextStageKey(levelData.Chapter, levelData.Stage);
-            PlayerPrefs.SetString("PendingUnlockStage", nextStageKey);
-            Debug.Log($"[ScoreManager] 다음 스테이지 해금 예약: {nextStageKey}");
-            //수정
-
             PlayerPrefs.Save();
             saveload.CurrentDataUpdate(levelData.Chapter, levelData.Stage, CurrentScore, starCount);
             saveload.AutoSave();
@@ -129,9 +128,15 @@ public class ScoreManager : MonoBehaviour, IScoreService
 
         if (isFirstClear && CurrentScore > 0)
         {
-            string nextStageKey = $"{levelData.Chapter}-{levelData.Stage + 1}";
             PlayerPrefs.SetString("PendingUnlockStage", nextStageKey);
             PlayerPrefs.Save();
+
+            //추가
+            saveload.currentData.UnlockStage(nextStageKey);
+            saveload.AutoSave();
+
+            Debug.Log($"[ScoreManager] 최초 클리어 - 다음 스테이지 해금: {nextStageKey}");
+            //추가
         }
         
 
