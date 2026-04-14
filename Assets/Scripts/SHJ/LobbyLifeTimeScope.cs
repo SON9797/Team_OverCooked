@@ -23,11 +23,17 @@ public class LobbyLifeTimeScope : LifetimeScope
         builder.RegisterBuildCallback(container =>
         {
             var hoverButton = FindObjectsOfType<HoverAnime_MenuApear>(true);
-
             foreach (var button in hoverButton)
             {
                 container.InjectGameObject(button.gameObject);
             }
+
+            var irisFader = FindObjectOfType<IrisFader>(true);
+            if (irisFader != null)
+            {
+                container.InjectGameObject(irisFader.gameObject);
+            }
+        
 
             if (_lobbyBGM != null && _soundManager != null)
             {

@@ -2,9 +2,7 @@ using Overcooked;
 using Overcooked.Interfaces;
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VContainer;
@@ -106,7 +104,8 @@ namespace OverCooked
 
             if (_isEndingSequenceFinished && Input.GetKeyDown(KeyCode.Space))
             {
-                GoToWorldMap();
+                _isEndingSequenceFinished = false;
+                StartCoroutine(GoToWorldMapCoroutine());
             }
         }
 
@@ -519,9 +518,14 @@ namespace OverCooked
             Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
         }
 
-        private void GoToWorldMap()
+        private IEnumerator GoToWorldMapCoroutine()
         {
             Time.timeScale = 1f;
+
+            if (IrisFader.Instance != null)
+            {
+                yield return StartCoroutine(IrisFader.Instance.IrisInToBlack());
+            }
 
             SceneManager.LoadScene("WorldMapScene");
         }
