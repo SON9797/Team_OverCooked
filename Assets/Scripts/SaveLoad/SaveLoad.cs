@@ -180,7 +180,6 @@ public class SaveLoad : MonoBehaviour
             currentData.bestScores[chapterString] = ToChapterScore(bestscore, starcount);
             currentData.totalStarCount += starcount;
         }
-        Debug.Log($"[SaveLoad] {chapterString} 메모리 업데이트 완료. 현재 총 저장 개수: {currentData.bestScores.Count}");
     }
 
     public void AutoSave()

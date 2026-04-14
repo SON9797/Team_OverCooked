@@ -101,4 +101,25 @@ public class BusMove : MonoBehaviour
         _canDash = true;
     }
 
+    public void Knockback(Vector3 hitDirection, float force = 3f)
+    {
+        Vector3 knockbackDir = -hitDirection.normalized;
+        knockbackDir.y = 0f;
+        StartCoroutine(KnockbackRoutine(knockbackDir, force));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector3 dir, float force)
+    {
+        float duration = 0.15f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = 1f - (elapsed / duration);
+            _rb.MovePosition(_rb.position + dir * force * t * Time.deltaTime);
+            yield return null;
+        }
+    }
+
 }
