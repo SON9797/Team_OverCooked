@@ -23,6 +23,7 @@ public class IrisFader : MonoBehaviour
 
     [Header("이미지")]
     [SerializeField] private Image _irisImage;
+    [SerializeField] private Image _BlackImage;
 
     [Header("설정")]
     [SerializeField] private float _fadeDuration = 0.6f;
@@ -54,6 +55,7 @@ public class IrisFader : MonoBehaviour
 
         if (_inGameSoundManager != null)
         {
+            _inGameSoundManager.StopAllSounds();
             _inGameSoundManager.PlaySFX(SFXType.UI_Screen_In);
         }
 
@@ -70,6 +72,8 @@ public class IrisFader : MonoBehaviour
         }
 
         _irisImage.rectTransform.sizeDelta = _minSize;
+
+        _BlackImage.gameObject.SetActive(true);
     }
 
     // 화면을 덮던 구멍이 거대해지며 게임 화면이 나타남
@@ -82,6 +86,7 @@ public class IrisFader : MonoBehaviour
 
         if (_inGameSoundManager != null)
         {
+            _inGameSoundManager.StopAllSounds();
             _inGameSoundManager.PlaySFX(SFXType.UI_Screen_Out);
         }
 
