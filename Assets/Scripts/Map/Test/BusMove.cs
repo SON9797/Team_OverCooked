@@ -1,6 +1,10 @@
+using Overcooked.Interfaces;
+using OverCooked;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using VContainer;
 
 public class BusMove : MonoBehaviour
 {
@@ -20,6 +24,15 @@ public class BusMove : MonoBehaviour
 
     private Transform _camTransform;
     private Rigidbody _rb;
+
+    private IWorldMapSoundManager _worldMapSoundManager;
+
+    [Inject]
+    public void Construct(IWorldMapSoundManager worldMapSoundManager)
+    {
+        _worldMapSoundManager = worldMapSoundManager;
+    }
+
     public bool CanMove
     {
         get => _canMove;
@@ -36,6 +49,8 @@ public class BusMove : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
 
         _currentSpeed = _moveSpeed;
+
+        PlayEngineSound();
     }
 
     private void Update()
@@ -58,6 +73,7 @@ public class BusMove : MonoBehaviour
         {
             return;
         }
+
         MoveAndRotate();
     }
 
@@ -75,6 +91,7 @@ public class BusMove : MonoBehaviour
         right.Normalize();
 
         Vector3 moveDir = (forward * v + right * h).normalized;
+        
 
         if (moveDir.magnitude >= 0.1f)
         {
@@ -82,9 +99,10 @@ public class BusMove : MonoBehaviour
 
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             targetRotation *= Quaternion.Euler(0, -90, 0);
-            _rb.rotation = Quaternion.Slerp(_rb.rotation, targetRotation, _turnSpeed * Time.fixedDeltaTime);
-        }
+            _rb.rotation = Quaternion.Slerp(_rb.rotation, targetRotation, _turnSpeed * Time.fixedDeltaTime);            
+        }        
     }
+
     private IEnumerator DashRoutine()
     {
         _isDashing = true;
@@ -101,25 +119,11 @@ public class BusMove : MonoBehaviour
         _canDash = true;
     }
 
-    public void Knockback(Vector3 hitDirection, float force = 3f)
+    private void PlayEngineSound()
     {
-        Vector3 knockbackDir = -hitDirection.normalized;
-        knockbackDir.y = 0f;
-        StartCoroutine(KnockbackRoutine(knockbackDir, force));
-    }
-
-    private IEnumerator KnockbackRoutine(Vector3 dir, float force)
-    {
-        float duration = 0.15f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
+        if (_worldMapSoundManager != null)
         {
-            elapsed += Time.deltaTime;
-            float t = 1f - (elapsed / duration);
-            _rb.MovePosition(_rb.position + dir * force * t * Time.deltaTime);
-            yield return null;
+            _worldMapSoundManager.PlayLoopSFX(SFXType.Van_Engine);
         }
     }
-
 }
