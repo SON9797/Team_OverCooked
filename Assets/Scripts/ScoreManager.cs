@@ -128,14 +128,14 @@ public class ScoreManager : MonoBehaviour, IScoreService
 
         if (isFirstClear && CurrentScore > 0)
         {
+            nextStageKey = $"{levelData.Chapter}-{levelData.Stage + 1}";//추가
+
             PlayerPrefs.SetString("PendingUnlockStage", nextStageKey);
             PlayerPrefs.Save();
 
             //추가
-            saveload.currentData.UnlockStage(nextStageKey);
-            saveload.AutoSave();
-
-            Debug.Log($"[ScoreManager] 최초 클리어 - 다음 스테이지 해금: {nextStageKey}");
+            //saveload.currentData.UnlockStage(nextStageKey);
+            //saveload.AutoSave();
             //추가
         }
         

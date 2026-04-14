@@ -127,11 +127,24 @@ public class WorldMapTileRotate : MonoBehaviour
             }
         }
     }
-    // 해금만 된 스테이지용 - Flip 가능하게 유지
+    // 해금만 된 스테이지용
     private void SetUnlockedStateImmediate()
     {
         _isActivated = false; // ★ Flip 허용
         _isFlipping = false;
-        // 타일은 아직 뒤집히지 않은 상태 유지 (연출이 Flip()을 통해 실행됨)
+
+        transform.rotation = Quaternion.Euler(0, 0, 180f);
+        if (_nextMaterial != null)
+        {
+            _meshRenderer.material = _nextMaterial;
+        }
+        if (_myBuildings != null)
+        {
+            foreach (var building in _myBuildings)
+            {
+                if (building != null)
+                    building.AppearImmediate();
+            }
+        }
     }
 }

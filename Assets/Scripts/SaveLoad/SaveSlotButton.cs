@@ -56,7 +56,7 @@ public class SaveSlotButton : MonoBehaviour
         SaveLoad.instance.autoSaveIndex = index;
         if (mode == SaveSlotMode.newgame)
         {
-            //수정 뉴게임 리셋용도 (임시 편하신) 
+            //수정 뉴게임 리셋용도
             SaveLoad.instance.currentData = new SaveData();
             SaveLoad.instance.currentData.bestScores = new Dictionary<string, ChapterScore>();
             SaveLoad.instance.AutoSave(); 
