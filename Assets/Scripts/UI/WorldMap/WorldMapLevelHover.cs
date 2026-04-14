@@ -1,3 +1,4 @@
+using Overcooked;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,10 +16,10 @@ public class WorldMapLevelHover : MonoBehaviour
 {
     [SerializeField] Image stagePicture;
     [SerializeField] List<Image> stars;
+    [SerializeField] List<TextMeshProUGUI> starScore;
     [SerializeField] Sprite emptyStar;
     [SerializeField] Sprite fillStar;
     [SerializeField] TextMeshProUGUI bestScoreText;
-    [SerializeField] List<ImageList> imageList;
 
     Dictionary<string, Sprite> imageDict=new Dictionary<string, Sprite>();
     void Start()
@@ -36,7 +37,11 @@ public class WorldMapLevelHover : MonoBehaviour
     {
 
         //해당 스테이지 사진 받아오기
-        stagePicture.sprite = imageDict[chapter];
+        LevelData leveldata = SoStageDatas.instance.levelDatas[chapter];
+        stagePicture.sprite = leveldata.LoadingImage;
+        starScore[0].text = leveldata.OneStar.ToString();
+        starScore[1].text = leveldata.TwoStar.ToString();
+        starScore[2].text = leveldata.ThreeStar.ToString();
 
         //해당 스테이지 별,최고점수 받아오기
         SaveData savedata = SaveLoad.instance.currentData;
