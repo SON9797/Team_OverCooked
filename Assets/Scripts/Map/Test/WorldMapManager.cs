@@ -14,13 +14,16 @@ public class WorldMapManager : MonoBehaviour
 
     public void StartConditionalWave(Vector3 centerPoint, float maxRadius)
     {
+        Debug.Log($"[WorldMapManager] StartConditionalWave 호출됨. 타일 수: {allTiles.Count}");
+
         foreach (var tile in allTiles)
         {
             float distance = Vector3.Distance(centerPoint, tile.transform.position);
 
-            // 설정한 반경 이내에 있는 타일만 실행
             if (distance <= maxRadius)
             {
+                Debug.Log($"[WorldMapManager] 범위 내 타일: {tile.gameObject.name}, 거리: {distance}");
+
                 float delay = distance / _waveSpeed;
                 StartCoroutine(DelayedFlip(tile, delay));
             }

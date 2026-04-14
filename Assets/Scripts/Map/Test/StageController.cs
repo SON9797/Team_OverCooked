@@ -124,18 +124,31 @@ public class StageController : MonoBehaviour
         */
     public void OnStageUnlockAnimation(string stageIndex)
     {
+        Debug.Log($"[StageController] OnStageUnlockAnimation 호출됨: {stageIndex}");
+
+
         if (_waitRoutine != null)
         {
             StopCoroutine(_waitRoutine);
             _waitRoutine = null;
         }
 
-        Debug.Log($"{stageIndex} 스테이지 길 열기 연출 시작!");
+
+        if (!_stageTransformDict.ContainsKey(stageIndex))
+        {
+            Debug.LogError($"[StageController] {stageIndex} 키가 딕셔너리에 없음!");
+            return;
+        }
 
         Transform target = _stageTransformDict[stageIndex];
 
+        Debug.Log($"[StageController] 타겟 Transform: {target.name}, 위치: {target.position}");
+
+
         _mapCamera.FocusTarget(target, () =>
         {
+            Debug.Log($"[StageController] FocusTarget 콜백 실행됨");
+
             _tileManager.StartConditionalWave(target.position, 5.0f);
             if (_waitRoutine != null)
             {

@@ -56,12 +56,11 @@ public class SaveSlotButton : MonoBehaviour
         SaveLoad.instance.autoSaveIndex = index;
         if (mode == SaveSlotMode.newgame)
         {
-            //수정
+            //수정 뉴게임 리셋용도 (임시 편하신) 
             SaveLoad.instance.currentData = new SaveData();
             SaveLoad.instance.currentData.bestScores = new Dictionary<string, ChapterScore>();
-            SaveLoad.instance.AutoSave(); // 빈 데이터로 덮어쓰기
+            SaveLoad.instance.AutoSave(); 
 
-            // ★ PlayerPrefs도 초기화 (이전 점수 기록 제거)
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
 
