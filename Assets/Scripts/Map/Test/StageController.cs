@@ -65,21 +65,21 @@ public class StageController : MonoBehaviour
 
     public void CheckNewStageUnlockPublic()
     {
-        Debug.Log("[StageController] CheckNewStageUnlockPublic 호출됨");
-        Debug.Log($"[StageController] PendingUnlockStage 존재 여부: {PlayerPrefs.HasKey("PendingUnlockStage")}");
-
-
         if (PlayerPrefs.HasKey("PendingUnlockStage"))
         {
             string nextStageKey = PlayerPrefs.GetString("PendingUnlockStage");
-            Debug.Log($"[StageController] 해금 시도 키: {nextStageKey}");
-            Debug.Log($"[StageController] _stageTransformDict 키 목록:");
             foreach (var key in _stageTransformDict.Keys)
                 Debug.Log($"  - {key}");
 
 
             if (_stageTransformDict.ContainsKey(nextStageKey))
             {
+                if (SaveLoad.instance != null)
+                {
+                    SaveLoad.instance.currentData.UnlockStage(nextStageKey);
+                    SaveLoad.instance.AutoSave();
+                    Debug.Log($"[StageController] unlockedStages에 {nextStageKey} 저장 완료");
+                }
                 OnStageUnlockAnimation(nextStageKey);
             }
             else
