@@ -20,8 +20,6 @@ public class WorldMapTileRotate : MonoBehaviour
     {
         _meshRenderer = GetComponent<MeshRenderer>();
         _initialPosition = transform.position;
-
-        
     }
     private void Start()
     {

@@ -13,6 +13,8 @@ public class DeliveryCounter : ItemPlaceAndTake
     private ScoreManager _scoreManager;
     private RecipeManager _recipeManager;
 
+    private bool _isDelivering = false;
+
     [Inject]
     public void Construct(ScoreManager scoreManager, IRecipeService recipeService)
     {
@@ -20,41 +22,85 @@ public class DeliveryCounter : ItemPlaceAndTake
         _recipeManager = (RecipeManager)recipeService;
     }
 
-    // 완성된 음식이 올라오면 제출 처리
     public override bool PlaceItem(GameObject item)
     {
+        if (_isDelivering)
+            return false;
+
+        if (item == null)
+            return false;
+
         Dish dish = item.GetComponent<Dish>();
 
-        if (dish != null && dish.GetRecipe().Count > 0)
-        {
-            var ingredients = dish.GetRecipe();
-            string dishName = _recipeManager.GetDishNameByIngredients(ingredients);
-
-            if (!string.IsNullOrEmpty(dishName))
-            {
-                SubmittedDish submitted = new SubmittedDish { DishName = dishName };
-                _scoreManager.OnPlaySubmitItem(submitted);
-
-                Debug.Log($"{dishName}");
-            }
-            else
-            {
-                Debug.Log("레시피 목록에 없음");
-            }
-
-            base.PlaceItem(item);
-            StartCoroutine(ClearDishAfterDelay(item));
-
-            return true;
-        }
-        else
+        if (dish == null || dish.GetRecipe().Count <= 0)
         {
             Debug.Log("접시만 있음 제출실패");
             return false;
         }
+
+        var ingredients = dish.GetRecipe();
+        string dishName = _recipeManager.GetDishNameByIngredients(ingredients);
+
+        if (string.IsNullOrEmpty(dishName))
+        {
+            Debug.Log("레시피 목록에 없음");
+            return false;
+        }
+
+        _isDelivering = true;
+
+        SubmittedDish submitted = new SubmittedDish { DishName = dishName };
+        _scoreManager.OnPlaySubmitItem(submitted);
+
+        Debug.Log($"{dishName}");
+
+        base.PlaceItem(item);
+
+        DisableInteraction(item);
+
+        StartCoroutine(ClearDishAfterDelay(item));
+
+        return true;
     }
 
-    // 제출 후 일정 시간 뒤 접시를 제거하고 리스폰 쪽에 알림
+    public override GameObject TakeItem()
+    {
+        if (_isDelivering)
+            return null;
+
+        return base.TakeItem();
+    }
+
+    private void DisableInteraction(GameObject target)
+    {
+        if (target == null)
+            return;
+
+        int ignoreLayer = LayerMask.NameToLayer("Ignore Raycast");
+
+        if (ignoreLayer != -1)
+        {
+            SetLayerRecursively(target, ignoreLayer);
+        }
+
+        Collider[] colliders = target.GetComponentsInChildren<Collider>();
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = false;
+        }
+    }
+
+    private void SetLayerRecursively(GameObject target, int layer)
+    {
+        target.layer = layer;
+
+        for (int i = 0; i < target.transform.childCount; i++)
+        {
+            SetLayerRecursively(target.transform.GetChild(i).gameObject, layer);
+        }
+    }
+
     private IEnumerator ClearDishAfterDelay(GameObject dishObj)
     {
         yield return new WaitForSeconds(_deliveryDelay);
@@ -67,6 +113,8 @@ public class DeliveryCounter : ItemPlaceAndTake
         }
 
         Destroy(dishObj);
+
         _onCounterItem = null;
+        _isDelivering = false;
     }
 }

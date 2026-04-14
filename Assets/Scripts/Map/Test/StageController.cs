@@ -22,11 +22,12 @@ public class StageController : MonoBehaviour
 
     public WorldMapCamera _mapCamera;
 
+    [SerializeField] private float _busOffset = 2.0f;
+
     private Coroutine _waitRoutine;
     private string _testStageName = "1-1";
     private void Start()
     {
-        //PlayerPrefs.DeleteAll();
         _stageTransformDict.Clear();
         for (int i = 0; i < _stageFlagTransformInput.Count; i++)
         {
@@ -35,34 +36,7 @@ public class StageController : MonoBehaviour
 
         
     }
-
-    private void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //   TestUnlockNextStage();
-        //}
-    }
-
-    private void TestUnlockNextStage()
-    {
-        // 배열 범위를 넘지 않는지 체크
-        if (_stageTransformDict.ContainsKey(_testStageName))
-        {
-            Debug.Log($"{_testStageName} 스테이지 연출 테스트 시작!");
-
-            // 즉시 연출 호출
-            OnStageUnlockAnimation(_testStageName);
-
-            // 다음번엔 그다음 스테이지가 열리도록 인덱스 증가
-            StagePlus();
-        }
-        else
-        {
-            Debug.Log("모든 스테이지 연출을 확인했습니다.");
-        }
-    }
-
+    
     public void CheckNewStageUnlockPublic()
     {
         if (PlayerPrefs.HasKey("PendingUnlockStage"))
@@ -78,21 +52,14 @@ public class StageController : MonoBehaviour
                 {
                     SaveLoad.instance.currentData.UnlockStage(nextStageKey);
                     SaveLoad.instance.AutoSave();
-                    Debug.Log($"[StageController] unlockedStages에 {nextStageKey} 저장 완료");
                 }
                 OnStageUnlockAnimation(nextStageKey);
-            }
-            else
-            {
-                Debug.LogWarning($"[StageController] '{nextStageKey}' 키가 딕셔너리에 없음!");
             }
             PlayerPrefs.DeleteKey("PendingUnlockStage");
             PlayerPrefs.Save();
         }
         else
         {
-            Debug.Log("[StageController] PendingUnlockStage가 PlayerPrefs에 없음!");
-            Debug.Log("[StageController] 현재 저장된 모든 베스트스코어 키:");
             if (SaveLoad.instance != null)
             {
                 foreach (var key in SaveLoad.instance.currentData.bestScores.Keys)
@@ -217,5 +184,19 @@ public class StageController : MonoBehaviour
         _testStageName = connect;
     }
 
+    public void SetBusToStageFlag(string stageKey, Transform busTransform)
+    {
+        if (!_stageTransformDict.ContainsKey(stageKey))
+        {
+            Debug.LogWarning($"[StageController] {stageKey} 깃발을 찾을 수 없음");
+            return;
+        }
 
+        Transform flag = _stageTransformDict[stageKey];
+
+        Vector3 busPos = flag.position + flag.forward * _busOffset;
+        busPos.y = busTransform.position.y;
+
+        busTransform.position = busPos;
+    }
 }

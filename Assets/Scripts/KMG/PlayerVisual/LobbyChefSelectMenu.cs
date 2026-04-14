@@ -7,10 +7,6 @@ namespace Overcooked
 {
     public class LobbyChefSelectMenu : MonoBehaviour
     {
-        [Header("UI")]
-        [SerializeField] private GameObject _leftArrow;
-        [SerializeField] private GameObject _rightArrow;
-
         [Header("외형 적용기")]
         [SerializeField] private ChefVisualApplier _chefVisualApplier;
 
@@ -23,23 +19,11 @@ namespace Overcooked
 
             ChefRuntimeStore.EnsureInitialized();
             _currentIndex = FindChefIndex(ChefRuntimeStore.CurrentChef);
-
-            HideArrows();
         }
 
         private void Start()
         {
             ApplyCurrentChef();
-        }
-
-        public void OpenMenu()
-        {
-            ShowArrows();
-        }
-
-        public void CloseMenu()
-        {
-            HideArrows();
         }
 
         public void SelectNextChef()
@@ -91,24 +75,6 @@ namespace Overcooked
             }
 
             return 0;
-        }
-
-        private void ShowArrows()
-        {
-            if (_leftArrow != null)
-                _leftArrow.SetActive(true);
-
-            if (_rightArrow != null)
-                _rightArrow.SetActive(true);
-        }
-
-        private void HideArrows()
-        {
-            if (_leftArrow != null)
-                _leftArrow.SetActive(false);
-
-            if (_rightArrow != null)
-                _rightArrow.SetActive(false);
         }
     }
 }
