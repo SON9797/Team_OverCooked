@@ -21,17 +21,6 @@ public class WorldMapLevelHover : MonoBehaviour
     [SerializeField] Sprite fillStar;
     [SerializeField] TextMeshProUGUI bestScoreText;
 
-    Dictionary<string, Sprite> imageDict=new Dictionary<string, Sprite>();
-    void Start()
-    {
-        for(int i = 0; i < imageList.Count; i++)
-        {
-            imageDict[imageList[i].key]=imageList[i].image;
-        }
-
-        //Å×½ºÆ®
-        //ShowLevel(1, 1);
-    }
 
     public void ShowLevel(string chapter)
     {
