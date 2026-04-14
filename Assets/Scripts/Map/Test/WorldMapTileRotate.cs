@@ -29,8 +29,11 @@ public class WorldMapTileRotate : MonoBehaviour
     }
     public void Flip()
     {
+        Debug.Log($"[TileRotate] Flip 호출됨: {gameObject.name}, isFlipping: {_isFlipping}, isActivated: {_isActivated}");
+
         if (_isFlipping || _isActivated)
         {
+            Debug.Log($"[TileRotate] Flip 스킵됨 - isFlipping: {_isFlipping}, isActivated: {_isActivated}");
             return;
         }
         StartCoroutine(FlipRoutine());
@@ -84,11 +87,20 @@ public class WorldMapTileRotate : MonoBehaviour
 
     private void CheckIfAlreadyFlipped()
     {
-        string stageKey = $"{_parentMainChapter}-{_parentStageIndex}"; // 예: 1-1, 1-2 형태
+        string stageKey = $"{_parentMainChapter}-{_parentStageIndex}";
+        if (SaveLoad.instance == null) return;
 
-        if (SaveLoad.instance != null && SaveLoad.instance.currentData.bestScores.ContainsKey(stageKey))
+        SaveData data = SaveLoad.instance.currentData;
+
+        if (data.bestScores.ContainsKey(stageKey))
         {
+            // 클리어한 스테이지 - 완전히 뒤집힌 상태, _isActivated = true
             SetTargetStateImmediate();
+        }
+        else if (data.unlockedStages.Contains(stageKey))
+        {
+            // 해금만 된 스테이지 - 뒤집혀야 하지만 _isActivated = false (다시 Flip 가능)
+            SetUnlockedStateImmediate();
         }
     }
 
@@ -106,23 +118,20 @@ public class WorldMapTileRotate : MonoBehaviour
 
         if (_myBuildings != null)
         {
-            Debug.Log($"[TileRotate] {gameObject.name} 건물 즉시 활성화 - 건물 수: {_myBuildings.Count}");
             foreach (var building in _myBuildings)
             {
                 if (building != null)
                 {
                     building.AppearImmediate();
-                    Debug.Log($"[TileRotate] 건물 활성화: {building.gameObject.name}");
-                }
-                else
-                {
-                    Debug.LogWarning($"[TileRotate] {gameObject.name}의 _myBuildings 리스트에 null 항목 있음!");
                 }
             }
         }
-        else
-        {
-            Debug.LogWarning($"[TileRotate] {gameObject.name} _myBuildings 리스트 자체가 null");
-        }
+    }
+    // 해금만 된 스테이지용 - Flip 가능하게 유지
+    private void SetUnlockedStateImmediate()
+    {
+        _isActivated = false; // ★ Flip 허용
+        _isFlipping = false;
+        // 타일은 아직 뒤집히지 않은 상태 유지 (연출이 Flip()을 통해 실행됨)
     }
 }
