@@ -50,10 +50,16 @@ public class WorldMapIntro : MonoBehaviour
 
         if (is1_1Cleared)
         {
-            Debug.Log("[Intro] 1-1 이미 클리어됨 로그 확인!");
 
             // 1-1이 클리어되었다면 연출 스킵: 즉시 버스 위치로
             _mapCamera.enabled = true; // 카메라 기능 활성화
+
+            if (_stageController != null)
+            {
+                string currentStageKey = $"{SaveLoad.instance.currentData.currentChapter}-{SaveLoad.instance.currentData.currentSubChapter}";
+                _stageController.SetBusToStageFlag(currentStageKey, _playerTransform);
+            }
+
             _mapCamera.transform.position = _playerTransform.position + _introOffset;
             _mapCamera.SetTarget(_playerTransform, _introOffset);
 
@@ -68,12 +74,7 @@ public class WorldMapIntro : MonoBehaviour
 
             if (_stageController != null)
             {
-                Debug.Log("[Intro] StageController.CheckNewStageUnlockPublic() 호출");
                 _stageController.CheckNewStageUnlockPublic();
-            }
-            else
-            {
-                Debug.LogError("[Intro] _stageController가 null입니다! 인스펙터에서 연결해주세요.");
             }
 
             yield break;
