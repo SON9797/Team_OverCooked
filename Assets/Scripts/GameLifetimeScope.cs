@@ -124,6 +124,24 @@ public class GameLifetimeScope : LifetimeScope
             {
                 container.InjectGameObject(irisFader.gameObject);
             }
+
+            var bigToOrigin = FindObjectsOfType<HoverAnime_BigtoOrigin>(true);
+            foreach (var button in bigToOrigin)
+            {
+                container.InjectGameObject(button.gameObject);
+            }
+
+            var popupManager = FindObjectOfType<PopupManager>(true);
+            if (popupManager != null)
+            {
+                container.InjectGameObject(popupManager.gameObject);
+            }
+
+            var hoverSounds = FindObjectsOfType<UIHoverSound>(true);
+            foreach (var soundBtn in hoverSounds)
+            {
+                container.InjectGameObject(soundBtn.gameObject);
+            }
         });
     }
 }
