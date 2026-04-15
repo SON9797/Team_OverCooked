@@ -12,7 +12,7 @@ namespace OverCooked
     public class InGameUIManager : MonoBehaviour, IUIManager
     {
         [Header("세팅")]
-        [SerializeField] private GameObject _loadingPanel;
+        //[SerializeField] private GameObject _loadingPanel;
         [SerializeField] private GameObject _recipeTutorialPanel;
         [SerializeField] private GameObject _readyPanel;
         [SerializeField] private GameObject _startPanel;
@@ -23,18 +23,10 @@ namespace OverCooked
         [SerializeField] private Image _timerGauge;
 
         [Header("스테이지 정보 업데이트용 UI")]
-        [SerializeField] private TextMeshProUGUI _loadingLevelText;
         [SerializeField] private TextMeshProUGUI _endingLevelText;
         [SerializeField] private TextMeshProUGUI _pauseLevelText;
-        [SerializeField] private Image _loadingImage;
         [SerializeField] private Image _tutorialImage;
         [SerializeField] private TextMeshProUGUI _timerText;
-        [SerializeField] private TextMeshProUGUI _oneStarText;
-        [SerializeField] private TextMeshProUGUI _twoStarText;
-        [SerializeField] private TextMeshProUGUI _threeStarText;
-        [SerializeField] private TextMeshProUGUI _loadingOneStarText;
-        [SerializeField] private TextMeshProUGUI _loadingTwoStarText;
-        [SerializeField] private TextMeshProUGUI _loadingThreeStarText;
         [SerializeField] private TextMeshProUGUI _newRecipeText;
 
         [Header("모래시계 연출")]
@@ -82,7 +74,6 @@ namespace OverCooked
         private LevelData _currentLevelData;
 
         public GameObject PausePanel => _pausePanel;
-        public GameObject LoadingPanel => _loadingPanel;
         public GameObject TutorialPanel => _recipeTutorialPanel;
         public GameObject ReadyPanel => _readyPanel;
         public GameObject StartPanel => _startPanel;
@@ -158,11 +149,6 @@ namespace OverCooked
 
             _currentLevelData = levelData;
 
-            if (_loadingLevelText != null)
-            {
-                _loadingLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
-            }
-
             if (_endingLevelText != null)
             {
                 _endingLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
@@ -173,44 +159,10 @@ namespace OverCooked
                 _pauseLevelText.text = $"{levelData.Chapter}-{levelData.Stage}";
             }
 
-            if (_loadingImage != null)
-            {
-                _loadingImage.sprite = levelData.LoadingImage;
-            }
 
             if (_tutorialImage != null)
             {
                 _tutorialImage.sprite = levelData.TutorialImage;
-            }
-
-            if (_oneStarText != null)
-            {
-                _oneStarText.text = levelData.OneStar.ToString();
-            }
-
-            if (_twoStarText != null)
-            {
-                _twoStarText.text = levelData.TwoStar.ToString();
-            }
-
-            if (_threeStarText != null)
-            {
-                _threeStarText.text = levelData.ThreeStar.ToString();
-            }
-
-            if (_loadingOneStarText != null)
-            {
-                _loadingOneStarText.text = levelData.OneStar.ToString();
-            }
-
-            if (_loadingTwoStarText != null)
-            {
-                _loadingTwoStarText.text = levelData.TwoStar.ToString();
-            }
-
-            if (_loadingThreeStarText != null)
-            {
-                _loadingThreeStarText.text = levelData.ThreeStar.ToString();
             }
 
             if (_newRecipeText != null)
