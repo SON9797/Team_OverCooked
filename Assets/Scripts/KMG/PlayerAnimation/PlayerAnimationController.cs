@@ -76,5 +76,10 @@ namespace Overcooked
         {
             _animator.SetTrigger(ThrowHash);
         }
+
+        public bool IsChoppingNow()
+        {
+            return _animator.GetBool(IsChoppingHash);
+        }
     }
 }

@@ -39,19 +39,21 @@ namespace Overcooked
         [SerializeField] private GameObject _hatTall;
 
         private readonly Dictionary<ChefType, ChefVisualEntry> _chefMap = new Dictionary<ChefType, ChefVisualEntry>();
+
         private bool _isBuilt;
+
+        public GameObject CurrentChefObject { get; private set; }
 
         private void Awake()
         {
             BuildMap();
+            ResetVisualState();
         }
 
         public void ApplyChef(ChefType chefType)
         {
             EnsureBuilt();
-
-            DisableAllChefObjects();
-            DisableAllHats();
+            ResetVisualState();
 
             bool isRobot = chefType == ChefType.Robot;
 
@@ -70,6 +72,7 @@ namespace Overcooked
                 if (entry.chefObject != null)
                 {
                     entry.chefObject.SetActive(true);
+                    CurrentChefObject = entry.chefObject;
                 }
 
                 ApplyHat(entry.hatType);
@@ -80,14 +83,80 @@ namespace Overcooked
             }
         }
 
+        public void ResetVisualState()
+        {
+            DisableAllChefObjects();
+            DisableAllHats();
+
+            if (_body != null)
+            {
+                _body.SetActive(false);
+            }
+
+            if (_robotBody != null)
+            {
+                _robotBody.SetActive(false);
+            }
+
+            CurrentChefObject = null;
+        }
+
         private void EnsureBuilt()
         {
             if (_isBuilt)
-            {
                 return;
-            }
 
             BuildMap();
+        }
+
+        private void BuildMap()
+        {
+            _chefMap.Clear();
+
+            for (int i = 0; i < _chefVisuals.Count; i++)
+            {
+                ChefVisualEntry entry = _chefVisuals[i];
+
+                if (entry == null)
+                    continue;
+
+                if (entry.chefObject == null)
+                    continue;
+
+                if (_chefMap.ContainsKey(entry.chefType))
+                {
+                    Debug.LogWarning($"{name}: {entry.chefType}가 중복 등록되어 있습니다.");
+                    continue;
+                }
+
+                _chefMap.Add(entry.chefType, entry);
+            }
+
+            _isBuilt = true;
+        }
+
+        private void DisableAllChefObjects()
+        {
+            for (int i = 0; i < _chefVisuals.Count; i++)
+            {
+                ChefVisualEntry entry = _chefVisuals[i];
+
+                if (entry == null)
+                    continue;
+
+                if (entry.chefObject == null)
+                    continue;
+
+                entry.chefObject.SetActive(false);
+            }
+        }
+
+        private void DisableAllHats()
+        {
+            if (_hatBaseballCap != null) _hatBaseballCap.SetActive(false);
+            if (_hatCap != null) _hatCap.SetActive(false);
+            if (_hatFancy != null) _hatFancy.SetActive(false);
+            if (_hatTall != null) _hatTall.SetActive(false);
         }
 
         private void ApplyHat(ChefHatType hatType)
@@ -110,52 +179,6 @@ namespace Overcooked
                     if (_hatTall != null) _hatTall.SetActive(true);
                     break;
             }
-        }
-
-        private void BuildMap()
-        {
-            _chefMap.Clear();
-
-            for (int i = 0; i < _chefVisuals.Count; i++)
-            {
-                ChefVisualEntry entry = _chefVisuals[i];
-
-                if (entry == null || entry.chefObject == null)
-                {
-                    continue;
-                }
-
-                if (_chefMap.ContainsKey(entry.chefType))
-                {
-                    Debug.LogWarning($"{name}: {entry.chefType}가 중복 등록되어 있습니다.");
-                    continue;
-                }
-
-                _chefMap.Add(entry.chefType, entry);
-            }
-
-            _isBuilt = true;
-        }
-
-        private void DisableAllChefObjects()
-        {
-            for (int i = 0; i < _chefVisuals.Count; i++)
-            {
-                ChefVisualEntry entry = _chefVisuals[i];
-
-                if (entry != null && entry.chefObject != null)
-                {
-                    entry.chefObject.SetActive(false);
-                }
-            }
-        }
-
-        private void DisableAllHats()
-        {
-            if (_hatBaseballCap != null) _hatBaseballCap.SetActive(false);
-            if (_hatCap != null) _hatCap.SetActive(false);
-            if (_hatFancy != null) _hatFancy.SetActive(false);
-            if (_hatTall != null) _hatTall.SetActive(false);
         }
     }
 }
