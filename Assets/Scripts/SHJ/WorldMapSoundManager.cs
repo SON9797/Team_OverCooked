@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace OverCooked
 {
-    public class WorldMapSoundManager : MonoBehaviour, IWorldMapSoundManager
+    public class WorldMapSoundManager : MonoBehaviour, IWorldMapSoundManager, ICommonSoundManager
     {
         [SerializeField] private AudioSource _sfxSource;
         [SerializeField] private AudioSource _bgmSource;

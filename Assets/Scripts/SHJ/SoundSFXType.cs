@@ -30,5 +30,9 @@ namespace OverCooked
         UI_PressStart,
         UI_Click,
         Van_Engine,
+        Van_Dash,
+        Van_Flag,
+        World_Tile,
+
     }
 }
