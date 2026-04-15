@@ -71,12 +71,7 @@ namespace Overcooked
 
         private IEnumerator InitializeFlowCoroutine()
         {
-            // 1. 로딩화면
-            _uiManager.SetPanelActive(_uiManager.LoadingPanel, true);
-            yield return new WaitForSeconds(3.0f);
-
             // 2. 레시피튜토리얼
-            _uiManager.SetPanelActive(_uiManager.LoadingPanel, false);
             _uiManager.SetPanelActive(_uiManager.TutorialPanel, true);
 
             // 3. 레시피 튜토리얼에서 Space 입력시 사라지고
