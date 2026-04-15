@@ -110,10 +110,22 @@ public class BusMove : MonoBehaviour
 
         _currentSpeed = _moveSpeed * _dashMultiplier;
 
+        if (_worldMapSoundManager != null)
+        {
+            _worldMapSoundManager.StopSFX(SFXType.Van_Engine);
+            _worldMapSoundManager.PlaySFX(SFXType.Van_Dash);
+        }
+
         yield return new WaitForSeconds(_dashDuration);
 
         _currentSpeed = _moveSpeed;
         _isDashing = false;
+
+        if (_worldMapSoundManager != null)
+        {
+            _worldMapSoundManager.StopSFX(SFXType.Van_Dash);
+            _worldMapSoundManager.PlayLoopSFX(SFXType.Van_Engine);
+        }
 
         yield return new WaitForSeconds(_dashCooldown);
         _canDash = true;

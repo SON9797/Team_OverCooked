@@ -1,6 +1,8 @@
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class WorldMapTileRotate : MonoBehaviour
 {
@@ -16,6 +18,10 @@ public class WorldMapTileRotate : MonoBehaviour
     private bool _isActivated = false;
     private MeshRenderer _meshRenderer;
     private Vector3 _initialPosition;
+
+    private static float _lastFlipSoundTime = -10f;
+    private readonly float _soundCooldown = 0.1f;
+
     void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
@@ -34,6 +40,7 @@ public class WorldMapTileRotate : MonoBehaviour
             Debug.Log($"[TileRotate] Flip ½ºÅµµÊ - isFlipping: {_isFlipping}, isActivated: {_isActivated}");
             return;
         }
+
         StartCoroutine(FlipRoutine());
     }
 

@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VContainer;
+using VContainer.Unity;
 
 public class PopupButtonData
 {
@@ -21,6 +23,15 @@ public class PopupWindow : MonoBehaviour,IMenu
     [SerializeField] PopupButton buttonPrefab;
     public string prevScenename { get; set; }
     public string currentScenename { get; set; }
+
+    //
+    private IObjectResolver _resolver;
+    [Inject]
+    public void Construct(IObjectResolver resolver)
+    {
+        _resolver = resolver;
+    }
+
     public void Setting(string titleText,string contentText)
     {
         title.text=titleText; 
@@ -34,9 +45,11 @@ public class PopupWindow : MonoBehaviour,IMenu
     {
         if (buttons == null)
             return;
+
         foreach (var data in buttons)
         {
-            var btn = Instantiate(buttonPrefab, buttonRoot);
+            //var btn = Instantiate(buttonPrefab, buttonRoot);
+            var btn = _resolver.Instantiate(buttonPrefab, buttonRoot);
             btn.Setting(data.text, data.onclickAction);
         }
     }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
+using VContainer.Unity;
 
 
 public class PopupManager : MonoBehaviour
@@ -12,10 +14,18 @@ public class PopupManager : MonoBehaviour
     [SerializeField] PopupWindow popupWindow;
     [SerializeField] Transform canvasTransform;
     [SerializeField] GameObject saveSlot;
-    [SerializeField] GameObject StageLoadObject;
-    
+    [SerializeField] GameObject StageLoadObject;   
 
     private PopupWindow currentPopup;
+    //
+    private IObjectResolver _resolver;
+
+    [Inject]
+    public void Construct(IObjectResolver resolver)
+    {
+        _resolver = resolver;
+    }
+
     private void Awake()
     {
         if (instance != null)
@@ -28,7 +38,9 @@ public class PopupManager : MonoBehaviour
     }
     void OpenPopup(string titleText,List<PopupButtonData>buttons=null, string contentText = "", List<GameObject> contentObj = null)
     {
-        currentPopup = Instantiate(popupWindow, canvasTransform);
+        //currentPopup = Instantiate(popupWindow, canvasTransform);
+        currentPopup = _resolver.Instantiate(popupWindow, canvasTransform);
+
         RectTransform rect = currentPopup.GetComponent<RectTransform>();
         rect.anchoredPosition = Vector2.zero;
         currentPopup.Setting(titleText, contentText);

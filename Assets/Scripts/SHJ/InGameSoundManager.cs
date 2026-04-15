@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace OverCooked
 {
-    public class InGameSoundManager : MonoBehaviour, IInGameSoundManager
+    public class InGameSoundManager : MonoBehaviour, IInGameSoundManager, ICommonSoundManager
     {
         [SerializeField] private AudioSource _sfxSource;
         [SerializeField] private AudioSource _bgmSource;

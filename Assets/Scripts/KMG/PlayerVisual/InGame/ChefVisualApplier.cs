@@ -13,6 +13,10 @@ namespace Overcooked
         private void Awake()
         {
             ChefRuntimeStore.EnsureInitialized();
+        }
+
+        private void Start()
+        {
             ApplyCurrentChef();
         }
 

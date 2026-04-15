@@ -1,6 +1,8 @@
+using Overcooked.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class StageFlag : MonoBehaviour
 {
@@ -8,6 +10,16 @@ public class StageFlag : MonoBehaviour
 
 
     [SerializeField] private StageTransUI _transUI;
+
+    //private ICommonSoundManager _soundManager;
+
+    private IWorldMapSoundManager _soundManager;
+
+    [Inject]
+    public void Construct(IWorldMapSoundManager soundManager)
+    {
+        _soundManager = soundManager;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -17,6 +29,11 @@ public class StageFlag : MonoBehaviour
         {
             if (_transUI != null)
             {
+                if (_soundManager != null)
+                {
+                    Debug.Log("사운드 재생");
+                    _soundManager.PlaySFX(OverCooked.SFXType.Van_Flag);
+                }
                 _transUI.ShowUI(_stageKey);
             }
         }

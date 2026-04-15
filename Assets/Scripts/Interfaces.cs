@@ -88,20 +88,25 @@ namespace Overcooked.Interfaces
         GameObject TimesUpPanel { get; }
     }
 
-    public interface IInGameSoundManager
+    public interface IInGameSoundManager : ICommonSoundManager
     {
-        void PlaySFX(SFXType sfxType);
+        //void PlaySFX(SFXType sfxType);
         void PlayBGM(AudioClip clip);
         void StopAllSounds();
         void StopSFX(SFXType sfxType);
     }
 
-    public interface IWorldMapSoundManager
+    public interface IWorldMapSoundManager : ICommonSoundManager
     {
-        void PlaySFX(SFXType sfxType);
+        //void PlaySFX(SFXType sfxType);
         void PlayBGM(AudioClip clip);
         void StopAllSounds();
         void StopSFX(SFXType sfxType);
         void PlayLoopSFX(SFXType sfxType);
+    }
+
+    public interface ICommonSoundManager
+    {
+        void PlaySFX(SFXType sfxType);
     }
 }

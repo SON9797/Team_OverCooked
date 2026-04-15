@@ -28,12 +28,23 @@ public class LobbyLifeTimeScope : LifetimeScope
                 container.InjectGameObject(button.gameObject);
             }
 
+            var bigToOrigin = FindObjectsOfType<HoverAnime_BigtoOrigin>(true);
+            foreach (var button in bigToOrigin)
+            {
+                container.InjectGameObject(button.gameObject);
+            }
+
             var irisFader = FindObjectOfType<IrisFader>(true);
             if (irisFader != null)
             {
                 container.InjectGameObject(irisFader.gameObject);
             }
-        
+
+            var popupManager = FindObjectOfType<PopupManager>(true);
+            if (popupManager != null)
+            {
+                container.InjectGameObject(popupManager.gameObject);
+            }
 
             if (_lobbyBGM != null && _soundManager != null)
             {
