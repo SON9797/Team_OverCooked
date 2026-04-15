@@ -1,8 +1,10 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -64,6 +66,7 @@ public class SaveData
     //추가
 
 }
+
 
 public class SaveLoad : MonoBehaviour
 {
@@ -219,5 +222,22 @@ public class SaveLoad : MonoBehaviour
         }
         currentData=savedatas[index];
         return true;
+    }
+    public bool ContinueGame()
+    {
+        if (PlayerPrefs.HasKey("ContinueGame"))
+        {
+            SaveLoad.instance.autoSaveIndex = PlayerPrefs.GetInt("ContinueGame");
+            Load(PlayerPrefs.GetInt("ContinueGame"));
+            return true;
+        }
+        else
+        {
+            print("continue할 파일없음");
+            PopupManager.instance.OpenInformationPopup("Please Click New Game First");
+            return false;
+            
+        }
+        
     }
 }

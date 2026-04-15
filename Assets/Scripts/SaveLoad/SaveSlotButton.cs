@@ -61,8 +61,10 @@ public class SaveSlotButton : MonoBehaviour
             SaveLoad.instance.currentData.bestScores = new Dictionary<string, ChapterScore>();
             SaveLoad.instance.AutoSave(); 
 
+            /*
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
+            */
 
             //¼öÁ¤
 
@@ -71,7 +73,8 @@ public class SaveSlotButton : MonoBehaviour
             SaveLoad.instance.AutoSave();
             */
         }
-        
+        PlayerPrefs.SetInt("ContinueGame", index);
+        PlayerPrefs.Save();
         MenuManager.instance.MinusMenuStack();
         MenuManager.instance.worldMap.OpenWindow(contentprefab);
         //SceneLoader.Instance.LoadSceneAsync("WorldMapScene");

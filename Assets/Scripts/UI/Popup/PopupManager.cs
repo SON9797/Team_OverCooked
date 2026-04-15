@@ -109,6 +109,7 @@ public class PopupManager : MonoBehaviour
         OpenPopup(titletext, contentObj: slotList);
 
     }
+
     public void GotoWorldMapExitPopup()
     {
         string titletext = "Exit";
@@ -119,7 +120,9 @@ public class PopupManager : MonoBehaviour
         PopupButtonData btnok = new PopupButtonData();
         btnok.text = "OK";
         btnok.onclickAction = ClosePopup;
-        btnok.onclickAction +=()=> SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
+
+        btnok.onclickAction += () => StartCoroutine(ExitToWorldMapSequence());
+        //btnok.onclickAction += () => SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
 
         List <PopupButtonData> buttonlist = new List<PopupButtonData>();
         buttonlist.Add(btnCancel);
@@ -127,6 +130,14 @@ public class PopupManager : MonoBehaviour
         OpenPopup(titletext, buttonlist, contentText);
 
     }
+
+    private IEnumerator ExitToWorldMapSequence()
+    {
+        yield return StartCoroutine(IrisFader.Instance.IrisInToBlack());
+
+        SceneLoader.Instance.LoadSceneAsync("WorldMapScene");
+    }
+
     public void RestartPopup()
     {
         string titletext = "Restart";
@@ -137,7 +148,8 @@ public class PopupManager : MonoBehaviour
         PopupButtonData btnok = new PopupButtonData();
         btnok.text = "OK";
         btnok.onclickAction = ClosePopup;
-        btnok.onclickAction +=()=> SceneLoader.Instance.LoadSceneAsync(SceneManager.GetActiveScene().name, StageLoadObject);
+
+        btnok.onclickAction += () => StartCoroutine(RestartSequence());
 
         List <PopupButtonData> buttonlist = new List<PopupButtonData>();
         buttonlist.Add(btnCancel);
@@ -149,4 +161,10 @@ public class PopupManager : MonoBehaviour
         currentPopup.CloseWindow();
     }
 
+    private IEnumerator RestartSequence()
+    {
+        yield return StartCoroutine(IrisFader.Instance.IrisInToBlack());
+
+        SceneLoader.Instance.LoadSceneAsync(SceneManager.GetActiveScene().name, StageLoadObject);
+    }
 }

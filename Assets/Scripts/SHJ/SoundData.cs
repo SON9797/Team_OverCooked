@@ -24,10 +24,28 @@ namespace OverCooked
             }
 
             source.clip = Clip;
-            source.volume = Volume;
             source.pitch = UseRandomPitch ? Pitch + Random.Range(-PitchRandomRange, PitchRandomRange) : Pitch;
 
             source.PlayOneShot(Clip);
+        }
+
+        public void PlayLoop(AudioSource source)
+        {
+            if (Clip == null)
+            {
+                return;
+            }
+
+            if (source.clip == Clip && source.isPlaying)
+            {
+                return;
+            }
+
+            source.clip = Clip;
+            source.loop = true;
+            source.pitch = UseRandomPitch ? Pitch + Random.Range(-PitchRandomRange, PitchRandomRange) : Pitch;
+
+            source.Play();
         }
     }
 }

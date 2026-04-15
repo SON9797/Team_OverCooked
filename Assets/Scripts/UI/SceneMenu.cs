@@ -12,7 +12,7 @@ public class SceneMenu : IMenu
     public string sceneName;
 
 
-    public void OpenWindow(GameObject contentPrefab)
+    public void OpenWindow(GameObject contentPrefab=null)
     {
         menuManager = MenuManager.instance;
         prevScenename = menuManager.GetPrevSceneName();
@@ -24,9 +24,6 @@ public class SceneMenu : IMenu
     public void CloseWindow()
     {
         PopupManager.instance.GotoprevScenePopup(prevScenename);
-        /*
-        SceneLoader.Instance.LoadSceneAsync(prevScenename);
-        menuManager.MinusMenuStack();
-        */
+        
     }
 }

@@ -78,7 +78,7 @@ namespace Overcooked.Interfaces
         void UpdateScoreText(int currentScore);
         void UpdateEndingUI(ScoreManager scoreManager);
 
-        GameObject LoadingPanel { get; }
+        //GameObject LoadingPanel { get; }
         GameObject TutorialPanel { get; }
         GameObject ReadyPanel { get; }
         GameObject StartPanel { get; }
@@ -93,5 +93,15 @@ namespace Overcooked.Interfaces
         void PlaySFX(SFXType sfxType);
         void PlayBGM(AudioClip clip);
         void StopAllSounds();
+        void StopSFX(SFXType sfxType);
+    }
+
+    public interface IWorldMapSoundManager
+    {
+        void PlaySFX(SFXType sfxType);
+        void PlayBGM(AudioClip clip);
+        void StopAllSounds();
+        void StopSFX(SFXType sfxType);
+        void PlayLoopSFX(SFXType sfxType);
     }
 }

@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace OverCooked
 {
-    public class InGameSoundManager : MonoBehaviour, IInGameSoundManager
+    public class WorldMapSoundManager : MonoBehaviour, IWorldMapSoundManager
     {
         [SerializeField] private AudioSource _sfxSource;
         [SerializeField] private AudioSource _bgmSource;
+        [SerializeField] private AudioSource _engineSource;
 
         [SerializeField] private SoundLibrarySO _library;
 
@@ -33,7 +33,7 @@ namespace OverCooked
             if (_sfxDictionary.TryGetValue(sfxType, out SoundData soundData))
             {
                 soundData.Play(_sfxSource);
-            }            
+            }
         }
 
         public void PlayBGM(AudioClip clip)
@@ -81,5 +81,14 @@ namespace OverCooked
                 }
             }
         }
+
+        public void PlayLoopSFX(SFXType sfxType)
+        {
+            if (_sfxDictionary.TryGetValue(sfxType, out SoundData soundData))
+            {
+                soundData.PlayLoop(_engineSource);
+            }
+        }
+
     }
 }
