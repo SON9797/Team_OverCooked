@@ -8,6 +8,9 @@ public class SceneLoader : MonoBehaviour
     public static SceneLoader Instance;
     [SerializeField] LoadingScreen loadingscreenPrefab;
     [SerializeField] GameObject defaultContent;
+    [SerializeField] float mintime = 1;
+    [SerializeField] float movetoLoadingsceneMintime=1;
+    string loadingSceneName = "LoadingScene";
     private void Start()
     {
         if (Instance != null)
@@ -22,11 +25,30 @@ public class SceneLoader : MonoBehaviour
     {
         StartCoroutine(LoadRoutine(sceneName,content));
     }
+    IEnumerator MoveToLoadingScene(string sceneName)
+    {
+        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
+        op.allowSceneActivation = false;
+        float t = 0;
+        while (op.progress < 0.9f||t<movetoLoadingsceneMintime)
+        {
+            //페이드아웃 모션 여기다 쓰면됨.
+            t += Time.unscaledDeltaTime;
+         
+            yield return null;
+        }
+        // 로딩 종료 후 씬 전환
+        op.allowSceneActivation = true;
 
+        // 씬 완전히 바뀔 때까지 대기
+        while (!op.isDone)
+        {
+            yield return null;
+        }
+        // 여기 페이드인 모션 쓰면 됨.
+    }
     IEnumerator LoadRoutine(string sceneName, GameObject content = null)
     {
-        //페이드 연출 코드 추가 가능
-        float mintime = 1;
         float timer = 0;
         LoadingScreen loadingscreen=Instantiate(loadingscreenPrefab);
         Time.timeScale = 1;
@@ -61,8 +83,13 @@ public class SceneLoader : MonoBehaviour
         {
             yield return null;
         }
+        //라이팅 초기화
+        /*
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+        RenderSettings.ambientLight = Color.white;
+        */
+        //페이드인 연출
 
-        //페이드 연출
 
     }
     IEnumerator LoadSceneAndData(string sceneName, IEnumerator dataLoad)
