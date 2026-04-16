@@ -6,15 +6,20 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using VContainer;
 using OverCooked;
+using UnityEngine.UI;
 
 public class HoverAnime_MenuApear : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField] int index;
+    [SerializeField] bool active = true;
     [SerializeField] GameObject menu;
+    [SerializeField] Sprite inactiveImage;
     float duration=0.1f;
     float movedistance=-0.2f;
     Vector3 originMenuPos;
     int hoverCount=0;
+
+    Image thisImage;
 
     MenuApearManager menuManager;
 
@@ -26,9 +31,16 @@ public class HoverAnime_MenuApear : MonoBehaviour, IPointerEnterHandler
         Debug.Log($"{gameObject.name} 사운드 매니저 주입");
         _soundManager = soundManager;
     }
-
+    private void Awake()
+    {
+        thisImage=GetComponent<Image>();
+    }
     void Start()
     {
+        if (active == false)
+        {
+            thisImage.sprite= inactiveImage;
+        }
         menu.SetActive(false);
         originMenuPos = menu.transform.position;
         menuManager = MenuApearManager.instance;
@@ -36,10 +48,18 @@ public class HoverAnime_MenuApear : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (active==false)
+        {
+            return;
+        }
         menuManager.ChangeMenuList(index);
     }
     public void MenuApear()
     {
+        if (active == false)
+        {
+            return;
+        }
         if (menu.activeSelf)
             return;
 

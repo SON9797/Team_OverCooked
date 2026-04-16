@@ -89,7 +89,7 @@ public class IrisFader : MonoBehaviour
             _inGameSoundManager.StopAllSounds();
             _inGameSoundManager.PlaySFX(SFXType.UI_Screen_Out);
         }
-
+        _BlackImage.gameObject.SetActive(false);
         _irisImage.gameObject.SetActive(true);
 
         float elapsedTime = 0f;

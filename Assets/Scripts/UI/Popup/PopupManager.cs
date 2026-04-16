@@ -178,5 +178,6 @@ public class PopupManager : MonoBehaviour
         yield return StartCoroutine(IrisFader.Instance.IrisInToBlack());
 
         SceneLoader.Instance.LoadSceneAsync(SceneManager.GetActiveScene().name, StageLoadObject);
+        StartCoroutine(IrisFader.Instance.IrisOutFromBlack());
     }
 }
