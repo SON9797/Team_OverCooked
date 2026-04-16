@@ -15,8 +15,9 @@ public class GameConfig : MonoBehaviour,IMenu
     public void CloseWindow()
     {
 
-        gameObject.SetActive(true);
+        
         MenuManager.instance.MinusMenuStack();
+        gameObject.SetActive(false);
     }
 
 
