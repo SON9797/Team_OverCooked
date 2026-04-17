@@ -98,8 +98,12 @@ public class ScoreManager : MonoBehaviour, IScoreService
 
         //bool isFirstClear = previousBest == 0;
         bool isFirstClear = !saveload.currentData.bestScores.ContainsKey(levelIdentifier);
-        
 
+        int starCount = 0;//추가
+        if (CurrentScore >= levelData.ThreeStar) starCount = 3;
+        else if (CurrentScore >= levelData.TwoStar) starCount = 2;
+        else if (CurrentScore >= levelData.OneStar) starCount = 1;
+        /*
         if (CurrentScore > previousBest)
         {
             PlayerPrefs.SetInt(scoreKey, CurrentScore);
@@ -124,6 +128,24 @@ public class ScoreManager : MonoBehaviour, IScoreService
             PlayerPrefs.Save();
             saveload.CurrentDataUpdate(levelData.Chapter, levelData.Stage, CurrentScore, starCount);
             saveload.AutoSave();
+        }
+        */
+        if (starCount < 1)
+        {
+            Debug.Log("[ScoreManager] 별 1개 미만 - 저장 및 해금 스킵");
+            return;
+        }
+
+        if (CurrentScore > previousBest)
+        {
+            PlayerPrefs.SetInt(scoreKey, CurrentScore);
+            PlayerPrefs.SetInt(starKey, starCount);
+            PlayerPrefs.Save();
+
+            saveload.CurrentDataUpdate(levelData.Chapter, levelData.Stage, CurrentScore, starCount);
+            saveload.AutoSave();
+
+            Debug.Log($"[ScoreManager] 저장 완료: {levelIdentifier} / 점수: {CurrentScore} / 별: {starCount}");
         }
 
         if (isFirstClear && CurrentScore > 0)
