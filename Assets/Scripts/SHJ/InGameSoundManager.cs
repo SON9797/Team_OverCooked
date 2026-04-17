@@ -8,6 +8,7 @@ namespace OverCooked
 {
     public class InGameSoundManager : MonoBehaviour, IInGameSoundManager, ICommonSoundManager
     {
+        public static InGameSoundManager Instance;
         [SerializeField] private AudioSource _sfxSource;
         [SerializeField] private AudioSource _bgmSource;
 
@@ -17,10 +18,20 @@ namespace OverCooked
 
         private void Awake()
         {
+            Instance = this;
             if (_library != null)
             {
                 _sfxDictionary = _library.GetDictionary();
             }
+        }
+        private void Start()
+        {
+            UpdateVolume();
+        }
+        public void UpdateVolume()
+        {
+            _bgmSource.volume = VolumeManager.Instance.bgmVolume;
+            _sfxSource.volume = VolumeManager.Instance.effectVolume;
         }
 
         public void PlaySFX(SFXType sfxType)
