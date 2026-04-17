@@ -22,60 +22,50 @@ public class WorldMapIntro : MonoBehaviour
 
     private IEnumerator IntroSequence()
     {
-        Debug.Log("[Intro] 루틴 시작");
 
-        if (SaveLoad.instance == null)
+        yield return new WaitUntil(() => SaveLoad.instance != null);
+
+        bool hasPlayedIntro = SaveLoad.instance != null
+        && SaveLoad.instance.currentData.hasPlayedIntro;
+
+        if (hasPlayedIntro)
         {
-            Debug.LogError("[Intro] SaveLoad 인스턴스가 없습니다!");
-        }
-        else
-        {
-            Debug.Log($"[Intro] 현재 데이터의 스테이지 개수: {SaveLoad.instance.currentData.bestScores.Count}");
-            foreach (var key in SaveLoad.instance.currentData.bestScores.Keys)
-            {
-                Debug.Log($"[Intro] 저장된 키 목록: {key}");
-            }
-        }
-
-
-        bool is1_1Cleared = SaveLoad.instance != null
-         && SaveLoad.instance.currentData != null
-         && SaveLoad.instance.currentData.bestScores.ContainsKey("1-1");
-
-
-        if (SaveLoad.instance != null && SaveLoad.instance.currentData != null)
-        {
-            is1_1Cleared = SaveLoad.instance.currentData.bestScores.ContainsKey("1-1");
-        }
-
-        if (is1_1Cleared)
-        {
-
-            // 1-1이 클리어되었다면 연출 스킵: 즉시 버스 위치로
-            _mapCamera.enabled = true; // 카메라 기능 활성화
+            _mapCamera.enabled = true;
 
             if (_stageController != null)
             {
-                string currentStageKey = $"{SaveLoad.instance.currentData.currentChapter}-{SaveLoad.instance.currentData.currentSubChapter}";
-                _stageController.SetBusToStageFlag(currentStageKey, _playerTransform);
+                //string targetStageKey;
+
+                int ch = SaveLoad.instance.currentData.currentChapter;
+                int sub = SaveLoad.instance.currentData.currentSubChapter;
+                Debug.Log($"[WorldMapIntro] currentChapter={ch}, currentSubChapter={sub}");
+                Debug.Log($"[WorldMapIntro] bestScores 키 목록:");
+                foreach (var key in SaveLoad.instance.currentData.bestScores.Keys)
+                    Debug.Log($"  bestScore key: {key}");
+                Debug.Log($"[WorldMapIntro] unlockedStages 목록:");
+                foreach (var key in SaveLoad.instance.currentData.unlockedStages)
+                    Debug.Log($"  unlocked: {key}");
+
+                string targetStageKey = (ch > 0 && sub > 0) ? $"{ch}-{sub}" : "1-1";
+
+                Debug.Log($"[WorldMapIntro] targetStageKey={targetStageKey}");
+
+                _stageController.SetBusToStageFlag(targetStageKey, _playerTransform);
             }
+
 
             _mapCamera.transform.position = _playerTransform.position + _introOffset;
             _mapCamera.SetTarget(_playerTransform, _introOffset);
 
             BusMove player = _playerTransform.GetComponent<BusMove>();
-            if (player != null)
-            {
-                player.CanMove = true;
-            }
+            if (player != null) player.CanMove = true;
+
             _stage1_1Open = true;
 
             yield return new WaitForSeconds(0.6f);
 
             if (_stageController != null)
-            {
                 _stageController.CheckNewStageUnlockPublic();
-            }
 
             yield break;
         }
@@ -110,6 +100,12 @@ public class WorldMapIntro : MonoBehaviour
 
             yield return null;
         }
+
+        SaveLoad.instance.currentData.hasPlayedIntro = true;
+
+        SaveLoad.instance.currentData.UnlockStage("1-1");
+
+        SaveLoad.instance.AutoSave();
 
         _stage1_1Open = true;
         _mapCamera.SetTarget(_playerTransform, _introOffset);

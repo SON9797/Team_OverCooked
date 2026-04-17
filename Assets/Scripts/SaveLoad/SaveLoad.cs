@@ -41,6 +41,8 @@ public class SaveData
 
     public List<string> unlockedStages = new List<string>(); //추가
 
+    public bool hasPlayedIntro = false;// 추가
+
     public ChapterScore GetScore(Chapter chapter)
     {
         string key = chapter.ToKey();
@@ -146,6 +148,7 @@ public class SaveLoad : MonoBehaviour
         {
             currentData.bestScores = new Dictionary<string, ChapterScore>();
         }
+
         //수정
 
         if (currentData.bestScores == null)
@@ -163,10 +166,17 @@ public class SaveLoad : MonoBehaviour
             currentData.currentSubChapter = subChapter;
         }
 
-        Chapter chapter = new Chapter();
-        chapter.mainChapter = mainChapter;
-        chapter.subChapter = subChapter;
+        //Chapter chapter = new Chapter();
+        //chapter.mainChapter = mainChapter;
+        //chapter.subChapter = subChapter;
         string chapterString = $"{mainChapter}-{subChapter}";//수정
+
+        //추가
+        if (starcount < 1)
+        {
+            Debug.Log($"[CurrentDataUpdate] 별 1개 미만 - bestScores 저장 스킵, currentChapter={currentData.currentChapter}, currentSubChapter={currentData.currentSubChapter}");
+            return;
+        }
 
         if (currentData.bestScores.ContainsKey(chapterString))
         {
@@ -193,6 +203,11 @@ public class SaveLoad : MonoBehaviour
     public SaveData Load(int slotNum)
     {
         string path = Path.Combine(Application.persistentDataPath, $"save{slotNum}.json");
+
+        Debug.Log($"[SaveLoad] 로드 시도 경로: {path}");
+        Debug.Log($"[SaveLoad] 파일 존재 여부: {File.Exists(path)}");
+
+
         if (!File.Exists(path))
         {
             Debug.Log($"세이브 파일 없음{slotNum}");
@@ -200,6 +215,7 @@ public class SaveLoad : MonoBehaviour
         }
 
         string json = File.ReadAllText(path);
+        Debug.Log($"[SaveLoad] 로드된 JSON: {json}");
         SaveData data = JsonConvert.DeserializeObject<SaveData>(json);
 
         return data;
@@ -240,4 +256,6 @@ public class SaveLoad : MonoBehaviour
         }
         
     }
+
+
 }
