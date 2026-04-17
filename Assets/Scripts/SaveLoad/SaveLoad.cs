@@ -41,6 +41,8 @@ public class SaveData
 
     public List<string> unlockedStages = new List<string>(); //추가
 
+    public bool hasPlayedIntro = false;// 추가
+
     public ChapterScore GetScore(Chapter chapter)
     {
         string key = chapter.ToKey();
