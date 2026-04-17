@@ -46,7 +46,7 @@ public class StageFlag : MonoBehaviour
         {
             if (_transUI != null)
             {
-                _transUI.HideUI(); // UI를 숨기는 함수 호출
+                _transUI.HideUI();
             }
         }
     }

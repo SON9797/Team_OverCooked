@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UIElements;
@@ -135,30 +136,28 @@ public class StageController : MonoBehaviour
     }
 
     // 게임 클리어시 호출
-    public void 
-        
-        MarkStageAsCleared(int mainChapter, int subChapter, int score, int stars)
+    public void MarkStageAsCleared(int mainChapter, int subChapter, int score, int stars)
     {
-        Debug.Log($"[StageController] MarkStageAsCleared 호출됨: {mainChapter}-{subChapter}");
 
         if (SaveLoad.instance != null)
         {
             SaveLoad.instance.CurrentDataUpdate(mainChapter, subChapter, score, stars);
             SaveLoad.instance.AutoSave();
-            Debug.Log($"[StageController] {mainChapter}-{subChapter} 클리어 및 저장 완료");
+
+            Debug.Log($"[MarkStageAsCleared] 저장 후 currentChapter={SaveLoad.instance.currentData.currentChapter}, currentSubChapter={SaveLoad.instance.currentData.currentSubChapter}");
+            Debug.Log($"[MarkStageAsCleared] bestScores 목록:");
+            foreach (var key in SaveLoad.instance.currentData.bestScores.Keys)
+                Debug.Log($"  key: {key}");
         }
         else
         {
-            Debug.LogError("[StageController] SaveLoad.instance가 null!");
+            Debug.LogError("[MarkStageAsCleared] SaveLoad.instance가 null!");
         }
 
         string nextStageKey = InputStagePlus($"{mainChapter}-{subChapter}");
-        Debug.Log($"[StageController] 다음 스테이지 키: {nextStageKey}");
-
         // 게임씬엔 월드맵 타일이 없으므로 딕셔너리 검증 없이 바로 저장
         PlayerPrefs.SetString("PendingUnlockStage", nextStageKey);
         PlayerPrefs.Save();
-        Debug.Log($"[StageController] PlayerPrefs 저장 완료: {nextStageKey}");
     }
 
     private string InputStagePlus(string inputstage)
@@ -169,21 +168,7 @@ public class StageController : MonoBehaviour
 
         return $"{mainChapter}-{subChapter}";
     }
-    private void StagePlus()
-    {
-        var split = _testStageName.Split('-');
-
-        int mainChapter = int.Parse(split[0]);
-        int subChapter = int.Parse(split[1])+1;
-
-        string connect = $"{mainChapter}-{subChapter}";
-        if (!_stageTransformDict.ContainsKey(connect))
-        {
-            connect = $"{mainChapter + 1}-1";
-        }
-        _testStageName = connect;
-    }
-
+    
     public void SetBusToStageFlag(string stageKey, Transform busTransform)
     {
         if (!_stageTransformDict.ContainsKey(stageKey))

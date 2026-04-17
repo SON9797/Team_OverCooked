@@ -130,6 +130,9 @@ public class ScoreManager : MonoBehaviour, IScoreService
             saveload.AutoSave();
         }
         */
+        saveload.CurrentDataUpdate(levelData.Chapter, levelData.Stage, CurrentScore, starCount);
+        saveload.AutoSave();
+
         if (starCount < 1)
         {
             Debug.Log("[ScoreManager] 별 1개 미만 - 저장 및 해금 스킵");
@@ -142,15 +145,15 @@ public class ScoreManager : MonoBehaviour, IScoreService
             PlayerPrefs.SetInt(starKey, starCount);
             PlayerPrefs.Save();
 
-            saveload.CurrentDataUpdate(levelData.Chapter, levelData.Stage, CurrentScore, starCount);
-            saveload.AutoSave();
+            //saveload.CurrentDataUpdate(levelData.Chapter,  //levelData.Stage,CurrentScore, starCount);
+            //saveload.AutoSave();
 
             Debug.Log($"[ScoreManager] 저장 완료: {levelIdentifier} / 점수: {CurrentScore} / 별: {starCount}");
         }
 
         if (isFirstClear && CurrentScore > 0)
         {
-            nextStageKey = $"{levelData.Chapter}-{levelData.Stage + 1}";//추가
+            //nextStageKey = $"{levelData.Chapter}-{levelData.Stage + 1}";//추가
 
             PlayerPrefs.SetString("PendingUnlockStage", nextStageKey);
             PlayerPrefs.Save();
