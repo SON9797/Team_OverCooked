@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 
-public class Dish : MonoBehaviour
+public class Dish : MonoBehaviour,IConveyorbeltMove
 {
     [SerializeField] Transform foodPos;
     HashSet<IngreDientData> mix=new HashSet<IngreDientData>();
