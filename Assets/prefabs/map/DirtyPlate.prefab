@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4483364229826188479}
   - component: {fileID: 2715118296454919904}
-  m_Layer: 11
+  - component: {fileID: 7394276528283959268}
+  m_Layer: 0
   m_Name: DirtyPlate
   m_TagString: Dirty
   m_Icon: {fileID: 0}
@@ -47,6 +48,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foodPos: {fileID: 2063782128964706915}
+--- !u!54 &7394276528283959268
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065768347962614607}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3320023185252762190
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +84,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2063782128964706915}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: FoodPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,9 +117,8 @@ GameObject:
   - component: {fileID: 8205463052965245866}
   - component: {fileID: 3492694003173704735}
   - component: {fileID: 7212484730936552196}
-  - component: {fileID: 7267023500263600964}
   - component: {fileID: 141362043823056634}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: DirtyPlate 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,33 +190,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!54 &7267023500263600964
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5870734396538496133}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &141362043823056634
 BoxCollider:
   m_ObjectHideFlags: 0
