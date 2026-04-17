@@ -22,6 +22,11 @@ namespace OverCooked
                 _sfxDictionary = _library.GetDictionary();
             }
         }
+        private void Start()
+        {
+            _sfxSource.volume = VolumeManager.Instance.effectVolume;
+            _bgmSource.volume = VolumeManager.Instance.bgmVolume;
+        }
 
         public void PlaySFX(SFXType sfxType)
         {

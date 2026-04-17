@@ -5,9 +5,15 @@ using UnityEngine.UI;
 
 public class Musicbar : MonoBehaviour
 {
+    public enum SoundType
+    {
+        bgm,
+        effect
+    }
     [SerializeField] List<Image> bars;
     [SerializeField] Sprite activebar;
     [SerializeField] Sprite inactivebar;
+    [SerializeField] SoundType soundType = SoundType.bgm;
     int volume = 5;
     void Start()
     {
@@ -24,6 +30,17 @@ public class Musicbar : MonoBehaviour
         {
             bars[i].sprite = activebar;
         }
+        switch (soundType)
+        {
+            case SoundType.bgm:
+                VolumeManager.Instance.bgmVolume = volume / 5.0f;
+                break;
+            case SoundType.effect:
+                VolumeManager.Instance.effectVolume = volume / 5.0f;
+                break;
+        }
+        VolumeManager.Instance.UpdateVolumToAudioSource();
+        
     }
     public void MinusVolume()
     {

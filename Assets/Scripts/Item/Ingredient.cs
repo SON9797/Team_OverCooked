@@ -13,7 +13,7 @@ public enum CookBehaivior
     boil = 1 << 2,
 
 }
-public class Ingredient : MonoBehaviour
+public class Ingredient : MonoBehaviour,IConveyorbeltMove
 {
     /*   순서가 중요하면 쓰려고 했던거.
     [Serializable]

@@ -28,5 +28,6 @@ public class ChefChange : MonoBehaviour,IMenu
         mainMenuCanvas.SetActive(true);
         shefSelectCanvas.SetActive(false);
         CameraMove.instance.MoveToTargetAsync(originCameraPos, 3f);
+        menuManager.MinusMenuStack();
     }
 }
