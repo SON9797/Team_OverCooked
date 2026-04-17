@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class Musicbar : MonoBehaviour
 {
+    public enum SoundType
+    {
+        bgm,
+        effect
+    }
     [SerializeField] List<Image> bars;
     [SerializeField] Sprite activebar;
     [SerializeField] Sprite inactivebar;
