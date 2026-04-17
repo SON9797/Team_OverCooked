@@ -23,6 +23,8 @@ public class WorldMapIntro : MonoBehaviour
     private IEnumerator IntroSequence()
     {
 
+        yield return new WaitUntil(() => SaveLoad.instance != null);
+
         bool hasPlayedIntro = SaveLoad.instance != null
         && SaveLoad.instance.currentData.hasPlayedIntro;
 
@@ -32,10 +34,21 @@ public class WorldMapIntro : MonoBehaviour
 
             if (_stageController != null)
             {
-                bool is1_1Cleared = SaveLoad.instance.currentData.bestScores.ContainsKey("1-1");
-                string targetStageKey = is1_1Cleared
-                    ? $"{SaveLoad.instance.currentData.currentChapter}-{SaveLoad.instance.currentData.currentSubChapter}"
-                    : "1-1";
+                //string targetStageKey;
+
+                int ch = SaveLoad.instance.currentData.currentChapter;
+                int sub = SaveLoad.instance.currentData.currentSubChapter;
+                Debug.Log($"[WorldMapIntro] currentChapter={ch}, currentSubChapter={sub}");
+                Debug.Log($"[WorldMapIntro] bestScores 키 목록:");
+                foreach (var key in SaveLoad.instance.currentData.bestScores.Keys)
+                    Debug.Log($"  bestScore key: {key}");
+                Debug.Log($"[WorldMapIntro] unlockedStages 목록:");
+                foreach (var key in SaveLoad.instance.currentData.unlockedStages)
+                    Debug.Log($"  unlocked: {key}");
+
+                string targetStageKey = (ch > 0 && sub > 0) ? $"{ch}-{sub}" : "1-1";
+
+                Debug.Log($"[WorldMapIntro] targetStageKey={targetStageKey}");
 
                 _stageController.SetBusToStageFlag(targetStageKey, _playerTransform);
             }
@@ -43,12 +56,6 @@ public class WorldMapIntro : MonoBehaviour
 
             _mapCamera.transform.position = _playerTransform.position + _introOffset;
             _mapCamera.SetTarget(_playerTransform, _introOffset);
-
-            if (_stageController != null)
-            {
-                string currentStageKey = $"{SaveLoad.instance.currentData.currentChapter}-{SaveLoad.instance.currentData.currentSubChapter}";
-                _stageController.SetBusToStageFlag(currentStageKey, _playerTransform);
-            }
 
             BusMove player = _playerTransform.GetComponent<BusMove>();
             if (player != null) player.CanMove = true;
